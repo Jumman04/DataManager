@@ -13,6 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DataManager"
 include(":app")
- 
+include(":DataManager")
