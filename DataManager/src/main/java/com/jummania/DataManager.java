@@ -55,8 +55,10 @@ public class DataManager {
      * @param <T>      The type of the data model.
      */
     public static <T> void saveData(List<T> dataList) {
+        if (dataList == null)
+            throw new IllegalArgumentException("dataList cannot be null");
         throwExceptionIfNull();
-        sharedPreferences.edit().putString(dataList.getClass().getSimpleName(), gson.toJson(dataList, getListType(dataList.getClass()))).apply();
+        sharedPreferences.edit().putString(dataList.getClass().getSimpleName(), gson.toJson(dataList, getListType(dataList.get(0).getClass()))).apply();
     }
 
     /**
