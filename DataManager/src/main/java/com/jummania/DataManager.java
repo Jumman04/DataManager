@@ -52,13 +52,14 @@ public class DataManager {
      * Saves a List of data of the specified data model to SharedPreferences.
      *
      * @param dataList The List of data to be saved.
+     * @param tClass   The class of the data model.
      * @param <T>      The type of the data model.
      */
-    public static <T> void saveData(List<T> dataList) {
+    public static <T> void saveData(List<T> dataList, Class<T> tClass) {
         if (dataList == null)
             throw new IllegalArgumentException("dataList cannot be null");
         throwExceptionIfNull();
-        sharedPreferences.edit().putString(dataList.getClass().getSimpleName(), gson.toJson(dataList, getListType(dataList.get(0).getClass()))).apply();
+        sharedPreferences.edit().putString(tClass.getSimpleName(), gson.toJson(dataList, getListType(tClass))).apply();
     }
 
     /**

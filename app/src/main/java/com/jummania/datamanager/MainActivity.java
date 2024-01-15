@@ -1,15 +1,14 @@
 package com.jummania.datamanager;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.jummania.DataManager; // Importing your DataManager library
+import com.jummania.DataManager;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
                 simpleData.add(new SimpleData(i, "simpleString"));
 
             // Save the newly populated data back to DataManager
-            DataManager.saveData(simpleData);
+            DataManager.saveData(simpleData, SimpleData.class);
         }
 
         // Find the TextView in the layout by its ID
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         // Iterate over the list of SimpleData objects
         for (SimpleData data : simpleDataList) {
             // Append each SimpleData's string representation to the formatted text
-            formattedText.append(data.toString()).append("\n\n");
+            formattedText.append("simpleInt: ").append(data.getSimpleInt()).append(", simpleString: ").append(data.getSimpleString()).append("\n");
         }
 
         // Return the formatted string for display in the TextView

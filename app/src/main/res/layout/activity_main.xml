@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/simpleTextView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <TextView
-        android:id="@+id/simpleTextView"
-        android:padding="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-
-</ScrollView>
+    android:padding="15dp"
+    android:text="@string/app_name"
+    tools:context=".MainActivity" />
