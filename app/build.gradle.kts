@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-   // implementation(project(":DataManager"))
     implementation(project(":Library"))
-    // ./gradlew assembleRelease
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 }
