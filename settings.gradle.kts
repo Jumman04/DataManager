@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 include(":app")
-include(":DataManager")
+include(":Library")

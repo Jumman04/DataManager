@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":DataManager"))
+   // implementation(project(":DataManager"))
+    implementation(project(":Library"))
     // ./gradlew assembleRelease
 }

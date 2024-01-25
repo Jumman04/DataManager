@@ -3,6 +3,7 @@ package com.jummania.datamanager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jummania.DataManager;
 
@@ -16,26 +17,31 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         // Initialize the DataManager library with the current context (this Activity)
-        DataManager.initialize(this);
+        DataManager dataManager = new DataManager(getFilesDir());
 
         // Retrieve a list of SimpleData objects from DataManager
-        List<SimpleData> simpleData = DataManager.getData(SimpleData.class);
+        List<SimpleData> simpleData = dataManager.getData(SimpleData.class);
 
         // Check if the retrieved data is empty
         if (simpleData.isEmpty()) {
+
+            Toast.makeText(this, "simpleData is empty", Toast.LENGTH_SHORT).show();
+
             // If no data exists, create and add 10 SimpleData objects to the list
             for (int i = 0; i < 10; i++)
                 simpleData.add(new SimpleData(i, "simpleString"));
 
             // Save the newly populated data back to DataManager
-            DataManager.saveData(simpleData, SimpleData.class);
-        }
+            dataManager.saveData(simpleData, SimpleData.class);
+        } else
+            Toast.makeText(this, "the size of simpleData are: " + simpleData.size(), Toast.LENGTH_SHORT).show();
 
         // Find the TextView in the layout by its ID
         TextView simpleTextView = findViewById(R.id.simpleTextView);
 
         // Set the text of the TextView with a formatted string of SimpleData items
         simpleTextView.setText(formatSimpleDataList(simpleData));
+
     }
 
     // Format the list of SimpleData objects for display in a TextView
