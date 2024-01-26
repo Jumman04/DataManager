@@ -126,6 +126,29 @@ public class DataManager {
         return getJsonData(dataModel.getSimpleName());
     }
 
+    /**
+     * Gets deserialized data from a JSON string associated with the given key and Type.
+     * <p>
+     * This method retrieves a JSON string from the DataManager using the specified key
+     * and then uses Gson to deserialize it into an object of the specified Type.
+     *
+     * @param key     The key associated with the data.
+     * @param typeOfT The Type of the object to be deserialized.
+     * @param <T>     The type of the data model.
+     * @return The deserialized object of the specified Type.
+     */
+    public <T> T getJsonData(String key, Type typeOfT) {
+        // Delegate the call to the existing getJsonData method to retrieve the JSON string
+        // associated with the provided key, and then use Gson to deserialize it into an object
+        // of the specified Type.
+
+        // Example usage:
+        // If you have a class SimpleData and want to retrieve an instance of List<SimpleData>,
+        // you can use: getJsonData("SimpleData", new TypeToken<List<SimpleData>>() {}.getType());
+
+        return gson.fromJson(getJsonData(key), typeOfT);
+    }
+
 
     /**
      * Gets the JSON data for a given key.
@@ -343,6 +366,27 @@ public class DataManager {
         // Ensure that the calculated batch size is greater than zero.
         // If dataSize and maxArraySize are both zero, set the batch size to 1 to avoid division by zero.
         return Math.max(batchSize, 1);
+    }
+
+    /**
+     * Saves an object to the DataManager using the specified key and Type.
+     * <p>
+     * This method serializes the provided object into a JSON string using Gson and
+     * then saves it to a file in the DataManager directory with the specified key.
+     *
+     * @param key       The key associated with the data.
+     * @param src       The object to be saved.
+     * @param typeOfSrc The Type of the object being saved.
+     */
+    public void saveData(String key, Object src, Type typeOfSrc) {
+        // Serialize the provided object into a JSON string using Gson and the specified Type.
+        // Delegate the call to the existing saveData method to handle the actual file saving.
+
+        // Example usage:
+        // If you have a List<SimpleData> and want to save it, you can use:
+        // saveData("SimpleData", dataList, new TypeToken<List<SimpleData>>() {}.getType());
+
+        saveData(key, gson.toJson(src, typeOfSrc));
     }
 
 
