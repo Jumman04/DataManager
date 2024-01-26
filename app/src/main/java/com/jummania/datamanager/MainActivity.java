@@ -31,13 +31,14 @@ public class MainActivity extends Activity {
         DataManager dataManager = new DataManager(getFilesDir());
 
         // Retrieve data and display a toast with the time taken in seconds
-        long beforeGetData = System.currentTimeMillis();
+        double beforeGetData = System.currentTimeMillis();
         List<SimpleData> dataList = dataManager.getData(SimpleData.class);
-        long afterGetData = (System.currentTimeMillis() - beforeGetData) / 1000; // Convert to seconds
-        Toast.makeText(this, "Data retrieved in: " + afterGetData + " seconds", Toast.LENGTH_SHORT).show();
+        double afterGetData = (System.currentTimeMillis() - beforeGetData) / 1000; // Convert to seconds
+        Toast.makeText(this, "Data retrieved in: " + afterGetData + " seconds\nData Size: " + dataList.size(), Toast.LENGTH_SHORT).show();
 
         // Set up the RecyclerView with the retrieved data
-        recyclerView.setAdapter(new Adapter(dataList));
+        Adapter adapter = new Adapter(dataList);
+        recyclerView.setAdapter(adapter);
 
         // Button click listener for adding data
         add.setOnClickListener(v -> {
@@ -45,10 +46,11 @@ public class MainActivity extends Activity {
             for (int i = 0; i < 99999; i++)
                 dataList.add(new SimpleData(i, "simpleString"));
 
-            long beforeSaveData = System.currentTimeMillis();
-            dataManager.saveData(dataList, SimpleData.class);
-            long afterSaveData = (System.currentTimeMillis() - beforeSaveData) / 1000; // Convert to seconds
+            double beforeSaveData = System.currentTimeMillis();
+            dataManager.saveData(dataList, SimpleData.class, 99999);
+            double afterSaveData = (System.currentTimeMillis() - beforeSaveData) / 1000; // Convert to seconds
             Toast.makeText(MainActivity.this, "Data saved in: " + afterSaveData + " seconds", Toast.LENGTH_SHORT).show();
+            adapter.notifyItemInserted(adapter.getItemCount());
         });
 
         // Button click listener for clearing all data
@@ -58,6 +60,8 @@ public class MainActivity extends Activity {
             dataManager.clearAll();
             long afterClearAll = (System.currentTimeMillis() - beforeClearAll) / 1000; // Convert to seconds
             Toast.makeText(MainActivity.this, "All data cleared in: " + afterClearAll + " seconds", Toast.LENGTH_SHORT).show();
+            dataList.clear();
+            adapter.notifyDataSetChanged();
         });
     }
 }
