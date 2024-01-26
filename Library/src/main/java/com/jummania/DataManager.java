@@ -139,18 +139,19 @@ public class DataManager {
         // It first checks for null values in essential components using throwExceptionIfNull().
         throwExceptionIfNull();
 
-        // StringBuilder to hold the JSON data
-        StringBuilder jsonString = new StringBuilder();
-
         try (InputStreamReader inputStreamReader = getInputStreamReader(key)) {
             // Attempt to create an InputStreamReader based on the provided key
             if (inputStreamReader != null) {
+                // StringBuilder to hold the JSON data
+                StringBuilder jsonString = new StringBuilder();
                 try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
                     // Read the contents of the file into the StringBuilder
                     String line;
                     while ((line = bufferedReader.readLine()) != null) {
                         jsonString.append(line);
                     }
+                    // Return the JSON data as a String
+                    return jsonString.toString();
                 }
             }
         } catch (IOException e) {
@@ -158,8 +159,8 @@ public class DataManager {
             e.printStackTrace();
         }
 
-        // Return the JSON data as a String
-        return jsonString.toString();
+        // Return null
+        return null;
     }
 
 
