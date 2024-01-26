@@ -150,6 +150,10 @@ public class DataManager {
                     while ((line = bufferedReader.readLine()) != null) {
                         jsonString.append(line);
                     }
+
+                    //close the bufferedReader
+                    bufferedReader.close();
+
                     // Return the JSON data as a String
                     return jsonString.toString();
                 }
