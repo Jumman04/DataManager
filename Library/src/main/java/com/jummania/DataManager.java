@@ -17,7 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The DataManager class provides functionality for managing and storing data using JSON serialization.
+ * * Created by Jummania on January 26, 2024.
+ * * Email: sharifuddinjumman@gmail.com
+ * * Dhaka, Bangladesh.
+ * <p>
+ * The DataManager class provides a versatile set of functionalities for managing and storing data using JSON serialization.
+ * It facilitates easy reading, writing, and deletion of data, making it a powerful tool for applications that require efficient
+ * and structured data storage. The class includes methods for handling batch operations, error checking, and clear documentation
+ * to ensure ease of use for developers.
  */
 public class DataManager {
 
