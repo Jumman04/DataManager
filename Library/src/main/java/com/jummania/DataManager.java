@@ -7,12 +7,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -284,7 +284,7 @@ public class DataManager {
                 if (file.exists()) {
                     // If the file exists, create a BufferedInputStream for efficient reading
                     // and wrap it with an InputStreamReader.
-                    BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024);
+                    BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file), 16 * 1024);
                     return new InputStreamReader(inputStream);
                 }
             }
@@ -468,8 +468,7 @@ public class DataManager {
                 // If the file exists, attempt to delete it
                 if (file.delete())
                     System.out.println("File deleted successfully: " + file.getAbsolutePath());
-                else
-                    System.err.println("Failed to delete file: " + file.getAbsolutePath());
+                else System.err.println("Failed to delete file: " + file.getAbsolutePath());
                 index++;
             } else {
                 // If the file does not exist, exit the loop
