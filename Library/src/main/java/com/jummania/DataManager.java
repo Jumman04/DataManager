@@ -9,7 +9,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
@@ -181,9 +180,9 @@ public class DataManager {
                     return jsonString.toString();
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             // Handle IOException by printing the stack trace
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
         // Return null
@@ -251,9 +250,9 @@ public class DataManager {
                 // into a List of the specified data model class.
                 return gson.fromJson(inputStreamReader, getListType(dataModel));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             // Handle IOException by printing the stack trace
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
         // If there's an error or the InputStreamReader is null, return null
@@ -290,7 +289,7 @@ public class DataManager {
             }
         } catch (Exception e) {
             // Handle any exceptions by printing the stack trace
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
         // If there's an error or the file does not exist, return null
@@ -422,9 +421,9 @@ public class DataManager {
             // Close the BufferedWriter and FileOutputStream to release resources
             writer.close();
             fos.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             // Handle IOException by printing the stack trace
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 
