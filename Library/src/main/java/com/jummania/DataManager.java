@@ -110,7 +110,7 @@ public class DataManager {
      * @param <T>       The type of the data model.
      * @return The JSON data as a String.
      */
-    public <T> String getJsonData(Class<T> dataModel) {
+    public <T> String getString(Class<T> dataModel) {
         // This method retrieves JSON data for a given data model class by delegating
         // the call to the getJsonData(String key) method with the key derived from the
         // simple name of the data model class.
@@ -122,7 +122,7 @@ public class DataManager {
         // If dataModel is SimpleData.class, this method is equivalent to calling
         // getJsonData("SimpleData").
 
-        return getJsonData(dataModel.getSimpleName());
+        return getString(dataModel.getSimpleName());
     }
 
     /**
@@ -136,7 +136,7 @@ public class DataManager {
      * @param <T>     The type of the data model.
      * @return The deserialized object of the specified Type.
      */
-    public <T> T getJsonData(String key, Type typeOfT) {
+    public <T> T getString(String key, Type typeOfT) {
         // Delegate the call to the existing getJsonData method to retrieve the JSON string
         // associated with the provided key, and then use Gson to deserialize it into an object
         // of the specified Type.
@@ -145,7 +145,7 @@ public class DataManager {
         // If you have a class SimpleData and want to retrieve an instance of List<SimpleData>,
         // you can use: getJsonData("SimpleData", new TypeToken<List<SimpleData>>() {}.getType());
 
-        return gson.fromJson(getJsonData(key), typeOfT);
+        return gson.fromJson(getString(key), typeOfT);
     }
 
 
@@ -155,7 +155,7 @@ public class DataManager {
      * @param key The key associated with the data.
      * @return The JSON data as a String.
      */
-    public String getJsonData(String key) {
+    public String getString(String key) {
         // This method retrieves JSON data from a file associated with the specified key.
 
         // It first checks for null values in essential components using throwExceptionIfNull().
