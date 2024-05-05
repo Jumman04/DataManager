@@ -176,6 +176,9 @@ public class DataManager {
                     //close the bufferedReader
                     bufferedReader.close();
 
+                    //close the inputStreamReader
+                    inputStreamReader.close();
+
                     // Return the JSON data as a String
                     return jsonString.toString();
                 }
@@ -197,7 +200,7 @@ public class DataManager {
      * @param <T>       The type of the data model.
      * @return The combined data as a List.
      */
-    public <T> List<T> getData(Class<T> dataModel) {
+    public <T> List<T> getObject(Class<T> dataModel) {
         // This method retrieves a List of data of a specified data model class.
         // It does this by combining multiple batches of data until no more data is found.
 
@@ -213,7 +216,7 @@ public class DataManager {
         // Continue looping until no more data is found
         while (hasMoreData) {
             // Attempt to retrieve a batch of data based on the current index
-            List<T> batchData = getDataBatch(dataModel.getSimpleName() + "." + index, dataModel);
+            List<T> batchData = getObjectBatch(dataModel.getSimpleName() + "." + index, dataModel);
 
             // Check if the batchData is not null (i.e., more data is found)
             if (batchData != null) {
@@ -239,7 +242,7 @@ public class DataManager {
      * @param <T>       The type of the data model.
      * @return The batch of data as a List.
      */
-    private <T> List<T> getDataBatch(String key, Class<T> dataModel) {
+    private <T> List<T> getObjectBatch(String key, Class<T> dataModel) {
         // This method retrieves a batch of data of a specified data model class from a file associated with the given key.
         // It is part of the getData() method, which retrieves data in batches until no more data is found.
 
@@ -304,14 +307,14 @@ public class DataManager {
      * @param tClass   The class representing the data model.
      * @param <T>      The type of the data model.
      */
-    public <T> void saveData(List<T> dataList, Class<T> tClass) {
+    public <T> void saveObject(List<T> dataList, Class<T> tClass) {
         // This method is responsible for saving a list of data to a file in batches
         // with a maximum array size of 9999 elements.
 
         // It delegates the call to the overloaded saveData() method with the default
         // maxArraySize parameter of 9999.
 
-        saveData(dataList, tClass, 9999);
+        saveObject(dataList, tClass, 9999);
     }
 
 
@@ -323,7 +326,7 @@ public class DataManager {
      * @param maxArraySize The maximum array size for each batch.
      * @param <T>          The type of the data model.
      */
-    public <T> void saveData(List<T> dataList, Class<T> tClass, int maxArraySize) {
+    public <T> void saveObject(List<T> dataList, Class<T> tClass, int maxArraySize) {
         // This method saves a list of data to multiple files in batches,
         // where each file contains a JSON representation of a subset of the data.
 
@@ -344,7 +347,7 @@ public class DataManager {
             List<T> batch = dataList.subList(i, Math.min(i + batchSize, dataList.size()));
 
             // Save the current batch to a file, naming it based on the data model class and position index
-            saveData(tClass.getSimpleName() + "." + pos++, gson.toJson(batch, getListType(tClass)));
+            saveString(tClass.getSimpleName() + "." + pos++, gson.toJson(batch, getListType(tClass)));
         }
     }
 
@@ -377,7 +380,7 @@ public class DataManager {
      * @param src       The object to be saved.
      * @param typeOfSrc The Type of the object being saved.
      */
-    public void saveData(String key, Object src, Type typeOfSrc) {
+    public void saveObject(String key, Object src, Type typeOfSrc) {
         // Serialize the provided object into a JSON string using Gson and the specified Type.
         // Delegate the call to the existing saveData method to handle the actual file saving.
 
@@ -385,7 +388,7 @@ public class DataManager {
         // If you have a List<SimpleData> and want to save it, you can use:
         // saveData("SimpleData", dataList, new TypeToken<List<SimpleData>>() {}.getType());
 
-        saveData(key, gson.toJson(src, typeOfSrc));
+        saveString(key, gson.toJson(src, typeOfSrc));
     }
 
 
@@ -395,7 +398,7 @@ public class DataManager {
      * @param key  The key associated with the data.
      * @param json The JSON data to be saved.
      */
-    public void saveData(String key, String json) {
+    public void saveString(String key, String json) {
         // This method saves a JSON string to a file in the app's internal storage using the specified key.
 
         // Check if either the JSON string or the key is null, and throw an exception if so.
@@ -405,22 +408,23 @@ public class DataManager {
         // Check for null values in essential components using throwExceptionIfNull().
         throwExceptionIfNull();
 
-        try {
-            // Construct the full path to the file in the app's internal storage based on the provided key
-            File file = getFile(key);
+        // Construct the full path to the file in the app's internal storage based on the provided key
+        File file = getFile(key);
 
-            // Open a private file in the app's internal storage for writing
-            FileOutputStream fos = new FileOutputStream(file);
+        // Open a private file in the app's internal storage for writing
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
 
             // Wrap the FileOutputStream with a BufferedWriter for efficient writing
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
 
-            // Write the JSON string to the file
-            writer.write(json);
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
+                // Write the JSON string to the file
+                writer.write(json);
 
-            // Close the BufferedWriter and FileOutputStream to release resources
-            writer.close();
-            fos.close();
+                // Close the BufferedWriter and FileOutputStream to release resources
+                writer.close();
+                fos.close();
+            }
         } catch (Exception e) {
             // Handle IOException by printing the stack trace
             System.err.println(e.getMessage());
@@ -434,13 +438,13 @@ public class DataManager {
      * @param tClass The class representing the data model.
      * @param <T>    The type of the data model.
      */
-    public <T> void deleteData(Class<T> tClass) {
+    public <T> void clear(Class<T> tClass) {
         // This method deletes data files associated with a specified data model class.
 
         // It delegates the call to the overloaded deleteData() method with the key
         // generated from the simple name of the provided data model class.
 
-        deleteData(tClass.getSimpleName());
+        clear(tClass.getSimpleName());
     }
 
 
@@ -449,7 +453,7 @@ public class DataManager {
      *
      * @param name The key associated with the data.
      */
-    public void deleteData(String name) {
+    public void clear(String name) {
         // This method deletes multiple data files associated with a specified key.
 
         // It iteratively attempts to delete files with names generated by appending
