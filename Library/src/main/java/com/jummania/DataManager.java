@@ -31,12 +31,17 @@ public class DataManager {
     private final Gson gson;
     private final File filesDir;
 
+
     /**
      * Initializes a new DataManager instance with the specified files directory.
      *
-     * @param filesDir The directory where data will be stored.
+     * @param filesDir The directory to use for data storage and management. This argument cannot be null.
+     * @throws IllegalStateException if the filesDir is null.
      */
     public DataManager(File filesDir) {
+
+        if (filesDir == null)
+            throw new IllegalArgumentException("The 'filesDir' argument cannot be null.");
 
         // Create the DataManager folder within the specified files directory
         this.filesDir = new File(filesDir, "DataManager");
@@ -60,15 +65,16 @@ public class DataManager {
 
 
     /**
-     * Initializes the DataManager instance with the specified directory.
+     * Initializes and returns the **singleton instance** of the DataManager.
      * <p>
-     * This method is synchronized to ensure thread-safe initialization.
-     * It throws an IllegalStateException if the DataManager is already initialized.
+     * This method is synchronized to ensure thread-safe initialization of the DataManager.
      *
-     * @param filesDir The directory to use for data management.
+     * @param filesDir The directory to use for data storage and management. This argument cannot be null.
+     * @return The initialized DataManager instance.
      */
-    public static synchronized void initialize(File filesDir) {
+    public static synchronized DataManager initialize(File filesDir) {
         if (dataManager == null) dataManager = new DataManager(filesDir);
+        return dataManager;
     }
 
 
@@ -163,7 +169,7 @@ public class DataManager {
      * @param <T>       The type of the data model.
      * @return The combined data as a List.
      */
-    public synchronized <T> List<T> getObject(String key, Class<T> dataModel) {
+    public <T> List<T> getObject(String key, Class<T> dataModel) {
         // This method retrieves a List of data of a specified data model class.
         // It does this by combining multiple batches of data until no more data is found.
 
@@ -200,19 +206,19 @@ public class DataManager {
     /**
      * Saves a List of data with the specified data model class.
      *
-     * @param key      The data will be saved under this key.
-     * @param dataList The List of data to be saved.
-     * @param tClass   The class representing the data model.
-     * @param <T>      The type of the data model.
+     * @param key    The data will be saved under this key.
+     * @param value  The List of data to be saved.
+     * @param tClass The class representing the data model.
+     * @param <T>    The type of the data model.
      */
-    public <T> void saveObject(String key, List<T> dataList, Class<T> tClass) {
+    public <T> void saveObject(String key, List<T> value, Class<T> tClass) {
         // This method is responsible for saving a list of data to a file in batches
         // with a maximum array size of 9999 elements.
 
         // It delegates the call to the overloaded saveData() method with the default
         // maxArraySize parameter of 9999.
 
-        saveObject(key, dataList, tClass, 9999);
+        saveObject(key, value, tClass, 9999);
     }
 
 
@@ -220,30 +226,30 @@ public class DataManager {
      * Saves a List of data with the specified data model class and maximum array size.
      *
      * @param key          The data will be saved under this key.
-     * @param dataList     The List of data to be saved.
+     * @param value        The List of data to be saved.
      * @param tClass       The class representing the data model.
      * @param maxArraySize The maximum array size for each batch.
      * @param <T>          The type of the data model.
      */
-    public synchronized <T> void saveObject(String key, List<T> dataList, Class<T> tClass, int maxArraySize) {
+    public <T> void saveObject(String key, List<T> value, Class<T> tClass, int maxArraySize) {
         // This method saves a list of data to multiple files in batches,
         // where each file contains a JSON representation of a subset of the data.
 
-        // Check if the provided dataList is null, and throw an exception if so.
-        if (dataList == null) {
-            throw new IllegalArgumentException("dataList cannot be null");
+        // Check if the provided value is null, and throw an exception if so.
+        if (value == null) {
+            throw new IllegalArgumentException("value cannot be null");
         }
 
         // Determine the batch size based on the size of the data and the specified maxArraySize
-        int batchSize = calculateBatchSize(dataList.size(), maxArraySize);
+        int batchSize = calculateBatchSize(value.size(), maxArraySize);
 
         // Initialize a position index for naming batches/files
         int pos = 0;
 
-        // Iterate over the dataList in batches
-        for (int i = 0; i < dataList.size(); i += batchSize) {
+        // Iterate over the value in batches
+        for (int i = 0; i < value.size(); i += batchSize) {
             // Create a subList representing the current batch
-            List<T> batch = dataList.subList(i, Math.min(i + batchSize, dataList.size()));
+            List<T> batch = value.subList(i, Math.min(i + batchSize, value.size()));
 
             // Save the current batch to a file, naming it based on the data model class and position index
             saveString(key + "." + pos++, gson.toJson(batch, getListType(tClass)));
@@ -258,10 +264,10 @@ public class DataManager {
      * then saves it to a file in the DataManager directory with the specified key.
      *
      * @param key       The data will be saved under this key.
-     * @param src       The object to be saved.
+     * @param value     The object to be saved.
      * @param typeOfSrc The Type of the object being saved.
      */
-    public void saveObject(String key, Object src, Type typeOfSrc) {
+    public void saveObject(String key, Object value, Type typeOfSrc) {
         // Serialize the provided object into a JSON string using Gson and the specified Type.
         // Delegate the call to the existing saveData method to handle the actual file saving.
 
@@ -269,21 +275,21 @@ public class DataManager {
         // If you have a List<SimpleData> and want to save it, you can use:
         // saveData("SimpleData", dataList, new TypeToken<List<SimpleData>>() {}.getType());
 
-        saveString(key, gson.toJson(src, typeOfSrc));
+        saveString(key, gson.toJson(value, typeOfSrc));
     }
 
 
     /**
-     * Saves JSON data with the specified key.
+     * Saves String value with the specified key.
      *
-     * @param key  The data will be saved under this key.
-     * @param data The JSON data to be saved.
+     * @param key   The value will be saved under this key.
+     * @param value The JSON value to be saved.
      */
-    public void saveString(String key, String data) {
+    public void saveString(String key, String value) {
         // This method saves a JSON string to a file in the app's internal storage using the specified key.
 
         // Check if either the JSON string or the key is null, and throw an exception if so.
-        if (data == null || key == null)
+        if (value == null || key == null)
             throw new IllegalArgumentException("Key or json cannot be null");
 
         // Check for null values in essential components using throwExceptionIfNull().
@@ -300,7 +306,7 @@ public class DataManager {
 
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
                 // Write the JSON string to the file
-                writer.write(data);
+                writer.write(value);
 
                 // Close the BufferedWriter and FileOutputStream to release resources
                 writer.close();
@@ -349,7 +355,7 @@ public class DataManager {
     /**
      * Clears all data stored in the DataManager directory.
      */
-    public synchronized void clearAll() {
+    public void clearAll() {
         // This method deletes all files within the DataManager's designated folder.
 
         // Check if the DataManager's folder (filesDir) is not null
