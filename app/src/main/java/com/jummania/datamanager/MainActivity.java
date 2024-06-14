@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
 
         // Retrieve data and display a toast with the time taken in seconds
         double beforeGetData = System.currentTimeMillis();
-        List<SimpleData> dataList = dataManager.getObject(SimpleData.class);
+        List<SimpleData> dataList = dataManager.getObject("key", SimpleData.class);
         double afterGetData = (System.currentTimeMillis() - beforeGetData) / 1000; // Convert to seconds
         Toast.makeText(this, "Data retrieved in: " + afterGetData + " seconds\nData Size: " + dataList.size(), Toast.LENGTH_SHORT).show();
 
@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
                 dataList.add(new SimpleData(i, "simpleString"));
 
             double beforeSaveData = System.currentTimeMillis();
-            dataManager.saveObject(dataList, SimpleData.class, 99999);
+            dataManager.saveObject("key", dataList, SimpleData.class, 99999);
             double afterSaveData = (System.currentTimeMillis() - beforeSaveData) / 1000; // Convert to seconds
             Toast.makeText(MainActivity.this, "Data saved in: " + afterSaveData + " seconds", Toast.LENGTH_SHORT).show();
             adapter.notifyItemInserted(adapter.getItemCount());
