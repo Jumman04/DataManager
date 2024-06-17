@@ -263,6 +263,46 @@ public class DataManager {
      * This method serializes the provided object into a JSON string using Gson and
      * then saves it to a file in the DataManager directory with the specified key.
      *
+     * @param key   The data will be saved under this key.
+     * @param value The object to be saved.
+     */
+    public void saveObject(String key, Object value) {
+        // Serialize the provided object into a JSON string using Gson and the specified Type.
+        // Delegate the call to the existing saveData method to handle the actual file saving.
+
+        // Example usage:
+        // If you have a List<SimpleData> and want to save it, you can use:
+        // saveData("SimpleData", dataList, new TypeToken<List<SimpleData>>() {}.getType());
+
+        saveString(key, gson.toJson(value));
+    }
+
+
+    /**
+     * Saves an object to the DataManager using the specified key and Class type.
+     * <p>
+     * This method serializes the provided object into a JSON string using Gson and
+     * then saves it using the specified key.
+     *
+     * @param key    The data will be saved under this key.
+     * @param value  The object to be saved.
+     * @param tClass The Class type of the object to be saved.
+     * @param <T>    The type of the object to be saved.
+     */
+    public <T> void saveObject(String key, T value, Class<T> tClass) {
+        // Serialize the provided object into a JSON string using Gson and the specified Class type
+        String json = gson.toJson(value, tClass);
+        // Save the JSON string using the saveString method
+        saveString(key, json);
+    }
+
+
+    /**
+     * Saves an object to the DataManager using the specified key and Type.
+     * <p>
+     * This method serializes the provided object into a JSON string using Gson and
+     * then saves it to a file in the DataManager directory with the specified key.
+     *
      * @param key       The data will be saved under this key.
      * @param value     The object to be saved.
      * @param typeOfSrc The Type of the object being saved.
