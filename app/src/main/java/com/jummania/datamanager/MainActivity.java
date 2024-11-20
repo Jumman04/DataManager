@@ -31,8 +31,28 @@ public class MainActivity extends Activity {
         // DataManagerFactory initialization
         DataManager dataManager = DataManagerFactory.create(getFilesDir());
 
-        dataManager.saveObject("string", "my name is sharif uddin jumman");
-        Toast.makeText(this, ""+dataManager.getString("string1"), Toast.LENGTH_SHORT).show();
+        dataManager.registerOnDataChangeListener(key -> Toast.makeText(MainActivity.this, "Data changed: " + key, Toast.LENGTH_SHORT).show());
+
+        dataManager.saveString("string", "string");
+        dataManager.saveInt("int", 10);
+        dataManager.saveLong("long", 1000000L);
+        dataManager.saveFloat("float", 10.0f);
+        dataManager.saveBoolean("boolean", true);
+        dataManager.saveObject("object", new SimpleData(1, "object"));
+        dataManager.saveList("key", List.of(new SimpleData(1, "list")));
+        dataManager.saveList("key", List.of(new SimpleData(1, "list")), 100);
+
+        // Retrieve and display data
+        dataManager.getString("string");
+        dataManager.getInt("int");
+        dataManager.getLong("long");
+        dataManager.getFloat("float");
+        dataManager.getBoolean("boolean");
+        dataManager.getObject("object", SimpleData.class);
+        dataManager.getList("key", SimpleData.class);
+        dataManager.contains("key");
+        dataManager.getParameterized("key", List.class, SimpleData.class);
+        dataManager.toJson(new SimpleData(1, "object"));
 
         // Retrieve data and display a toast with the time taken in seconds
         double beforeGetData = System.currentTimeMillis();
@@ -47,7 +67,7 @@ public class MainActivity extends Activity {
         // Button click listener for adding data
         add.setOnClickListener(v -> {
             // Generate and save new data, displaying the time taken in seconds
-            for (int i = 0; i < 99999; i++)
+            for (int i = 0; i < 999; i++)
                 dataList.add(new SimpleData(i, "simpleString"));
 
             double beforeSaveData = System.currentTimeMillis();
@@ -67,5 +87,9 @@ public class MainActivity extends Activity {
             dataList.clear();
             adapter.notifyDataSetChanged();
         });
+
+        dataManager.remove("key");
+        dataManager.clear();
+        dataManager.unregisterOnDataChangeListener();
     }
 }

@@ -107,19 +107,6 @@ public interface DataManager {
 
 
     /**
-     * Returns an instance of Gson to be used for JSON serialization/deserialization.
-     * <p>
-     * The Gson instance is used to convert Java objects to their JSON representation
-     * and vice versa. If you need a customized Gson instance, you can configure it
-     * before returning it.
-     * </p>
-     *
-     * @return A Gson instance for JSON operations.
-     */
-    Gson getGson();
-
-
-    /**
      * Converts the provided JSON string to an object of the specified type.
      * <p>
      * This method uses Gson to deserialize the JSON string into an object of the specified type.

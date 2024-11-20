@@ -147,11 +147,9 @@ class DataManagerImpl implements DataManager {
         try {
             return getObject(key, String.class);
         } catch (Exception e) {
-            // Log the error message for debugging purposes
-            System.err.println(e.getMessage());
+            // Return the default value if retrieval fails
+            return defValue;
         }
-        // Return the default value if retrieval fails
-        return defValue;
     }
 
 
@@ -169,11 +167,9 @@ class DataManagerImpl implements DataManager {
         try {
             return getObject(key, Integer.class);
         } catch (Exception e) {
-            // Log the error message for debugging purposes
-            System.err.println(e.getMessage());
+            // Return the default value if retrieval fails
+            return defValue;
         }
-        // Return the default value if retrieval fails
-        return defValue;
     }
 
 
@@ -191,11 +187,9 @@ class DataManagerImpl implements DataManager {
         try {
             return getObject(key, Long.class);
         } catch (Exception e) {
-            // Log the error message for debugging purposes
-            System.err.println(e.getMessage());
+            // Return the default value if retrieval fails
+            return defValue;
         }
-        // Return the default value if retrieval fails
-        return defValue;
     }
 
 
@@ -213,11 +207,9 @@ class DataManagerImpl implements DataManager {
         try {
             return getObject(key, Float.class);
         } catch (Exception e) {
-            // Log the error message for debugging purposes
-            System.err.println(e.getMessage());
+            // Return the default value if retrieval fails
+            return defValue;
         }
-        // Return the default value if retrieval fails
-        return defValue;
     }
 
 
@@ -235,11 +227,9 @@ class DataManagerImpl implements DataManager {
         try {
             return getObject(key, Boolean.class);
         } catch (Exception e) {
-            // Log the error message for debugging purposes
-            System.err.println(e.getMessage());
+            // Return the default value if retrieval fails
+            return defValue;
         }
-        // Return the default value if retrieval fails
-        return defValue;
     }
 
 
@@ -319,6 +309,8 @@ class DataManagerImpl implements DataManager {
         // Determine the full Type for the parameterized List
         Type listType = TypeToken.getParameterized(List.class, type).getType();
 
+        // Try to get a batch of data (e.g., key.0, key.1, ...)
+
         // Loop to retrieve data in batches until no more data is found
         while (hasMoreData) {
             // Try to get a batch of data (e.g., key.0, key.1, ...)
@@ -329,6 +321,8 @@ class DataManagerImpl implements DataManager {
                 dataList.addAll(batchData);
                 index++;  // Increment to check the next batch (key.1, key.2, ...)
             } else {
+                batchData = getObject(key, listType);
+                if (batchData != null) dataList.addAll(batchData);
                 // If no more data is found, exit the loop
                 hasMoreData = false;
             }
@@ -336,25 +330,6 @@ class DataManagerImpl implements DataManager {
 
         // Return the full list of retrieved objects
         return dataList;
-    }
-
-
-    /**
-     * Returns the Gson instance used for JSON serialization and deserialization.
-     * <p>
-     * This method ensures that the DataManager is properly initialized before returning the Gson instance.
-     * If the DataManager has not been initialized (i.e., if the filesDir or gson is null), an exception is thrown.
-     * </p>
-     *
-     * @return the Gson instance used for JSON operations.
-     * @throws IllegalStateException if the DataManager has not been properly initialized.
-     */
-    @Override
-    public Gson getGson() {
-        // Check if the DataManager is properly initialized before accessing the Gson instance
-        throwExceptionIfNull();
-        // Return the initialized Gson instance
-        return gson;
     }
 
 
@@ -539,8 +514,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void saveObject(String key, Object value) {
         // Convert the object to a JSON string using Gson
-        String json = gson.toJson(value);
-        saveString(key, json);
+        saveString(key, gson.toJson(value));
     }
 
 
