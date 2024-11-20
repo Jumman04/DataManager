@@ -37,8 +37,7 @@ implementation 'com.yourdomain:data-manager:2.6'
 ### 1. Initializing the DataManager
 
 ```java
-File filesDir = new File(context.getFilesDir(), "DataManager");
-DataManager dataManager = new DataManagerImpl(filesDir);
+DataManager dataManager = DataManagerFactory.create(getFilesDir())
 ```
 
 ### 2. Storing Data
