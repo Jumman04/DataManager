@@ -2,10 +2,8 @@ package com.jummania.datamanager;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.jummania.DataManager;
 import com.jummania.DataManagerFactory;
@@ -23,16 +21,13 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // UI elements
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        Button add = findViewById(R.id.add);
-        Button clearAll = findViewById(R.id.clearAll);
-
         // DataManagerFactory initialization
         DataManager dataManager = DataManagerFactory.create(getFilesDir());
 
+// Register a listener to display a toast when data changes
         dataManager.registerOnDataChangeListener(key -> Toast.makeText(MainActivity.this, "Data changed: " + key, Toast.LENGTH_SHORT).show());
 
+// Save various types of data
         dataManager.saveString("string", "string");
         dataManager.saveInt("int", 10);
         dataManager.saveLong("long", 1000000L);
@@ -42,52 +37,35 @@ public class MainActivity extends Activity {
         dataManager.saveList("key", List.of(new SimpleData(1, "list")));
         dataManager.saveList("key", List.of(new SimpleData(1, "list")), 100);
 
-        // Retrieve and display data
-        dataManager.getString("string");
-        dataManager.getInt("int");
-        dataManager.getLong("long");
-        dataManager.getFloat("float");
-        dataManager.getBoolean("boolean");
-        dataManager.getObject("object", SimpleData.class);
-        dataManager.getList("key", SimpleData.class);
-        dataManager.contains("key");
-        dataManager.getParameterized("key", List.class, SimpleData.class);
-        dataManager.toJson(new SimpleData(1, "object"));
-
-        // Retrieve data and display a toast with the time taken in seconds
+// Measure time taken to retrieve data
         double beforeGetData = System.currentTimeMillis();
-        List<SimpleData> dataList = dataManager.getList("key", SimpleData.class);
+
+        String string = dataManager.getString("string");
+        int i = dataManager.getInt("int");
+        long l = dataManager.getLong("long");
+        float f = dataManager.getFloat("float");
+        boolean b = dataManager.getBoolean("boolean");
+        Object o = dataManager.getObject("object", SimpleData.class);
+        List<SimpleData> list = dataManager.getList("key", SimpleData.class);
+        boolean isContains = dataManager.contains("key");
+        List<SimpleData> parameterized = dataManager.getParameterized("key", List.class, SimpleData.class);
+        String json = dataManager.toJson(new SimpleData(1, "object"));
+
+// Calculate elapsed time
         double afterGetData = (System.currentTimeMillis() - beforeGetData) / 1000; // Convert to seconds
-        Toast.makeText(this, "Data retrieved in: " + afterGetData + " seconds\nData Size: " + dataList.size(), Toast.LENGTH_SHORT).show();
 
-        // Set up the RecyclerView with the retrieved data
-        Adapter adapter = new Adapter(dataList);
-        recyclerView.setAdapter(adapter);
+// Display retrieval stats in a toast
+        Toast.makeText(this, "Data retrieved in: " + afterGetData + " seconds\nData Size: " + list.size(), Toast.LENGTH_SHORT).show();
 
-        // Button click listener for adding data
-        add.setOnClickListener(v -> {
-            // Generate and save new data, displaying the time taken in seconds
-            for (int i = 0; i < 999; i++)
-                dataList.add(new SimpleData(i, "simpleString"));
+// Display retrieved data in TextView
+        TextView textView = findViewById(R.id.textView);
 
-            double beforeSaveData = System.currentTimeMillis();
-            dataManager.saveList("key", dataList);
-            double afterSaveData = (System.currentTimeMillis() - beforeSaveData) / 1000; // Convert to seconds
-            Toast.makeText(MainActivity.this, "Data saved in: " + afterSaveData + " seconds", Toast.LENGTH_SHORT).show();
-            adapter.notifyItemInserted(adapter.getItemCount());
-        });
 
-        // Button click listener for clearing all data
-        clearAll.setOnClickListener(v -> {
-            // Clear all data and display the time taken in seconds
-            long beforeClearAll = System.currentTimeMillis();
-            dataManager.clear();
-            long afterClearAll = (System.currentTimeMillis() - beforeClearAll) / 1000; // Convert to seconds
-            Toast.makeText(MainActivity.this, "All data cleared in: " + afterClearAll + " seconds", Toast.LENGTH_SHORT).show();
-            dataList.clear();
-            adapter.notifyDataSetChanged();
-        });
+        StringBuilder dataDisplay = new StringBuilder();
+        dataDisplay.append("String: ").append(string).append("\n").append("Int: ").append(i).append("\n").append("Long: ").append(l).append("\n").append("Float: ").append(f).append("\n").append("Boolean: ").append(b).append("\n").append("Object: ").append(o).append("\n").append("List: ").append(list).append("\n").append("Contains Key: ").append(isContains).append("\n").append("Parameterized Data: ").append(parameterized).append("\n").append("JSON: ").append(json);
+        textView.setText(dataDisplay);
 
+        // Remove and clear data
         dataManager.remove("key");
         dataManager.clear();
         dataManager.unregisterOnDataChangeListener();
