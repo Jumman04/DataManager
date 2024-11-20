@@ -31,6 +31,9 @@ public class MainActivity extends Activity {
         // DataManagerFactory initialization
         DataManager dataManager = DataManagerFactory.create(getFilesDir());
 
+        dataManager.saveObject("string", "my name is sharif uddin jumman");
+        Toast.makeText(this, ""+dataManager.getString("string1"), Toast.LENGTH_SHORT).show();
+
         // Retrieve data and display a toast with the time taken in seconds
         double beforeGetData = System.currentTimeMillis();
         List<SimpleData> dataList = dataManager.getList("key", SimpleData.class);

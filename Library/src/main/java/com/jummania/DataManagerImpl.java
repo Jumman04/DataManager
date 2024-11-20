@@ -440,8 +440,34 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public void saveString(String key, String value) {
-        // Delegate to saveObject to handle the actual storage of the value
-        saveObject(key, value);
+
+        // Validate inputs: neither key nor value can be null
+        if (key == null || value == null)
+            throw new IllegalArgumentException("Key or value cannot be null");
+
+        // Ensure that the DataManager is properly initialized before proceeding
+        throwExceptionIfNull();
+
+        // Get the file corresponding to the key where the object will be stored
+        File file = getFile(key);
+
+        // Write the JSON string to the file
+        try (FileOutputStream fos = new FileOutputStream(file); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
+
+            // Write the JSON string to the file
+            writer.write(value);
+            writer.close();
+            fos.close();
+
+            // Close the writer and output stream (handled by try-with-resources)
+            if (onDataChangeListener != null) {
+                // Notify the listener that the data has changed
+                onDataChangeListener.onDataChanged(key);
+            }
+        } catch (Exception e) {
+            // Print the exception message to standard error if an error occurs
+            System.err.println(e.getMessage());
+        }
     }
 
 
@@ -455,7 +481,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void saveInt(String key, int value) {
         // Delegate to saveObject to handle the actual storage of the value
-        saveObject(key, value);
+        saveString(key, Integer.toString(value));
     }
 
 
@@ -469,7 +495,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void saveLong(String key, long value) {
         // Delegate to saveObject to handle the actual storage of the value
-        saveObject(key, value);
+        saveObject(key, Long.toString(value));
     }
 
 
@@ -483,7 +509,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void saveFloat(String key, float value) {
         // Delegate to saveObject to handle the actual storage of the value
-        saveObject(key, value);
+        saveObject(key, Float.toString(value));
     }
 
 
@@ -497,7 +523,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void saveBoolean(String key, boolean value) {
         // Delegate to saveObject to handle the actual storage of the value
-        saveObject(key, value);
+        saveObject(key, Boolean.toString(value));
     }
 
 
@@ -512,34 +538,9 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public void saveObject(String key, Object value) {
-        // Validate inputs: neither key nor value can be null
-        if (key == null || value == null)
-            throw new IllegalArgumentException("Key or value cannot be null");
-
-        // Ensure that the DataManager is properly initialized before proceeding
-        throwExceptionIfNull();
-
         // Convert the object to a JSON string using Gson
         String json = gson.toJson(value);
-
-        // Get the file corresponding to the key where the object will be stored
-        File file = getFile(key);
-
-        // Write the JSON string to the file
-        try (FileOutputStream fos = new FileOutputStream(file); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
-
-            // Write the JSON string to the file
-            writer.write(json);
-
-            // Close the writer and output stream (handled by try-with-resources)
-            if (onDataChangeListener != null) {
-                // Notify the listener that the data has changed
-                onDataChangeListener.onDataChanged(key);
-            }
-        } catch (Exception e) {
-            // Print the exception message to standard error if an error occurs
-            System.err.println(e.getMessage());
-        }
+        saveString(key, json);
     }
 
 
