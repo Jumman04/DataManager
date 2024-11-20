@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
                 dataList.add(new SimpleData(i, "simpleString"));
 
             double beforeSaveData = System.currentTimeMillis();
-            dataManager.putList("key", dataList);
+            dataManager.saveList("key", dataList);
             double afterSaveData = (System.currentTimeMillis() - beforeSaveData) / 1000; // Convert to seconds
             Toast.makeText(MainActivity.this, "Data saved in: " + afterSaveData + " seconds", Toast.LENGTH_SHORT).show();
             adapter.notifyItemInserted(adapter.getItemCount());

@@ -237,7 +237,7 @@ public interface DataManager {
      * @param key   The key for the stored value.
      * @param value The String value to store.
      */
-    void putString(String key, String value);
+    void saveString(String key, String value);
 
 
     /**
@@ -246,7 +246,7 @@ public interface DataManager {
      * @param key   The key for the stored value.
      * @param value The int value to store.
      */
-    void putInt(String key, int value);
+    void saveInt(String key, int value);
 
 
     /**
@@ -255,7 +255,7 @@ public interface DataManager {
      * @param key   The key for the stored value.
      * @param value The long value to store.
      */
-    void putLong(String key, long value);
+    void saveLong(String key, long value);
 
 
     /**
@@ -264,7 +264,7 @@ public interface DataManager {
      * @param key   The key for the stored value.
      * @param value The float value to store.
      */
-    void putFloat(String key, float value);
+    void saveFloat(String key, float value);
 
 
     /**
@@ -273,7 +273,7 @@ public interface DataManager {
      * @param key   The key for the stored value.
      * @param value The boolean value to store.
      */
-    void putBoolean(String key, boolean value);
+    void saveBoolean(String key, boolean value);
 
 
     /**
@@ -282,7 +282,7 @@ public interface DataManager {
      * @param key   The key for the stored object.
      * @param value The object to store.
      */
-    void putObject(String key, Object value);
+    void saveObject(String key, Object value);
 
 
     /**
@@ -292,7 +292,7 @@ public interface DataManager {
      * @param value The list of objects to store.
      * @param <T>   The type of objects in the list.
      */
-    <T> void putList(String key, List<T> value);
+    <T> void saveList(String key, List<T> value);
 
 
     /**
@@ -303,7 +303,7 @@ public interface DataManager {
      * @param maxArraySize The maximum allowed size of the list.
      * @param <T>          The type of objects in the list.
      */
-    <T> void putList(String key, List<T> value, int maxArraySize);
+    <T> void saveList(String key, List<T> value, int maxArraySize);
 
 
     /**

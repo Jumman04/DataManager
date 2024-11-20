@@ -439,9 +439,9 @@ class DataManagerImpl implements DataManager {
      * @param value The String value to be stored. It cannot be null.
      */
     @Override
-    public void putString(String key, String value) {
-        // Delegate to putObject to handle the actual storage of the value
-        putObject(key, value);
+    public void saveString(String key, String value) {
+        // Delegate to saveObject to handle the actual storage of the value
+        saveObject(key, value);
     }
 
 
@@ -453,9 +453,9 @@ class DataManagerImpl implements DataManager {
      * @param value The int value to be stored.
      */
     @Override
-    public void putInt(String key, int value) {
-        // Delegate to putObject to handle the actual storage of the value
-        putObject(key, value);
+    public void saveInt(String key, int value) {
+        // Delegate to saveObject to handle the actual storage of the value
+        saveObject(key, value);
     }
 
 
@@ -467,9 +467,9 @@ class DataManagerImpl implements DataManager {
      * @param value The long value to be stored.
      */
     @Override
-    public void putLong(String key, long value) {
-        // Delegate to putObject to handle the actual storage of the value
-        putObject(key, value);
+    public void saveLong(String key, long value) {
+        // Delegate to saveObject to handle the actual storage of the value
+        saveObject(key, value);
     }
 
 
@@ -481,9 +481,9 @@ class DataManagerImpl implements DataManager {
      * @param value The float value to be stored.
      */
     @Override
-    public void putFloat(String key, float value) {
-        // Delegate to putObject to handle the actual storage of the value
-        putObject(key, value);
+    public void saveFloat(String key, float value) {
+        // Delegate to saveObject to handle the actual storage of the value
+        saveObject(key, value);
     }
 
 
@@ -495,9 +495,9 @@ class DataManagerImpl implements DataManager {
      * @param value The boolean value to be stored.
      */
     @Override
-    public void putBoolean(String key, boolean value) {
-        // Delegate to putObject to handle the actual storage of the value
-        putObject(key, value);
+    public void saveBoolean(String key, boolean value) {
+        // Delegate to saveObject to handle the actual storage of the value
+        saveObject(key, value);
     }
 
 
@@ -511,7 +511,7 @@ class DataManagerImpl implements DataManager {
      * @throws IllegalArgumentException if either the key or the value is null.
      */
     @Override
-    public void putObject(String key, Object value) {
+    public void saveObject(String key, Object value) {
         // Validate inputs: neither key nor value can be null
         if (key == null || value == null)
             throw new IllegalArgumentException("Key or value cannot be null");
@@ -552,9 +552,9 @@ class DataManagerImpl implements DataManager {
      * @param value The list of objects to be stored.
      */
     @Override
-    public <T> void putList(String key, List<T> value) {
-        // Delegate to putList with a default max array size of 9999
-        putList(key, value, 999);
+    public <T> void saveList(String key, List<T> value) {
+        // Delegate to saveList with a default max array size of 9999
+        saveList(key, value, 999);
     }
 
 
@@ -567,7 +567,7 @@ class DataManagerImpl implements DataManager {
      * @param maxArraySize The maximum size of each batch. If the list is larger than this, it will be split into multiple batches.
      */
     @Override
-    public <T> void putList(String key, List<T> value, int maxArraySize) {
+    public <T> void saveList(String key, List<T> value, int maxArraySize) {
         // Ensure the batch size is at least 1
         int batchSize = Math.max(Math.min(value.size(), maxArraySize), 1);
         int pos = 0;
@@ -575,7 +575,7 @@ class DataManagerImpl implements DataManager {
         // Split the list into smaller batches and store each one
         for (int i = 0; i < value.size(); i += batchSize) {
             List<T> batch = value.subList(i, Math.min(i + batchSize, value.size()));
-            putObject(key + "." + pos++, batch);  // Store each batch with a unique key
+            saveObject(key + "." + pos++, batch);  // Store each batch with a unique key
         }
     }
 
