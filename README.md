@@ -94,7 +94,7 @@ dataManager.registerOnDataChangeListener(new OnDataChangeListener() {
 - **getObject(String key, Type type)**: Get a stored object of a specified type.
 - **putObject(String key, Object value)**: Store a generic object.
 
-For more methods, refer to the [documentation](#).
+For more methods, refer to the [documentation](https://jumman04.github.io/DataManager/doc/index.html).
 
 ## Contributing
 
