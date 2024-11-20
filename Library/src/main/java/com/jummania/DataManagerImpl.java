@@ -495,7 +495,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void saveLong(String key, long value) {
         // Delegate to saveObject to handle the actual storage of the value
-        saveObject(key, Long.toString(value));
+        saveString(key, Long.toString(value));
     }
 
 
@@ -509,7 +509,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void saveFloat(String key, float value) {
         // Delegate to saveObject to handle the actual storage of the value
-        saveObject(key, Float.toString(value));
+        saveString(key, Float.toString(value));
     }
 
 
@@ -523,7 +523,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void saveBoolean(String key, boolean value) {
         // Delegate to saveObject to handle the actual storage of the value
-        saveObject(key, Boolean.toString(value));
+        saveString(key, Boolean.toString(value));
     }
 
 
