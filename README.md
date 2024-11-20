@@ -22,14 +22,14 @@ If you're using **Maven** or **Gradle**, follow these steps:
 <dependency>
     <groupId>com.yourdomain</groupId>
     <artifactId>data-manager</artifactId>
-    <version>1.0.0</version>
+    <version>2.6</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'com.yourdomain:data-manager:1.0.0'
+implementation 'com.yourdomain:data-manager:2.6'
 ```
 
 ## Usage
