@@ -4,21 +4,21 @@ plugins {
 
 android {
     namespace = "com.jummania.datamanager"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.jummania.datamanager"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 4
-        versionName = "1.4"
+        targetSdk = 35
+        versionCode = 5
+        versionName = "1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

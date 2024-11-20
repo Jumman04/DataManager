@@ -7,13 +7,14 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.jummania.DataManager2;
+import com.jummania.DataManager;
+import com.jummania.DataManagerFactory;
 
 import java.util.List;
 
 /**
  * The MainActivity class serves as the main entry point for the application,
- * showcasing the use of the DataManager library to manage and display SimpleData objects.
+ * showcasing the use of the DataManagerFactory library to manage and display SimpleData objects.
  */
 public class MainActivity extends Activity {
 
@@ -27,8 +28,8 @@ public class MainActivity extends Activity {
         Button add = findViewById(R.id.add);
         Button clearAll = findViewById(R.id.clearAll);
 
-        // DataManager initialization
-        DataManager2 dataManager = new DataManager2(getFilesDir());
+        // DataManagerFactory initialization
+        DataManager dataManager = DataManagerFactory.create(getFilesDir());
 
         // Retrieve data and display a toast with the time taken in seconds
         double beforeGetData = System.currentTimeMillis();

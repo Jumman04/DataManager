@@ -2,7 +2,7 @@ package com.jummania.datamanager;
 
 /**
  * The SimpleData class represents a simple data model with an integer and a string.
- * It is used for demonstration purposes in the DataManager library.
+ * It is used for demonstration purposes in the DataManagerFactory library.
  */
 public class SimpleData {
 

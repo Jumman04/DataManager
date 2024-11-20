@@ -1,577 +1,339 @@
 package com.jummania;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonSyntaxException;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * * Created by Jummania on January 26, 2024.
- * * Email: sharifuddinjumman@gmail.com
- * * Dhaka, Bangladesh.
+ * Interface for managing data storage and retrieval, including primitives, objects, and collections.
+ * Provides methods to store, retrieve, and remove data, as well as register listeners for data changes.
  * <p>
- * The DataManager class provides a versatile set of functionalities for managing and storing data using JSON serialization.
- * It facilitates easy reading, writing, and deletion of data, making it a powerful tool for applications that require efficient
- * and structured data storage. The class includes methods for handling batch operations, error checking, and clear documentation
- * to ensure ease of use for developers.
+ * Created by Jummania on 20, November, 2024.
+ * Email: sharifuddinjumman@gmail.com
+ * Dhaka, Bangladesh.
  */
-public class DataManager {
-
-    private static DataManager dataManager;
-    private final Gson gson;
-    private final File filesDir;
+public interface DataManager {
 
 
     /**
-     * Initializes a new DataManager instance with the specified files directory.
+     * Retrieves a stored String value associated with the specified key.
+     * If no value is found, returns the provided default value.
      *
-     * @param filesDir The directory to use for data storage and management. This argument cannot be null.
-     * @throws IllegalStateException if the filesDir is null.
+     * @param key      The key for the stored value.
+     * @param defValue The default value to return if no value is found.
+     * @return The stored String value or the default value.
      */
-    public DataManager(File filesDir) {
-
-        if (filesDir == null)
-            throw new IllegalArgumentException("The 'filesDir' argument cannot be null.");
-
-        // Create the DataManager folder within the specified files directory
-        this.filesDir = new File(filesDir, "DataManager");
-
-        // Initialize the Gson object for JSON serialization/deserialization
-        gson = new Gson();
-
-        // Check if the DataManager folder already exists
-        if (!this.filesDir.exists()) {
-            // If it doesn't exist, attempt to create the folder
-            if (this.filesDir.mkdirs())
-                // Print a success message if the folder is created successfully
-                System.out.println("Folder created successfully: " + this.filesDir.getAbsolutePath());
-            else
-                // Print an error message if folder creation fails
-                System.err.println("Failed to create folder");
-        } else
-            // Print a message if the folder already exists
-            System.out.println("Folder already exists: " + this.filesDir.getAbsolutePath());
-    }
+    String getString(String key, String defValue);
 
 
     /**
-     * Initializes and returns the **singleton instance** of the DataManager.
+     * Retrieves a stored int value associated with the specified key.
+     * If no value is found, returns the provided default value.
+     *
+     * @param key      The key for the stored value.
+     * @param defValue The default value to return if no value is found.
+     * @return The stored int value or the default value.
+     */
+    int getInt(String key, int defValue);
+
+
+    /**
+     * Retrieves a stored long value associated with the specified key.
+     * If no value is found, returns the provided default value.
+     *
+     * @param key      The key for the stored value.
+     * @param defValue The default value to return if no value is found.
+     * @return The stored long value or the default value.
+     */
+    long getLong(String key, long defValue);
+
+
+    /**
+     * Retrieves a stored float value associated with the specified key.
+     * If no value is found, returns the provided default value.
+     *
+     * @param key      The key for the stored value.
+     * @param defValue The default value to return if no value is found.
+     * @return The stored float value or the default value.
+     */
+    float getFloat(String key, float defValue);
+
+
+    /**
+     * Retrieves a stored boolean value associated with the specified key.
+     * If no value is found, returns the provided default value.
+     *
+     * @param key      The key for the stored value.
+     * @param defValue The default value to return if no value is found.
+     * @return The stored boolean value or the default value.
+     */
+    boolean getBoolean(String key, boolean defValue);
+
+
+    /**
+     * Retrieves a stored object associated with the specified key.
+     *
+     * @param key  The key for the stored object.
+     * @param type The Type of the object to retrieve.
+     * @param <T>  The type of the object.
+     * @return The stored object of type T.
+     */
+    <T> T getObject(String key, Type type);
+
+
+    /**
+     * Retrieves a parameterized object associated with the specified key.
+     *
+     * @param key           The key for the stored object.
+     * @param rawType       The raw type of the object.
+     * @param typeArguments The type arguments for the parameterized object.
+     * @param <T>           The type of the object.
+     * @return The stored parameterized object of type T.
+     */
+    <T> T getParameterized(String key, Type rawType, Type... typeArguments);
+
+
+    /**
+     * Retrieves a list of objects associated with the specified key.
+     *
+     * @param key  The key for the stored list.
+     * @param type The Type of the objects in the list.
+     * @param <T>  The type of objects in the list.
+     * @return A list of objects of type T.
+     */
+    <T> List<T> getList(String key, Type type);
+
+
+    /**
+     * Returns an instance of Gson to be used for JSON serialization/deserialization.
      * <p>
-     * This method is synchronized to ensure thread-safe initialization of the DataManager.
+     * The Gson instance is used to convert Java objects to their JSON representation
+     * and vice versa. If you need a customized Gson instance, you can configure it
+     * before returning it.
+     * </p>
      *
-     * @param filesDir The directory to use for data storage and management. This argument cannot be null.
-     * @return The initialized DataManager instance.
+     * @return A Gson instance for JSON operations.
      */
-    public static synchronized DataManager initialize(File filesDir) {
-        if (dataManager == null) dataManager = new DataManager(filesDir);
-        return dataManager;
-    }
+    Gson getGson();
 
 
     /**
-     * Returns the initialized DataManager instance.
+     * Converts the provided JSON string to an object of the specified type.
      * <p>
-     * This method throws an IllegalStateException if the DataManager is not initialized.
+     * This method uses Gson to deserialize the JSON string into an object of the specified type.
+     * The type parameter allows the conversion to a specific object type.
+     * </p>
      *
-     * @return The DataManager instance.
-     * @throws IllegalStateException if the DataManager is not initialized.
+     * @param value the JSON string to deserialize.
+     * @param type  the type of the object to deserialize into.
+     * @param <T>   the type of the object.
+     * @return the deserialized object of type T.
+     * @throws JsonSyntaxException if the JSON string is not a valid representation for the specified type.
      */
-    public static DataManager getDataManager() {
-        if (dataManager == null)
-            throw new IllegalStateException("DataManager is not initialized. Call initialize(getFilesDir()) first.");
-        return dataManager;
-    }
+    <T> T fromJson(String value, Type type);
 
 
     /**
-     * Gets deserialized data from a JSON string associated with the given key and Type.
+     * Converts the given object to a JSON string.
      * <p>
-     * This method retrieves a JSON string from the DataManager using the specified key
-     * and then uses Gson to deserialize it into an object of the specified Type.
+     * This method uses Gson to serialize an object into its JSON representation.
+     * It can handle any object type, converting it into a JSON string.
+     * </p>
      *
-     * @param key     The key associated with the data.
-     * @param typeOfT The Type of the object to be deserialized.
-     * @param <T>     The type of the data model.
-     * @return The deserialized object of the specified Type.
+     * @param object the object to serialize into JSON.
+     * @return the JSON string representation of the object.
+     * @throws JsonSyntaxException if the object cannot be serialized.
      */
-    public <T> T getString(String key, Type typeOfT) {
-        // Delegate the call to the existing getJsonData method to retrieve the JSON string
-        // associated with the provided key, and then use Gson to deserialize it into an object
-        // of the specified Type.
-
-        // Example usage:
-        // If you have a class SimpleData and want to retrieve an instance of List<SimpleData>,
-        // you can use: getJsonData("SimpleData", new TypeToken<List<SimpleData>>() {}.getType());
-
-        return gson.fromJson(getString(key), typeOfT);
-    }
+    String toJson(Object object);
 
 
     /**
-     * Gets the JSON data for a given key.
+     * Retrieves a String value associated with the specified key, with a default value of null if not found.
      *
-     * @param key The key associated with the data.
-     * @return The JSON data as a String.
+     * @param key The key for the stored value.
+     * @return The stored String value or null if no value is found.
      */
-    public String getString(String key) {
-        // This method retrieves JSON data from a file associated with the specified key.
-
-        // It first checks for null values in essential components using throwExceptionIfNull().
-        throwExceptionIfNull();
-
-        try (InputStreamReader inputStreamReader = getInputStreamReader(key)) {
-            // Attempt to create an InputStreamReader based on the provided key
-            if (inputStreamReader != null) {
-                // StringBuilder to hold the JSON data
-                StringBuilder jsonString = new StringBuilder();
-                try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-                    // Read the contents of the file into the StringBuilder
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        jsonString.append(line);
-                    }
-
-                    //close the bufferedReader
-                    bufferedReader.close();
-
-                    //close the inputStreamReader
-                    inputStreamReader.close();
-
-                    // Return the JSON data as a String
-                    return jsonString.toString();
-                }
-            }
-        } catch (Exception e) {
-            // Handle IOException by printing the stack trace
-            System.err.println(e.getMessage());
-        }
-
-        // Return null
-        return null;
+    default String getString(String key) {
+        return getString(key, null);
     }
 
 
     /**
-     * Gets the combined data from multiple batches for a given data model class.
+     * Retrieves an int value associated with the specified key, with a default value of 0 if not found.
      *
-     * @param key       The data will be saved under this key.
-     * @param dataModel The class representing the data model.
-     * @param <T>       The type of the data model.
-     * @return The combined data as a List.
+     * @param key The key for the stored value.
+     * @return The stored int value or 0 if no value is found.
      */
-    public <T> List<T> getObject(String key, Class<T> dataModel) {
-        // This method retrieves a List of data of a specified data model class.
-        // It does this by combining multiple batches of data until no more data is found.
-
-        // Initialize an ArrayList to hold the combined data
-        List<T> combinedData = new ArrayList<>();
-
-        // Initialize an index for batch retrieval
-        int index = 0;
-
-        // Flag to indicate whether there is more data
-        boolean hasMoreData = true;
-
-        // Continue looping until no more data is found
-        while (hasMoreData) {
-            // Attempt to retrieve a batch of data based on the current index
-            List<T> batchData = getObjectBatch(key + "." + index, dataModel);
-
-            // Check if the batchData is not null (i.e., more data is found)
-            if (batchData != null) {
-                // Add the batch data to the combined result
-                combinedData.addAll(batchData);
-                index++; // Move to the next batch
-            } else {
-                // No more data found, exit the loop
-                hasMoreData = false;
-            }
-        }
-
-        // Return the combined data
-        return combinedData;
+    default int getInt(String key) {
+        return getInt(key, 0);
     }
 
 
     /**
-     * Saves a List of data with the specified data model class.
+     * Retrieves a long value associated with the specified key, with a default value of 0L if not found.
      *
-     * @param key    The data will be saved under this key.
-     * @param value  The List of data to be saved.
-     * @param tClass The class representing the data model.
-     * @param <T>    The type of the data model.
+     * @param key The key for the stored value.
+     * @return The stored long value or 0L if no value is found.
      */
-    public <T> void saveObject(String key, List<T> value, Class<T> tClass) {
-        // This method is responsible for saving a list of data to a file in batches
-        // with a maximum array size of 9999 elements.
-
-        // It delegates the call to the overloaded saveData() method with the default
-        // maxArraySize parameter of 9999.
-
-        saveObject(key, value, tClass, 9999);
+    default long getLong(String key) {
+        return getLong(key, 0L);
     }
 
 
     /**
-     * Saves a List of data with the specified data model class and maximum array size.
+     * Retrieves a float value associated with the specified key, with a default value of 0F if not found.
      *
-     * @param key          The data will be saved under this key.
-     * @param value        The List of data to be saved.
-     * @param tClass       The class representing the data model.
-     * @param maxArraySize The maximum array size for each batch.
-     * @param <T>          The type of the data model.
+     * @param key The key for the stored value.
+     * @return The stored float value or 0F if no value is found.
      */
-    public <T> void saveObject(String key, List<T> value, Class<T> tClass, int maxArraySize) {
-        // This method saves a list of data to multiple files in batches,
-        // where each file contains a JSON representation of a subset of the data.
-
-        // Check if the provided value is null, and throw an exception if so.
-        if (value == null) {
-            throw new IllegalArgumentException("value cannot be null");
-        }
-
-        // Determine the batch size based on the size of the data and the specified maxArraySize
-        int batchSize = calculateBatchSize(value.size(), maxArraySize);
-
-        // Initialize a position index for naming batches/files
-        int pos = 0;
-
-        // Iterate over the value in batches
-        for (int i = 0; i < value.size(); i += batchSize) {
-            // Create a subList representing the current batch
-            List<T> batch = value.subList(i, Math.min(i + batchSize, value.size()));
-
-            // Save the current batch to a file, naming it based on the data model class and position index
-            saveString(key + "." + pos++, gson.toJson(batch, getListType(tClass)));
-        }
+    default float getFloat(String key) {
+        return getFloat(key, 0F);
     }
 
 
     /**
-     * Saves an object to the DataManager using the specified key and Type.
-     * <p>
-     * This method serializes the provided object into a JSON string using Gson and
-     * then saves it to a file in the DataManager directory with the specified key.
+     * Retrieves a boolean value associated with the specified key, with a default value of false if not found.
      *
-     * @param key   The data will be saved under this key.
-     * @param value The object to be saved.
+     * @param key The key for the stored value.
+     * @return The stored boolean value or false if no value is found.
      */
-    public void saveObject(String key, Object value) {
-        // Serialize the provided object into a JSON string using Gson and the specified Type.
-        // Delegate the call to the existing saveData method to handle the actual file saving.
-
-        // Example usage:
-        // If you have a List<SimpleData> and want to save it, you can use:
-        // saveData("SimpleData", dataList, new TypeToken<List<SimpleData>>() {}.getType());
-
-        saveString(key, gson.toJson(value));
+    default boolean getBoolean(String key) {
+        return getBoolean(key, false);
     }
 
 
     /**
-     * Saves an object to the DataManager using the specified key and Class type.
-     * <p>
-     * This method serializes the provided object into a JSON string using Gson and
-     * then saves it using the specified key.
+     * Checks if a value associated with the specified key exists in the storage.
      *
-     * @param key    The data will be saved under this key.
-     * @param value  The object to be saved.
-     * @param tClass The Class type of the object to be saved.
-     * @param <T>    The type of the object to be saved.
+     * @param key The key to check.
+     * @return true if the key exists, false otherwise.
      */
-    public <T> void saveObject(String key, T value, Class<T> tClass) {
-        // Serialize the provided object into a JSON string using Gson and the specified Class type
-        String json = gson.toJson(value, tClass);
-        // Save the JSON string using the saveString method
-        saveString(key, json);
-    }
+    boolean contains(String key);
 
+
+    // Data change listener registration
 
     /**
-     * Saves an object to the DataManager using the specified key and Type.
-     * <p>
-     * This method serializes the provided object into a JSON string using Gson and
-     * then saves it to a file in the DataManager directory with the specified key.
+     * Registers a listener to be notified when data associated with a key changes.
      *
-     * @param key       The data will be saved under this key.
-     * @param value     The object to be saved.
-     * @param typeOfSrc The Type of the object being saved.
+     * @param listener The listener to be registered.
      */
-    public void saveObject(String key, Object value, Type typeOfSrc) {
-        // Serialize the provided object into a JSON string using Gson and the specified Type.
-        // Delegate the call to the existing saveData method to handle the actual file saving.
-
-        // Example usage:
-        // If you have a List<SimpleData> and want to save it, you can use:
-        // saveData("SimpleData", dataList, new TypeToken<List<SimpleData>>() {}.getType());
-
-        saveString(key, gson.toJson(value, typeOfSrc));
-    }
+    void registerOnDataChangeListener(OnDataChangeListener listener);
 
 
     /**
-     * Saves String value with the specified key.
+     * Unregisters the currently registered data change listener.
+     */
+    void unregisterOnDataChangeListener();
+
+
+    // Data modification methods
+
+    /**
+     * Stores a String value with the specified key.
      *
-     * @param key   The value will be saved under this key.
-     * @param value The JSON value to be saved.
+     * @param key   The key for the stored value.
+     * @param value The String value to store.
      */
-    public void saveString(String key, String value) {
-        // This method saves a JSON string to a file in the app's internal storage using the specified key.
-
-        // Check if either the JSON string or the key is null, and throw an exception if so.
-        if (value == null || key == null)
-            throw new IllegalArgumentException("Key or json cannot be null");
-
-        // Check for null values in essential components using throwExceptionIfNull().
-        throwExceptionIfNull();
-
-        // Construct the full path to the file in the app's internal storage based on the provided key
-        File file = getFile(key);
-
-        // Open a private file in the app's internal storage for writing
-
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-
-            // Wrap the FileOutputStream with a BufferedWriter for efficient writing
-
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
-                // Write the JSON string to the file
-                writer.write(value);
-
-                // Close the BufferedWriter and FileOutputStream to release resources
-                writer.close();
-                fos.close();
-            }
-        } catch (Exception e) {
-            // Handle IOException by printing the stack trace
-            System.err.println(e.getMessage());
-        }
-    }
+    void putString(String key, String value);
 
 
     /**
-     * Deletes data associated with the specified key.
+     * Stores an int value with the specified key.
      *
-     * @param key The data will be saved under this key.
+     * @param key   The key for the stored value.
+     * @param value The int value to store.
      */
-    public void clear(String key) {
-        // This method deletes multiple data files associated with a specified key.
-
-        // It iteratively attempts to delete files with names generated by appending
-        // an index to the provided name until no more files are found.
-
-        int index = 0;
-        boolean hasMoreFile = true;
-
-        while (hasMoreFile) {
-            // Generate the full path to the file based on the name and index
-            File file = getFile(key + "." + index);
-
-            // Check if the file exists
-            if (file.exists()) {
-                // If the file exists, attempt to delete it
-                if (file.delete())
-                    System.out.println("File deleted successfully: " + file.getAbsolutePath());
-                else System.err.println("Failed to delete file: " + file.getAbsolutePath());
-                index++;
-            } else {
-                // If the file does not exist, exit the loop
-                hasMoreFile = false;
-            }
-        }
-    }
+    void putInt(String key, int value);
 
 
     /**
-     * Clears all data stored in the DataManager directory.
-     */
-    public void clearAll() {
-        // This method deletes all files within the DataManager's designated folder.
-
-        // Check if the DataManager's folder (filesDir) is not null
-        if (filesDir != null) {
-            // List all files within the DataManager's folder
-            File[] files = filesDir.listFiles();
-
-            // Check if there are files in the folder
-            if (files != null) {
-                // Iterate over each file in the folder
-                for (File file : files) {
-                    // Check if the file is not null and exists
-                    if (file != null && file.exists()) {
-                        // Attempt to delete the file
-                        if (file.delete()) {
-                            System.out.println("File deleted successfully: " + file.getAbsolutePath());
-                        } else {
-                            System.err.println("Failed to delete file: " + file.getAbsolutePath());
-                        }
-                    }
-                }
-            } else {
-                // Print a message if no files are found in the folder
-                System.out.println("No files found in folder: " + filesDir.getAbsolutePath());
-            }
-        } else {
-            // Print an error message if the DataManager's folder is null
-            System.err.println("Folder does not exist");
-        }
-    }
-
-
-    /**
-     * Throws an exception if the DataManager is not properly initialized.
-     */
-    private void throwExceptionIfNull() {
-        // This method checks if essential components (filesDir and gson) are null,
-        // and throws an IllegalStateException if they are, indicating that the DataManager
-        // is not properly initialized and that the user should call initialize(Context) first.
-
-        if (filesDir == null || gson == null) {
-            // If either filesDir or gson is null, throw an IllegalStateException
-            throw new IllegalStateException(this + " is not properly initialized. Call initialize(Context) first.");
-        }
-    }
-
-
-    /**
-     * Gets the Type for a generic List based on the provided data model class.
+     * Stores a long value with the specified key.
      *
-     * @param dataModel The class representing the data model.
-     * @param <T>       The type of the data model.
-     * @return The Type for a List of the specified data model class.
+     * @param key   The key for the stored value.
+     * @param value The long value to store.
      */
-    private <T> Type getListType(Class<T> dataModel) {
-        // This method returns a Type object that represents a parameterized List type.
-        // It is used for Gson serialization/deserialization of generic List types.
-
-        // TypeToken.getParameterized is a Gson utility method that creates a parameterized type
-        // for a generic class or interface, in this case, List<T>.
-        // It takes two parameters: the raw type (List.class) and the type parameters (dataModel).
-
-        // The .getType() at the end retrieves the Type object representing the parameterized List type.
-
-        // Example usage:
-        // If dataModel is, for instance, SimpleData.class, this method returns the Type
-        // for List<SimpleData>.
-
-        return TypeToken.getParameterized(List.class, dataModel).getType();
-    }
+    void putLong(String key, long value);
 
 
     /**
-     * Gets the File object for a given file name in the DataManager directory.
+     * Stores a float value with the specified key.
      *
-     * @param key The name of the file.
-     * @return The File object representing the file in the DataManager directory.
+     * @param key   The key for the stored value.
+     * @param value The float value to store.
      */
-    private File getFile(String key) {
-        // This method generates a File object within the DataManager directory
-        // using the specified file name.
-
-        // It takes the DataManager directory (filesDir) and appends the provided
-        // file name to create a new File object.
-
-        // Example usage:
-        // If filesDir is "/path/to/data" and fileName is "example.txt",
-        // this method returns a File object representing "/path/to/data/DataManager/example.txt".
-
-        return new File(filesDir, key);
-    }
+    void putFloat(String key, float value);
 
 
     /**
-     * Gets a batch of data for a given key and data model class.
+     * Stores a boolean value with the specified key.
      *
-     * @param key       The data will be saved under this key.
-     * @param dataModel The class representing the data model.
-     * @param <T>       The type of the data model.
-     * @return The batch of data as a List.
+     * @param key   The key for the stored value.
+     * @param value The boolean value to store.
      */
-    private <T> List<T> getObjectBatch(String key, Class<T> dataModel) {
-        // This method retrieves a batch of data of a specified data model class from a file associated with the given key.
-        // It is part of the getData() method, which retrieves data in batches until no more data is found.
-
-        try (InputStreamReader inputStreamReader = getInputStreamReader(key)) {
-            // Attempt to create an InputStreamReader based on the provided key
-            if (inputStreamReader != null) {
-                // If the InputStreamReader is successfully created, use Gson to deserialize the JSON data
-                // into a List of the specified data model class.
-                return gson.fromJson(inputStreamReader, getListType(dataModel));
-            }
-        } catch (Exception e) {
-            // Handle IOException by printing the stack trace
-            System.err.println(e.getMessage());
-        }
-
-        // If there's an error or the InputStreamReader is null, return null
-        return null;
-    }
+    void putBoolean(String key, boolean value);
 
 
     /**
-     * Gets an InputStreamReader for a given key.
+     * Stores an object with the specified key.
      *
-     * @param key The data will be saved under this key.
-     * @return An InputStreamReader for reading the data.
+     * @param key   The key for the stored object.
+     * @param value The object to store.
      */
-    private InputStreamReader getInputStreamReader(String key) {
-        // This method creates an InputStreamReader for reading from a file associated with the given key.
-        // It is used in the getDataBatch() method to retrieve data from files.
-
-        // Check for null values in essential components using throwExceptionIfNull().
-        throwExceptionIfNull();
-
-        try {
-            // Check if the DataManager directory is readable
-            if (filesDir.canRead()) {
-                // Create a File object based on the provided key
-                File file = getFile(key);
-
-                // Check if the file exists
-                if (file.exists()) {
-                    // If the file exists, create a BufferedInputStream for efficient reading
-                    // and wrap it with an InputStreamReader.
-                    BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024);
-                    return new InputStreamReader(inputStream);
-                }
-            }
-        } catch (Exception e) {
-            // Handle any exceptions by printing the stack trace
-            System.err.println(e.getMessage());
-        }
-
-        // If there's an error or the file does not exist, return null
-        return null;
-    }
+    void putObject(String key, Object value);
 
 
     /**
-     * Calculates the batch size based on the data size and maximum array size.
+     * Stores a list of objects with the specified key.
      *
-     * @param dataSize     The size of the data.
-     * @param maxArraySize The maximum array size for each batch.
-     * @return The calculated batch size.
+     * @param key   The key for the stored list.
+     * @param value The list of objects to store.
+     * @param <T>   The type of objects in the list.
      */
-    private int calculateBatchSize(int dataSize, int maxArraySize) {
-        // This method calculates the batch size based on the total size of the data and a specified maximum array size.
+    <T> void putList(String key, List<T> value);
 
-        // Calculate the batch size as the minimum value between the total data size and the specified maxArraySize.
-        int batchSize = Math.min(dataSize, maxArraySize);
 
-        // Ensure that the calculated batch size is greater than zero.
-        // If dataSize and maxArraySize are both zero, set the batch size to 1 to avoid division by zero.
-        return Math.max(batchSize, 1);
+    /**
+     * Stores a list of objects with the specified key, limiting the size of the list.
+     *
+     * @param key          The key for the stored list.
+     * @param value        The list of objects to store.
+     * @param maxArraySize The maximum allowed size of the list.
+     * @param <T>          The type of objects in the list.
+     */
+    <T> void putList(String key, List<T> value, int maxArraySize);
+
+
+    /**
+     * Removes the stored value associated with the specified key.
+     *
+     * @param key The key for the value to remove.
+     */
+    void remove(String key);
+
+
+    /**
+     * Clears all stored data.
+     */
+    void clear();
+
+
+    /**
+     * Interface for listeners to be notified when data changes.
+     */
+    interface OnDataChangeListener {
+
+
+        /**
+         * Called when data associated with a key changes.
+         *
+         * @param key The key whose data has changed.
+         */
+        void onDataChanged(String key);
     }
 
 }
+
 
