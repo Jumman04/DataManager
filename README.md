@@ -19,17 +19,17 @@ If you're using **Maven** or **Gradle**, follow these steps:
 ### Maven
 
 ```xml
-<dependency>
-    <groupId>com.yourdomain</groupId>
-    <artifactId>data-manager</artifactId>
-    <version>2.6</version>
-</dependency>
+	<dependency>
+	    <groupId>com.github.Jumman04</groupId>
+	    <artifactId>DataManager</artifactId>
+	    <version>2.7</version>
+	</dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'com.yourdomain:data-manager:2.6'
+implementation 'com.github.Jumman04:DataManager:2.7'
 ```
 
 ## Usage
