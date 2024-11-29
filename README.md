@@ -14,28 +14,39 @@ A simple, efficient, and flexible data management library that allows you to sto
 
 To include this library in your project, simply clone this repository and build the project, or you can manually add the source code to your project.
 
-If you're using **Maven** or **Gradle**, follow these steps:
+## Installation Guide (Java + Gradle)
 
-### Maven
+Follow these steps to integrate the **DataManager** library into your project:
 
-Add it in your root settings.gradle at the end of repositories:
+---
 
+### Step 1: Add the JitPack Repository
 
-```gradle
-		dependencyResolutionManagement {
-		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-		repositories {
-			mavenCentral()
-			maven { url 'https://jitpack.io' }
-		}
-	}
+Add the JitPack repository to your root `settings.gradle` file:
+
+```groovy
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
 ```
 
-### Gradle
+---
+
+### Step 2: Add the Dependency
+
+Add the following dependency to your module-level `build.gradle` file:
 
 ```groovy
 implementation 'com.github.Jumman04:DataManager:2.7'
 ```
+
+---
+
+
 
 ## Usage
 
