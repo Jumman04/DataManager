@@ -10,11 +10,10 @@ A simple, efficient, and flexible data management library that allows you to sto
 - **On Data Change Listener**: Listen to changes in data to update your app in real time.
 - **Type-Safe Operations**: Work with strongly-typed objects and use generics for flexibility.
 
+---
 ## Installation
 
 To include this library in your project, simply clone this repository and build the project, or you can manually add the source code to your project.
-
-## Installation Guide (Java + Gradle)
 
 Follow these steps to integrate the **DataManager** library into your project:
 
