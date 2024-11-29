@@ -18,12 +18,17 @@ If you're using **Maven** or **Gradle**, follow these steps:
 
 ### Maven
 
-```xml
-	<dependency>
-	    <groupId>com.github.Jumman04</groupId>
-	    <artifactId>DataManager</artifactId>
-	    <version>2.7</version>
-	</dependency>
+Add it in your root settings.gradle at the end of repositories:
+
+
+```gradle
+		dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url 'https://jitpack.io' }
+		}
+	}
 ```
 
 ### Gradle
