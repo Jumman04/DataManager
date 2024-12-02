@@ -10,27 +10,42 @@ A simple, efficient, and flexible data management library that allows you to sto
 - **On Data Change Listener**: Listen to changes in data to update your app in real time.
 - **Type-Safe Operations**: Work with strongly-typed objects and use generics for flexibility.
 
+---
 ## Installation
 
 To include this library in your project, simply clone this repository and build the project, or you can manually add the source code to your project.
 
-If you're using **Maven** or **Gradle**, follow these steps:
+Follow these steps to integrate the **DataManager** library into your project:
 
-### Maven
+---
 
-```xml
-<dependency>
-    <groupId>com.yourdomain</groupId>
-    <artifactId>data-manager</artifactId>
-    <version>2.6</version>
-</dependency>
-```
+### Step 1: Add the JitPack Repository
 
-### Gradle
+Add the JitPack repository to your root `settings.gradle` file:
 
 ```groovy
-implementation 'com.yourdomain:data-manager:2.6'
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
 ```
+
+---
+
+### Step 2: Add the Dependency
+
+Add the following dependency to your module-level `build.gradle` file:
+
+```groovy
+implementation 'com.github.Jumman04:DataManager:2.7'
+```
+
+---
+
+
 
 ## Usage
 
