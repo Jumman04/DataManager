@@ -8,6 +8,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
@@ -64,71 +65,6 @@ class DataManagerImpl implements DataManager {
             else System.err.println("Failed to create folder");
         } else {
             System.out.println("Folder already exists: " + this.filesDir.getAbsolutePath());
-        }
-    }
-
-
-    /**
-     * Retrieves an InputStreamReader for a specified key.
-     * This method checks if the directory is readable and if the file associated with the given key exists.
-     * If the file exists, it opens the file for reading and returns an InputStreamReader to read its contents.
-     *
-     * @param key The key used to identify the data file.
-     * @return An InputStreamReader for the file associated with the key, or null if an error occurs or the file doesn't exist.
-     */
-    private InputStreamReader getInputStreamReader(String key) {
-        // Ensure that the necessary data and files are initialized before proceeding
-        throwExceptionIfNull();
-
-        try {
-            // Check if the directory is readable
-            if (filesDir.canRead()) {
-                // Retrieve the file associated with the key
-                File file = getFile(key);
-
-                // If the file exists, create an InputStreamReader to read it
-                if (file.exists()) {
-                    // Use a BufferedInputStream with a 16KB buffer for efficient reading
-                    BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024);
-
-                    // Return an InputStreamReader to read the file content
-                    return new InputStreamReader(inputStream);
-                }
-            }
-        } catch (Exception e) {
-            // Print the exception message if something goes wrong
-            System.err.println(e.getMessage());
-        }
-
-        // Return null if the file doesn't exist or an error occurs
-        return null;
-    }
-
-
-    /**
-     * Retrieves the file associated with a specified key.
-     * This method constructs a `File` object using the provided key and the directory managed by the DataManager.
-     *
-     * @param key The key used to identify the data file.
-     * @return A `File` object representing the file located in the directory for the given key.
-     */
-    private File getFile(String key) {
-        // Return the File object located in the directory with the provided key
-        return new File(filesDir, key);
-    }
-
-
-    /**
-     * Checks if the DataManager is properly initialized.
-     * This method verifies that the necessary resources, such as `filesDir` and `gson`, are properly set before performing any operations.
-     * If any of the resources are null, an exception is thrown.
-     *
-     * @throws IllegalStateException If `filesDir` or `gson` are not properly initialized.
-     */
-    private void throwExceptionIfNull() {
-        // Check if filesDir or gson are null and throw an exception if they are
-        if (filesDir == null || gson == null) {
-            throw new IllegalStateException(this + " is not properly initialized. Call initialize(filesDir) first.");
         }
     }
 
@@ -246,25 +182,31 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public <T> T getObject(String key, Type type) {
-        // Ensure that the DataManager has been properly initialized before performing any operation
+        // Ensure DataManager is initialized
         throwExceptionIfNull();
 
-        // Check if key or type are null and throw an IllegalArgumentException if they are
-        if (key == null || type == null) {
-            throw new IllegalArgumentException("Key or value cannot be null");
+        // Validate input parameters
+        if (key == null || type == null)
+            throw new IllegalArgumentException("Key or type cannot be null");
+
+        File file = getFile(key);
+        if (!file.exists()) {
+            // File does not exist; return null
+            return null;
         }
 
-        try (InputStreamReader inputStreamReader = getInputStreamReader(key)) {
-            // If the InputStreamReader is successfully retrieved, deserialize the content to the specified type
-            if (inputStreamReader != null) {
-                return gson.fromJson(inputStreamReader, type);
-            }
-        } catch (Exception e) {
-            // Print any exception that occurs during deserialization or file reading
-            System.err.println(e.getMessage());
+        try (BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024); InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
+            // Deserialize the file content to the given type
+            return gson.fromJson(inputStreamReader, type);
+        } catch (IOException e) {
+            // Log the error for debugging purposes
+            System.err.println("Error reading file for key " + key + ": " + e.getMessage());
+        } catch (JsonSyntaxException e) {
+            // Log JSON deserialization issues
+            System.err.println("Error deserializing JSON for key " + key + ": " + e.getMessage());
         }
 
-        // Return null if the data could not be read or deserialized
+        // Return null if an error occurs
         return null;
     }
 
@@ -394,6 +336,7 @@ class DataManagerImpl implements DataManager {
         // Set the provided listener to be notified of data changes
         onDataChangeListener = listener;
     }
+
 
     /**
      * Unregisters the currently registered data change listener.
@@ -640,5 +583,32 @@ class DataManagerImpl implements DataManager {
         return false;
     }
 
+
+    /**
+     * Retrieves the file associated with a specified key.
+     * This method constructs a `File` object using the provided key and the directory managed by the DataManager.
+     *
+     * @param key The key used to identify the data file.
+     * @return A `File` object representing the file located in the directory for the given key.
+     */
+    private File getFile(String key) {
+        // Return the File object located in the directory with the provided key
+        return new File(filesDir, key);
+    }
+
+
+    /**
+     * Checks if the DataManager is properly initialized.
+     * This method verifies that the necessary resources, such as `filesDir` and `gson`, are properly set before performing any operations.
+     * If any of the resources are null, an exception is thrown.
+     *
+     * @throws IllegalStateException If `filesDir` or `gson` are not properly initialized.
+     */
+    private void throwExceptionIfNull() {
+        // Check if filesDir or gson are null and throw an exception if they are
+        if (filesDir == null || gson == null) {
+            throw new IllegalStateException(this + " is not properly initialized. Call DataManagerFactory.create(filesDir) first.");
+        }
+    }
 
 }

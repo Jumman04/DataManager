@@ -13,5 +13,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":app")
 include(":Library")

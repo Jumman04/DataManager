@@ -1,6 +1,5 @@
 package com.jummania;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.lang.reflect.Type;
@@ -322,5 +321,3 @@ public interface DataManager {
     }
 
 }
-
-
