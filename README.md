@@ -23,6 +23,7 @@ manipulate data using JSON serialization and deserialization.
     - **JsonIterConverter**
     - **LoganSquareConverter**
     - **MoshiConverter**
+    - **KotlinxSerializationConverter**
 
   You can also create your own converter by implementing the `DataManager.Converter` interface,
   allowing for even greater flexibility in handling data.

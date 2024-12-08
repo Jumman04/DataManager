@@ -49,7 +49,7 @@ loadScripts(document, 'script');</script>
 <div class="header">
 <h1>Index</h1>
 </div>
-<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
+<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
 <dt><a href="com/jummania/DataManager.html#clear()" class="member-name-link">clear()</a> - Method in interface com.jummania.<a href="com/jummania/DataManager.html" title="interface in com.jummania">DataManager</a></dt>
@@ -135,6 +135,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Converts a JSON string into a Java object of the specified type.</div>
 </dd>
+<dt><a href="com/jummania/converter/KotlinxSerializationConverter.html#fromJson(java.lang.String,java.lang.reflect.Type)" class="member-name-link">fromJson(String, Type)</a> - Method in class com.jummania.converter.<a href="com/jummania/converter/KotlinxSerializationConverter.html" title="class in com.jummania.converter">KotlinxSerializationConverter</a></dt>
+<dd>
+<div class="block">Deserializes the given JSON content into an object of the specified type.</div>
+</dd>
 <dt><a href="com/jummania/converter/LoganSquareConverter.html#fromJson(java.lang.String,java.lang.reflect.Type)" class="member-name-link">fromJson(String, Type)</a> - Method in class com.jummania.converter.<a href="com/jummania/converter/LoganSquareConverter.html" title="class in com.jummania.converter">LoganSquareConverter</a></dt>
 <dd>
 <div class="block">Converts a JSON string into a Java object of the specified type.</div>
@@ -170,6 +174,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/jummania/converter/JsonIterConverter.html#fromReader(java.io.Reader,java.lang.reflect.Type)" class="member-name-link">fromReader(Reader, Type)</a> - Method in class com.jummania.converter.<a href="com/jummania/converter/JsonIterConverter.html" title="class in com.jummania.converter">JsonIterConverter</a></dt>
 <dd>
 <div class="block">Converts a JSON stream from a Reader into a Java object of the specified type.</div>
+</dd>
+<dt><a href="com/jummania/converter/KotlinxSerializationConverter.html#fromReader(java.io.Reader,java.lang.reflect.Type)" class="member-name-link">fromReader(Reader, Type)</a> - Method in class com.jummania.converter.<a href="com/jummania/converter/KotlinxSerializationConverter.html" title="class in com.jummania.converter">KotlinxSerializationConverter</a></dt>
+<dd>
+<div class="block">Reads JSON content from the given Reader and deserializes it into an object of the specified type.</div>
 </dd>
 <dt><a href="com/jummania/converter/LoganSquareConverter.html#fromReader(java.io.Reader,java.lang.reflect.Type)" class="member-name-link">fromReader(Reader, Type)</a> - Method in class com.jummania.converter.<a href="com/jummania/converter/LoganSquareConverter.html" title="class in com.jummania.converter">LoganSquareConverter</a></dt>
 <dd>
@@ -322,6 +330,22 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/jummania/converter/JsonIterConverter.html#%3Cinit%3E()" class="member-name-link">JsonIterConverter()</a> - Constructor for class com.jummania.converter.<a href="com/jummania/converter/JsonIterConverter.html" title="class in com.jummania.converter">JsonIterConverter</a></dt>
 <dd>&nbsp;</dd>
 </dl>
+<h2 class="title" id="I:K">K</h2>
+<dl class="index">
+<dt><a href="com/jummania/converter/KotlinxSerializationConverter.html" class="type-name-link" title="class in com.jummania.converter">KotlinxSerializationConverter</a> - Class in <a href="com/jummania/converter/package-summary.html">com.jummania.converter</a></dt>
+<dd>
+<div class="block">A converter that uses Kotlinx Serialization for serializing and deserializing
+ objects to and from JSON format.</div>
+</dd>
+<dt><a href="com/jummania/converter/KotlinxSerializationConverter.html#%3Cinit%3E()" class="member-name-link">KotlinxSerializationConverter()</a> - Constructor for class com.jummania.converter.<a href="com/jummania/converter/KotlinxSerializationConverter.html" title="class in com.jummania.converter">KotlinxSerializationConverter</a></dt>
+<dd>
+<div class="block">Constructs a KotlinxSerializationConverter using the default JSON configuration.</div>
+</dd>
+<dt><a href="com/jummania/converter/KotlinxSerializationConverter.html#%3Cinit%3E(kotlinx.serialization.json.Json)" class="member-name-link">KotlinxSerializationConverter(Json)</a> - Constructor for class com.jummania.converter.<a href="com/jummania/converter/KotlinxSerializationConverter.html" title="class in com.jummania.converter">KotlinxSerializationConverter</a></dt>
+<dd>
+<div class="block">Constructs a KotlinxSerializationConverter using a custom Json instance.</div>
+</dd>
+</dl>
 <h2 class="title" id="I:L">L</h2>
 <dl class="index">
 <dt><a href="com/jummania/converter/LoganSquareConverter.html" class="type-name-link" title="class in com.jummania.converter">LoganSquareConverter</a> - Class in <a href="com/jummania/converter/package-summary.html">com.jummania.converter</a></dt>
@@ -469,6 +493,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Converts a Java object to its JSON representation.</div>
 </dd>
+<dt><a href="com/jummania/converter/KotlinxSerializationConverter.html#toJson(T)" class="member-name-link">toJson(T)</a> - Method in class com.jummania.converter.<a href="com/jummania/converter/KotlinxSerializationConverter.html" title="class in com.jummania.converter">KotlinxSerializationConverter</a></dt>
+<dd>
+<div class="block">Converts the given data object to its JSON representation as a String.</div>
+</dd>
 <dt><a href="com/jummania/converter/LoganSquareConverter.html#toJson(T)" class="member-name-link">toJson(T)</a> - Method in class com.jummania.converter.<a href="com/jummania/converter/LoganSquareConverter.html" title="class in com.jummania.converter">LoganSquareConverter</a></dt>
 <dd>
 <div class="block">Converts a Java object to its JSON representation.</div>
@@ -493,7 +521,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Unregisters the currently registered data change listener.</div>
 </dd>
 </dl>
-<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
+<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
 </div>
 </div>
 </body>

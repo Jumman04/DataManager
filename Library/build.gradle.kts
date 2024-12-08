@@ -15,6 +15,7 @@ dependencies {
     implementation("com.jsoniter:jsoniter:0.9.23")
     implementation("com.alibaba:fastjson:1.2.83")
     implementation("com.bluelinelabs:logansquare:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
 
 
