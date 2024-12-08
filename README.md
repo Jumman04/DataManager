@@ -1,23 +1,40 @@
 # DataManager Library
 
-A simple, efficient, and flexible data management library that allows you to store, retrieve, and manipulate data using JSON serialization and deserialization. This library is designed to easily save objects to disk, load them back, and provide high flexibility with batch processing, data change listeners, and type-safe operations.
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Version](https://img.shields.io/badge/version-2.8-blue)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+A simple, efficient, and flexible data management library that allows you to store, retrieve, and
+manipulate data using JSON serialization and deserialization.
 
 ## Features
 
 - **JSON Serialization/Deserialization**: Easily convert objects to and from JSON format.
-- **File-based Data Storage**: Store objects, strings, integers, booleans, lists, and more in local storage.
+- **File-based Data Storage**: Store objects, strings, integers, booleans, lists, and more in local
+  storage.
 - **Batch Data Handling**: Efficiently save and load lists in batches to optimize memory usage.
 - **On Data Change Listener**: Listen to changes in data to update your app in real time.
 - **Type-Safe Operations**: Work with strongly-typed objects and use generics for flexibility.
+- **Customizable Converter**: **NEW in version 2.8!** You can choose from the following built-in
+  converters:
+    - **FastJsonConverter**
+    - **GsonConverter**
+    - **JacksonConverter**
+    - **JsonIterConverter**
+    - **LoganSquareConverter**
+    - **MoshiConverter**
+
+  You can also create your own converter by implementing the `DataManager.Converter` interface,
+  allowing for even greater flexibility in handling data.
 
 ---
+
 ## Installation
 
-To include this library in your project, simply clone this repository and build the project, or you can manually add the source code to your project.
+To include this library in your project, simply clone this repository and build the project, or you
+can manually add the source code to your project.
 
 Follow these steps to integrate the **DataManager** library into your project:
-
----
 
 ### Step 1: Add the JitPack Repository
 
@@ -33,26 +50,24 @@ dependencyResolutionManagement {
 }
 ```
 
----
-
 ### Step 2: Add the Dependency
 
 Add the following dependency to your module-level `build.gradle` file:
 
 ```groovy
-implementation 'com.github.Jumman04:DataManager:2.7'
+implementation 'com.github.Jumman04:DataManager:2.8'
 ```
 
 ---
-
-
 
 ## Usage
 
 ### 1. Initializing the DataManager
 
+You can initialize the DataManager with a custom converter:
+
 ```java
-DataManager dataManager = DataManagerFactory.create(getFilesDir())
+DataManager dataManager = DataManagerFactory.create(getFilesDir(), new GsonConverter());
 ```
 
 ### 2. Storing Data
@@ -60,15 +75,19 @@ DataManager dataManager = DataManagerFactory.create(getFilesDir())
 Store simple data types or complex objects:
 
 ```java
-dataManager.putString("user_name", "John Doe");
-dataManager.putInt("user_age", 30);
+dataManager.putString("user_name","John Doe");
+dataManager.
+
+putInt("user_age",30);
 ```
 
 Store a list of objects:
 
 ```java
 List<String> fruits = Arrays.asList("Apple", "Banana", "Cherry");
-dataManager.putList("fruits", fruits);
+dataManager.
+
+putList("fruits",fruits);
 ```
 
 ### 3. Retrieving Data
@@ -93,34 +112,74 @@ You can register a listener to detect when data changes:
 ```java
 dataManager.registerOnDataChangeListener(new OnDataChangeListener() {
     @Override
-    public void onDataChanged(String key) {
+    public void onDataChanged (String key){
         // Handle data change for the specific key
     }
 });
 ```
 
+### 5. Creating a Custom Converter
+
+To create your own converter, implement the `DataManager.Converter` interface as follows:
+
+```java
+public class MyCustomConverter implements DataManager.Converter {
+    @Override
+    public <T> String toJson(T data) {
+        return // Implement serialization logic
+    }
+
+    @Override
+    public <T> T fromJson(String json, Type typeOfT) {
+        return // Implement deserialization logic
+    }
+
+    @Override
+    public <T> T fromReader(Reader json, Type typeOfT) {
+        return // Implement deserialization logic from a Reader
+    }
+}
+```
+
+You can then use your custom converter when initializing the `DataManager`:
+
+```java
+DataManager dataManager = DataManagerFactory.create(getFilesDir(), new MyCustomConverter());
+```
+
 ## Methods Overview
 
-- **getString(String key, String defValue)**: Get a stored string, or return the default value if not found.
-- **getInt(String key, int defValue)**: Get a stored integer, or return the default value.
-- **putString(String key, String value)**: Store a string value.
-- **putInt(String key, int value)**: Store an integer value.
-- **getObject(String key, Type type)**: Get a stored object of a specified type.
-- **putObject(String key, Object value)**: Store a generic object.
+| Return Type   | Method Name                                                               | Description                                                |
+|---------------|---------------------------------------------------------------------------|------------------------------------------------------------|
+| `<T>`         | `fromJson(String value, Type typeOfT)`                                    | Converts JSON to an object of the specified type.          |
+| `<T>`         | `fromReader(Reader json, Type typeOfT)`                                   | Converts a JSON stream to an object of the specified type. |
+| `<T>`         | `getObject(String key, Type type)`                                        | Retrieves a stored object.                                 |
+| `<T>`         | `getParameterized(String key, Type rawType, Type... typeArguments)`       | Retrieves a parameterized object.                          |
+| `<T> List<T>` | `getList(String key, Type type)`                                          | Retrieves a list of objects.                               |
+| `boolean`     | `getBoolean(String key, boolean defValue)`                                | Retrieves a boolean value.                                 |
+| `float`       | `getFloat(String key, float defValue)`                                    | Retrieves a float value.                                   |
+| `int`         | `getInt(String key, int defValue)`                                        | Retrieves an int value.                                    |
+| `long`        | `getLong(String key, long defValue)`                                      | Retrieves a long value.                                    |
+| `String`      | `getString(String key, String defValue)`                                  | Retrieves a String value.                                  |
+| `String`      | `toJson(Object object)`                                                   | Converts an object to a JSON string.                       |
+| `void`        | `registerOnDataChangeListener(DataManager.OnDataChangeListener listener)` | Registers a data change listener.                          |
+| `void`        | `remove(String key)`                                                      | Removes the stored value.                                  |
+| `void`        | `saveBoolean(String key, boolean value)`                                  | Stores a boolean value.                                    |
+| `void`        | `saveFloat(String key, float value)`                                      | Stores a float value.                                      |
+| `void`        | `saveInt(String key, int value)`                                          | Stores an int value.                                       |
+| `void`        | `saveLong(String key, long value)`                                        | Stores a long value.                                       |
+| `void`        | `saveList(String key, List<T> value)`                                     | Stores a list of objects.                                  |
+| `void`        | `saveList(String key, List<T> value, int maxArraySize)`                   | Stores a list of objects with a size limit.                |
+| `void`        | `saveObject(String key, Object value)`                                    | Stores an object.                                          |
+| `void`        | `saveString(String key, String value)`                                    | Stores a String value.                                     |
 
-For more methods, refer to the [documentation](https://jumman04.github.io/DataManager/doc/index.html).
+For more methods, refer to
+the [documentation](https://jumman04.github.io/DataManager/doc/index.html).
 
 ## Contributing
 
-We welcome contributions from the community! If you'd like to contribute, please fork the repository, make your changes, and submit a pull request.
-
-### Steps to contribute:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Make the necessary changes and add tests.
-4. Commit your changes and push to your fork.
-5. Open a pull request to the main repository.
+We welcome contributions from the community! If you'd like to contribute, please fork the
+repository, make your changes, and submit a pull request.
 
 ## License
 

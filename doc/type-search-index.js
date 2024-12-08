@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.jummania","l":"DataManager"},{"p":"com.jummania","l":"DataManagerFactory"},{"p":"com.jummania","l":"DataManager.OnDataChangeListener"}];updateSearchResults();

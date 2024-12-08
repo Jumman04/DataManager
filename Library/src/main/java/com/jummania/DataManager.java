@@ -2,6 +2,7 @@ package com.jummania;
 
 import com.google.gson.JsonSyntaxException;
 
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -106,36 +107,6 @@ public interface DataManager {
 
 
     /**
-     * Converts the provided JSON string to an object of the specified type.
-     * <p>
-     * This method uses Gson to deserialize the JSON string into an object of the specified type.
-     * The type parameter allows the conversion to a specific object type.
-     * </p>
-     *
-     * @param value the JSON string to deserialize.
-     * @param type  the type of the object to deserialize into.
-     * @param <T>   the type of the object.
-     * @return the deserialized object of type T.
-     * @throws JsonSyntaxException if the JSON string is not a valid representation for the specified type.
-     */
-    <T> T fromJson(String value, Type type);
-
-
-    /**
-     * Converts the given object to a JSON string.
-     * <p>
-     * This method uses Gson to serialize an object into its JSON representation.
-     * It can handle any object type, converting it into a JSON string.
-     * </p>
-     *
-     * @param object the object to serialize into JSON.
-     * @return the JSON string representation of the object.
-     * @throws JsonSyntaxException if the object cannot be serialized.
-     */
-    String toJson(Object object);
-
-
-    /**
      * Retrieves a String value associated with the specified key, with a default value of null if not found.
      *
      * @param key The key for the stored value.
@@ -188,31 +159,6 @@ public interface DataManager {
     default boolean getBoolean(String key) {
         return getBoolean(key, false);
     }
-
-
-    /**
-     * Checks if a value associated with the specified key exists in the storage.
-     *
-     * @param key The key to check.
-     * @return true if the key exists, false otherwise.
-     */
-    boolean contains(String key);
-
-
-    // Data change listener registration
-
-    /**
-     * Registers a listener to be notified when data associated with a key changes.
-     *
-     * @param listener The listener to be registered.
-     */
-    void registerOnDataChangeListener(OnDataChangeListener listener);
-
-
-    /**
-     * Unregisters the currently registered data change listener.
-     */
-    void unregisterOnDataChangeListener();
 
 
     // Data modification methods
@@ -293,6 +239,47 @@ public interface DataManager {
 
 
     /**
+     * Converts the provided JSON string to an object of the specified type.
+     * <p>
+     * This method uses Gson to deserialize the JSON string into an object of the specified type.
+     * The type parameter allows the conversion to a specific object type.
+     * </p>
+     *
+     * @param value   the JSON string to deserialize.
+     * @param typeOfT the type of the object to deserialize into.
+     * @param <T>     the type of the object.
+     * @return the deserialized object of type T.
+     * @throws JsonSyntaxException if the JSON string is not a valid representation for the specified type.
+     */
+    <T> T fromJson(String value, Type typeOfT);
+
+
+    /**
+     * Converts a JSON stream from a Reader into a Java object of the specified type.
+     *
+     * @param json    the Reader containing the JSON data to be converted
+     * @param typeOfT the type of the object to be returned
+     * @param <T>     the type of the object
+     * @return the Java object represented by the JSON data from the Reader
+     */
+    <T> T fromReader(Reader json, Type typeOfT);
+
+
+    /**
+     * Converts the given object to a JSON string.
+     * <p>
+     * This method uses Gson to serialize an object into its JSON representation.
+     * It can handle any object type, converting it into a JSON string.
+     * </p>
+     *
+     * @param object the object to serialize into JSON.
+     * @return the JSON string representation of the object.
+     * @throws JsonSyntaxException if the object cannot be serialized.
+     */
+    String toJson(Object object);
+
+
+    /**
      * Removes the stored value associated with the specified key.
      *
      * @param key The key for the value to remove.
@@ -304,6 +291,31 @@ public interface DataManager {
      * Clears all stored data.
      */
     void clear();
+
+
+    /**
+     * Checks if a value associated with the specified key exists in the storage.
+     *
+     * @param key The key to check.
+     * @return true if the key exists, false otherwise.
+     */
+    boolean contains(String key);
+
+
+    // Data change listener registration
+
+    /**
+     * Registers a listener to be notified when data associated with a key changes.
+     *
+     * @param listener The listener to be registered.
+     */
+    void registerOnDataChangeListener(OnDataChangeListener listener);
+
+
+    /**
+     * Unregisters the currently registered data change listener.
+     */
+    void unregisterOnDataChangeListener();
 
 
     /**
@@ -319,5 +331,46 @@ public interface DataManager {
          */
         void onDataChanged(String key);
     }
+
+
+    /**
+     * The Converter interface provides methods for converting
+     * data between JSON format and Java objects.
+     */
+    interface Converter {
+
+
+        /**
+         * Converts a Java object to its JSON representation.
+         *
+         * @param data the Java object to be converted to JSON
+         * @param <T>  the type of the object
+         * @return a JSON string representing the object
+         */
+        <T> String toJson(T data);
+
+
+        /**
+         * Converts a JSON string into a Java object of the specified type.
+         *
+         * @param json    the JSON string to be converted
+         * @param typeOfT the type of the object to be returned
+         * @param <T>     the type of the object
+         * @return the Java object represented by the JSON string
+         */
+        <T> T fromJson(String json, Type typeOfT);
+
+
+        /**
+         * Converts a JSON stream from a Reader into a Java object of the specified type.
+         *
+         * @param json    the Reader containing the JSON data to be converted
+         * @param typeOfT the type of the object to be returned
+         * @param <T>     the type of the object
+         * @return the Java object represented by the JSON data from the Reader
+         */
+        <T> T fromReader(Reader json, Type typeOfT);
+    }
+
 
 }

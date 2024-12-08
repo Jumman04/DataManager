@@ -1,13 +1,15 @@
 package com.jummania;
 
-import java.io.File;
+import com.jummania.converter.GsonConverter;
 
+import java.io.File;
 
 /**
  * Factory class for creating and managing a singleton instance of DataManager.
- * Ensures that only one instance of DataManager is created and provides global access to it.
  * <p>
- * This class follows the Singleton design pattern to manage the instance of DataManager.
+ * This class follows the Singleton design pattern to ensure that only one instance
+ * of DataManager is created and provides global access to it.
+ * <p>
  * It is thread-safe and provides methods to create and retrieve the DataManager instance.
  * <p>
  * Created by Jummania on 20, November, 2024.
@@ -27,7 +29,7 @@ public class DataManagerFactory {
     /**
      * Creates and returns the singleton instance of DataManager.
      * If the DataManager instance does not exist, it is created with the provided filesDir.
-     * This method is synchronized to ensure thread safety when creating the instance.
+     * This method is synchronized to ensure thread safety during instance creation.
      *
      * @param filesDir The directory where data is to be stored.
      * @return The singleton instance of DataManager.
@@ -35,15 +37,32 @@ public class DataManagerFactory {
     public static synchronized DataManager create(File filesDir) {
         // If the instance does not exist, create a new one
         if (dataManager == null) {
-            dataManager = new DataManagerImpl(filesDir);
+            dataManager = new DataManagerImpl(filesDir, new GsonConverter());
         }
         return dataManager;
     }
 
 
     /**
+     * Creates and returns the singleton instance of DataManager with a specified converter.
+     * If the DataManager instance does not exist, it is created with the provided filesDir and converter.
+     * This method is synchronized to ensure thread safety during instance creation.
+     *
+     * @param filesDir  The directory where data is to be stored.
+     * @param converter The converter to be used for data serialization/deserialization.
+     * @return The singleton instance of DataManager.
+     */
+    public static synchronized DataManager create(File filesDir, DataManager.Converter converter) {
+        // If the instance does not exist, create a new one
+        if (dataManager == null) {
+            dataManager = new DataManagerImpl(filesDir, converter);
+        }
+        return dataManager;
+    }
+
+    /**
      * Retrieves the singleton instance of DataManager.
-     * If the instance is not yet created, throws an IllegalStateException.
+     * If the instance is not yet created, this method throws an IllegalStateException.
      *
      * @return The singleton instance of DataManager.
      * @throws IllegalStateException If the DataManager instance is not yet created.
@@ -55,5 +74,4 @@ public class DataManagerFactory {
         }
         return dataManager;
     }
-
 }

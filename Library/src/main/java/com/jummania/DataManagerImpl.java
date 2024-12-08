@@ -1,6 +1,5 @@
 package com.jummania;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
@@ -11,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -31,8 +31,8 @@ import java.util.List;
  */
 class DataManagerImpl implements DataManager {
 
-    // Gson instance for serializing and deserializing data
-    private final Gson gson;
+    // Converter instance for serializing and deserializing data
+    private final Converter converter;
 
     // Directory where the data will be stored
     private final File filesDir;
@@ -40,29 +40,37 @@ class DataManagerImpl implements DataManager {
     // Listener to notify data changes
     private OnDataChangeListener onDataChangeListener;
 
+
     /**
      * Constructor for initializing the DataManagerImpl.
      * Ensures that the specified directory exists or is created.
      *
-     * @param filesDir The directory where data is stored.
-     * @throws IllegalArgumentException If the provided filesDir is null.
+     * @param filesDir  The directory where data is stored.
+     * @param converter The converter for serialization/deserialization.
+     * @throws IllegalArgumentException If the provided filesDir or converter is null.
      */
-    DataManagerImpl(File filesDir) {
+    DataManagerImpl(File filesDir, Converter converter) {
         // Ensure the filesDir argument is not null
-        if (filesDir == null)
+        if (filesDir == null) {
             throw new IllegalArgumentException("The 'filesDir' argument cannot be null.");
+        }
+        if (converter == null) {
+            throw new IllegalArgumentException("The 'converter' argument cannot be null.");
+        }
 
-        // Initialize the filesDir with a subdirectory called "DataManagerFactory"
+        // Initialize the filesDir with a subdirectory called "DataManager"
         this.filesDir = new File(filesDir, "DataManager");
 
-        // Initialize Gson for object serialization
-        gson = new Gson();
+        // Initialize the converter for object serialization
+        this.converter = converter;
 
         // Check if the directory exists, and create it if necessary
         if (!this.filesDir.exists()) {
-            if (this.filesDir.mkdirs())
+            if (this.filesDir.mkdirs()) {
                 System.out.println("Folder created successfully: " + this.filesDir.getAbsolutePath());
-            else System.err.println("Failed to create folder");
+            } else {
+                System.err.println("Failed to create folder");
+            }
         } else {
             System.out.println("Folder already exists: " + this.filesDir.getAbsolutePath());
         }
@@ -197,7 +205,7 @@ class DataManagerImpl implements DataManager {
 
         try (BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024); InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
             // Deserialize the file content to the given type
-            return gson.fromJson(inputStreamReader, type);
+            return fromReader(inputStreamReader, type);
         } catch (IOException e) {
             // Log the error for debugging purposes
             System.err.println("Error reading file for key " + key + ": " + e.getMessage());
@@ -290,7 +298,22 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public <T> T fromJson(String value, Type type) {
-        return gson.fromJson(value, type);
+        return converter.fromJson(value, type);
+    }
+
+
+    /**
+     * Converts a JSON stream from a Reader into a Java object of the specified type.
+     *
+     * @param json    the Reader containing the JSON data to be converted
+     * @param typeOfT the type of the object to be returned
+     * @param <T>     the type of the object
+     * @return the Java object represented by the JSON data from the Reader
+     * @throws IllegalArgumentException if the JSON data cannot be parsed into the specified type
+     */
+    @Override
+    public <T> T fromReader(Reader json, Type typeOfT) {
+        return converter.fromReader(json, typeOfT);
     }
 
 
@@ -307,7 +330,7 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public String toJson(Object object) {
-        return gson.toJson(object);
+        return converter.toJson(object);
     }
 
 
@@ -452,12 +475,11 @@ class DataManagerImpl implements DataManager {
      *
      * @param key   The key used to identify the stored object.
      * @param value The object to be serialized and stored. It cannot be null.
-     * @throws IllegalArgumentException if either the key or the value is null.
      */
     @Override
     public void saveObject(String key, Object value) {
         // Convert the object to a JSON string using Gson
-        saveString(key, gson.toJson(value));
+        saveString(key, toJson(value));
     }
 
 
@@ -606,7 +628,7 @@ class DataManagerImpl implements DataManager {
      */
     private void throwExceptionIfNull() {
         // Check if filesDir or gson are null and throw an exception if they are
-        if (filesDir == null || gson == null) {
+        if (filesDir == null || converter == null) {
             throw new IllegalStateException(this + " is not properly initialized. Call DataManagerFactory.create(filesDir) first.");
         }
     }
