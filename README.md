@@ -1,7 +1,7 @@
 # DataManager Library
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Version](https://img.shields.io/badge/version-2.8-blue)
+[![](https://jitpack.io/v/Jumman04/DataManager.svg)](https://jitpack.io/#Jumman04/DataManager)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 A simple, efficient, and flexible data management library that allows you to store, retrieve, and
