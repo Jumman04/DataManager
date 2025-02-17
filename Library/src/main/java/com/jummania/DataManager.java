@@ -29,6 +29,26 @@ public interface DataManager {
 
 
     /**
+     * Retrieves the raw JSON string associated with the specified key from storage.
+     *
+     * <p>
+     * This method reads the data from the storage file corresponding to the given key
+     * and returns it as a plain JSON string. If no data is found for the specified key,
+     * it will return null.
+     * </p>
+     *
+     * @param key The unique key associated with the JSON data in storage. This key is used
+     *            to locate and retrieve the corresponding data.
+     * @return The raw JSON string associated with the specified key, or null if no data
+     * exists for that key.
+     * @throws IllegalArgumentException if the key is null or empty.
+     * @throws RuntimeException         if an error occurs while reading from storage.
+     * @see #saveString(String, String) (String, String) for saving a JSON string to storage.
+     */
+    String getRawString(String key);
+
+
+    /**
      * Retrieves a stored int value associated with the specified key.
      * If no value is found, returns the provided default value.
      *
@@ -236,6 +256,52 @@ public interface DataManager {
      * @param <T>          The type of objects in the list.
      */
     <T> void saveList(String key, List<T> value, int maxArraySize);
+
+
+    /**
+     * Adds a new value to the beginning of a JSON array associated with the given key.
+     * If an existing JSON array is found, the new value is added as the first element
+     * of the array, followed by the existing values.
+     *
+     * <p>
+     * This method uses a StringBuilder for efficient string manipulation to construct the
+     * JSON array and reduces memory overhead by avoiding multiple string creations.
+     * </p>
+     *
+     * @param key   The unique key associated with the JSON array in storage. This key is used
+     *              to retrieve the existing data and save the updated JSON array.
+     * @param value The new value to be added to the JSON array. This value will be converted
+     *              to a JSON string format before being saved.
+     * @throws IllegalArgumentException if the key is null or empty.
+     * @throws RuntimeException         if an error occurs while saving the JSON string to storage.
+     * @see #toJson(Object) for converting the object to its JSON representation.
+     * @see #getRawString(String) for retrieving the existing JSON string associated with the key.
+     * @see #saveString(String, String) for saving the constructed JSON string back to storage.
+     */
+    void prependToList(String key, Object value);
+
+
+    /**
+     * Adds a new value to the end of a JSON array associated with the given key.
+     * If an existing JSON array is found, the new value is added as the last element
+     * of the array.
+     *
+     * <p>
+     * This method uses a StringBuilder for efficient string manipulation to construct the
+     * JSON array and reduces memory overhead by avoiding multiple string creations.
+     * </p>
+     *
+     * @param key   The unique key associated with the JSON array in storage. This key is used
+     *              to retrieve the existing data and save the updated JSON array.
+     * @param value The new value to be added to the JSON array. This value will be converted
+     *              to a JSON string format before being saved.
+     * @throws IllegalArgumentException if the key is null or empty.
+     * @throws RuntimeException         if an error occurs while saving the JSON string to storage.
+     * @see #toJson(Object) for converting the object to its JSON representation.
+     * @see #getRawString(String) for retrieving the existing JSON string associated with the key.
+     * @see #saveString(String, String) (String, String) for saving the constructed JSON string back to storage.
+     */
+    void appendToList(String key, Object value);
 
 
     /**

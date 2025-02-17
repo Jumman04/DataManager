@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,7 +15,10 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the DataManager interface.
@@ -94,6 +98,32 @@ class DataManagerImpl implements DataManager {
             // Return the default value if retrieval fails
             return defValue;
         }
+    }
+
+
+    /**
+     * Retrieves the raw JSON string stored under the specified key.
+     *
+     * <p>This method reads the content of the file associated with the given key
+     * and returns it as a plain string. If the file does not exist or an error occurs,
+     * it returns {@code null}.
+     *
+     * @param key The unique identifier for the stored data.
+     * @return The raw JSON string if the file exists and is readable; otherwise, {@code null}.
+     */
+    @Override
+    public String getRawString(String key) {
+        try (InputStreamReader reader = getInputStreamReader(key); BufferedReader bufferedReader = (reader != null) ? new BufferedReader(reader) : null) {
+
+            if (bufferedReader != null) {
+                return bufferedReader.lines().collect(Collectors.joining("\n"));
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error reading file for key " + key + ": " + e.getMessage());
+        }
+
+        return null;
     }
 
 
@@ -190,31 +220,36 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public <T> T getObject(String key, Type type) {
+        try (InputStreamReader reader = getInputStreamReader(key)) {
+            if (reader == null) {
+                return null;
+            }
+
+            return fromReader(reader, type);
+        } catch (JsonSyntaxException | IOException e) {
+            System.err.println("Error deserializing JSON for key " + key + ": " + e.getMessage());
+        }
+        return null;
+    }
+
+    private InputStreamReader getInputStreamReader(String key) {
         // Ensure DataManager is initialized
         throwExceptionIfNull();
 
-        // Validate input parameters
-        if (key == null || type == null)
-            throw new IllegalArgumentException("Key or type cannot be null");
+        if (key == null) throw new IllegalArgumentException("Key cannot be null");
 
         File file = getFile(key);
         if (!file.exists()) {
-            // File does not exist; return null
-            return null;
+            return null; // File does not exist
         }
 
-        try (BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024); InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
-            // Deserialize the file content to the given type
-            return fromReader(inputStreamReader, type);
+        try {
+            BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024);
+            return new InputStreamReader(inputStream);
         } catch (IOException e) {
-            // Log the error for debugging purposes
             System.err.println("Error reading file for key " + key + ": " + e.getMessage());
-        } catch (JsonSyntaxException e) {
-            // Log JSON deserialization issues
-            System.err.println("Error deserializing JSON for key " + key + ": " + e.getMessage());
         }
 
-        // Return null if an error occurs
         return null;
     }
 
@@ -519,6 +554,37 @@ class DataManagerImpl implements DataManager {
         }
     }
 
+    @Override
+    public void prependToList(String key, Object value) {
+        saveString(key + ".0", value);
+    }
+
+    @Override
+    public void appendToList(String key, Object value) {
+        File directory = new File("."); // Current directory or specify the path
+
+        // Get all files matching the pattern "key.X"
+        File[] matchingFiles = directory.listFiles((dir, name) -> name.matches(key + "\\.\\d+"));
+
+        String lastFileName;
+
+        if (matchingFiles != null && matchingFiles.length > 0) {
+            Arrays.sort(matchingFiles, Comparator.comparingInt(file -> {
+                try {
+                    return Integer.parseInt(file.getName().substring(key.length() + 1));
+                } catch (NumberFormatException e) {
+                    return -1; // Handle unexpected file names safely
+                }
+            }));
+
+            lastFileName = matchingFiles[matchingFiles.length - 1].getName();
+        } else {
+            lastFileName = key + ".0"; // If no file exists, start with key.0
+        }
+
+        saveString(lastFileName, value);
+    }
+
 
     /**
      * Removes all files associated with the given key. This method checks for multiple
@@ -574,6 +640,51 @@ class DataManagerImpl implements DataManager {
             // If the directory does not exist, log the error
             System.err.println("Folder does not exist");
         }
+    }
+
+    /**
+     * Saves a new value as the first element in a JSON array associated with the given key.
+     * If an existing JSON array is found, the new value is added to the beginning of the array,
+     * followed by the existing values.
+     *
+     * <p>
+     * This method uses a StringBuilder for efficient string manipulation to construct the
+     * JSON array and reduces memory overhead by avoiding multiple string creations.
+     * </p>
+     *
+     * @param key   The unique key associated with the JSON array in storage. This key is used
+     *              to retrieve the existing data and save the updated JSON array.
+     * @param value The new value to be added to the JSON array. This value will be converted
+     *              to a JSON string format before being saved.
+     * @throws IllegalArgumentException if the key is null or empty.
+     * @throws RuntimeException         if an error occurs while saving the JSON string to storage.
+     * @see #toJson(Object) for converting the object to its JSON representation.
+     * @see #getRawString(String) for retrieving the existing JSON string associated with the key.
+     * @see #saveString(String, String) for saving the constructed JSON string back to storage.
+     */
+    private void saveString(String key, Object value) {
+        // Convert the new value to JSON
+        String newJson = toJson(value);
+        // Get the existing JSON string from storage
+        String savedJson = getRawString(key);
+
+        // Use StringBuilder for efficient string manipulation
+        StringBuilder jsonBuilder = new StringBuilder();
+
+        // If there is existing data, append it to the StringBuilder
+        if (savedJson != null && !savedJson.isEmpty()) {
+            jsonBuilder.append("["); // Start a new JSON array
+            jsonBuilder.append(newJson).append(","); // Append the new value followed by a comma
+            // Append existing JSON, removing the surrounding brackets
+            jsonBuilder.append(savedJson, 1, savedJson.length() - 1);
+            jsonBuilder.append("]"); // Close the JSON array
+        } else {
+            // If no existing data, create an array with just the new value
+            jsonBuilder.append("[").append(newJson).append("]"); // Save as an array with the new value
+        }
+
+        // Save the combined JSON array using the saveRawString method
+        saveString(key, jsonBuilder.toString());
     }
 
 
