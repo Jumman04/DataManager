@@ -373,41 +373,50 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Stores a String value in the storage associated with the provided key.
-     * This method serializes the String and stores it in a file corresponding to the key.
+     * Stores a string value in persistent storage associated with the given key.
+     * If the provided value is `null`, the corresponding entry will be removed.
      *
-     * @param key   The key used to identify the stored String value.
-     * @param value The String value to be stored. It cannot be null.
+     * <p>This method serializes the string and writes it to a file corresponding to the key.
+     * If an error occurs during the writing process, an error message is logged.</p>
+     *
+     * @param key   The unique identifier for the stored string value. Must not be null.
+     * @param value The string value to be stored. If null, the corresponding key will be removed.
+     * @throws IllegalArgumentException If the key is null.
      */
     @Override
     public void saveString(String key, String value) {
 
-        // Validate inputs: neither key nor value can be null
-        if (key == null || value == null)
-            throw new IllegalArgumentException("Key or value cannot be null");
+        // Validate inputs: Ensure the key is not null
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null");
+        }
+
+        // If the value is null, remove the corresponding entry and return
+        if (value == null) {
+            remove(key);
+            return;
+        }
 
         // Ensure that the DataManager is properly initialized before proceeding
         throwExceptionIfNull();
 
-        // Get the file corresponding to the key where the object will be stored
+        // Get the file corresponding to the key where the value will be stored
         File file = getFile(key);
 
-        // Write the JSON string to the file
+        // Write the string to the file using BufferedWriter for efficiency
         try (FileOutputStream fos = new FileOutputStream(file); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
 
-            // Write the JSON string to the file
+            // Write the value to the file
             writer.write(value);
-            writer.close();
-            fos.close();
 
-            // Close the writer and output stream (handled by try-with-resources)
+            // Notify the listener about data changes, if applicable
             if (onDataChangeListener != null) {
-                // Notify the listener that the data has changed
                 onDataChangeListener.onDataChanged(key);
             }
+
         } catch (Exception e) {
-            // Print the exception message to standard error if an error occurs
-            System.err.println(e.getMessage());
+            // Log the exception to standard error output
+            System.err.println("Failed to save data for key: " + key + ". Error: " + e.getMessage());
         }
     }
 
@@ -578,17 +587,29 @@ class DataManagerImpl implements DataManager {
     /**
      * Removes an element from the list stored in JSON at the specified index.
      *
-     * @param key   The key associated with the list in storage.
-     * @param type  The Type of the list elements (e.g., new TypeToken<List<String>>(){}.getType()).
+     * <p>This method retrieves the list associated with the given key, removes the element
+     * at the specified index, and then updates the storage.</p>
+     *
+     * @param key   The unique identifier for the list stored in storage. Must not be null.
      * @param index The position of the element to be removed.
-     * @param <E>   The type of elements in the list.
      * @throws IndexOutOfBoundsException If the index is out of range for the list size.
      */
     @Override
-    public <E> void removeFromList(String key, Type type, int index) {
-        List<E> list = getList(key, type);
-        list.remove(index); // Remove element at the specified index
-        saveList(key, list); // Save the updated list
+    public void removeFromList(String key, int index) {
+        // Retrieve the list from storage
+        List<Object> list = getList(key, new TypeToken<List<Object>>() {
+        }.getType());
+
+        // Ensure the index is within the valid range
+        if (index < 0 || index >= list.size()) {
+            throw new IndexOutOfBoundsException("Invalid index: " + index + ". List size: " + list.size());
+        }
+
+        // Remove element at the specified index
+        list.remove(index);
+
+        // Save the updated list back to storage
+        saveList(key, list);
     }
 
 

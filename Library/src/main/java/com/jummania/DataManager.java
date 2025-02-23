@@ -294,13 +294,14 @@ public interface DataManager {
     /**
      * Removes an element at the specified index from a JSON-stored list.
      *
-     * @param key   The key associated with the list in storage.
-     * @param type  The Type of the list elements (e.g., new TypeToken<List<String>>(){}.getType()).
-     * @param index The position of the element to remove.
-     * @param <E>   The type of elements in the list.
-     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
+     * <p>This method retrieves the list associated with the given key, removes the element
+     * at the specified index, and updates the storage.</p>
+     *
+     * @param key   The unique identifier for the stored list. Must not be null.
+     * @param index The zero-based position of the element to be removed.
+     * @throws IndexOutOfBoundsException If the index is out of bounds for the list size.
      */
-    <E> void removeFromList(String key, Type type, int index);
+    void removeFromList(String key, int index);
 
 
     /**

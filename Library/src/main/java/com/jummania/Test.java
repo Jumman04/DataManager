@@ -24,7 +24,13 @@ public class Test {
          */
 
         dataManager.clear();
-        dataManager.appendToList("key", new char[0]);
-        dataManager.appendToList("key", "null");
+
+        for (int i = 0; i < 999; i++) {
+            dataManager.saveString("string_" + i, "i = " + i);
+            dataManager.saveInt("int_" + i, i);
+            dataManager.saveFloat("float_" + i, i);
+            dataManager.saveBoolean("boolean_" + i, i % 2 == 0);
+            dataManager.appendToList("key", "i = " + i);
+        }
     }
 }
