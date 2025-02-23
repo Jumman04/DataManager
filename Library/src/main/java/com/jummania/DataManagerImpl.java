@@ -529,19 +529,49 @@ class DataManagerImpl implements DataManager {
      * Inserts an element at the specified index in a JSON-stored list.
      * If the element already exists in the list, it will be removed before insertion.
      *
-     * @param key     The key associated with the list in storage.
-     * @param type    The Type of the list elements (e.g., new TypeToken<List<String>>(){}.getType()).
-     * @param index   The position where the new element should be inserted.
-     * @param element The element to be added to the list.
-     * @param <E>     The type of elements in the list.
+     * @param key             The key associated with the list in storage.
+     * @param index           The position where the new element should be inserted.
+     * @param element         The element to be added to the list.
+     * @param removeDuplicate If true, removes any existing occurrences of the element before adding.
      * @throws IndexOutOfBoundsException If the index is out of range for the list size.
+     * @throws IllegalArgumentException  If the stored list type does not match the element's type.
      */
     @Override
-    public <E> void appendToList(String key, Type type, int index, E element) {
-        List<E> list = getList(key, type);
-        list.remove(element); // Ensure uniqueness by removing existing instances
-        list.add(index, element); // Insert at the specified index
-        saveList(key, list); // Save the updated list
+    public void appendToList(String key, int index, Object element, boolean removeDuplicate) {
+
+        if (element == null) return;
+
+        // Retrieve the list from storage, or initialize it if null
+        List<Object> list = getList(key, new TypeToken<Object>() {
+        }.getType());
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+
+        // Ensure the retrieved list contains elements of the same type
+        if (!list.isEmpty()) {
+            Object obj = list.get(0);
+            if (!element.getClass().isInstance(obj)) {
+                throw new IllegalArgumentException("Type mismatch: Expected " + obj.getClass().getSimpleName() + ", but got " + element.getClass().getSimpleName());
+            }
+        }
+
+
+        // Remove existing instances if needed
+        if (removeDuplicate) {
+            list.remove(element);
+        }
+
+        // Ensure index is within bounds
+        if (index < 0 || index > list.size()) {
+            index = list.size(); // Append at the end if out of bounds
+        }
+
+        // Insert at the specified index
+        list.add(index, element);
+
+        // Save the updated list
+        saveList(key, list);
     }
 
 

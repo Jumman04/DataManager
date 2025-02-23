@@ -241,14 +241,54 @@ public interface DataManager {
     /**
      * Appends an element at the specified index in a JSON-stored list.
      *
+     * @param key             The key associated with the list in storage.
+     * @param index           The position where the new element should be inserted.
+     *                        Use -1 to append at the end.
+     * @param element         The element to be added to the list.
+     * @param removeDuplicate If true, removes any existing occurrences of the element before adding.
+     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
+     * @throws IllegalArgumentException  If the stored list type does not match the element's type.
+     */
+    void appendToList(String key, int index, Object element, boolean removeDuplicate);
+
+
+    /**
+     * Appends an element at the specified index in a JSON-stored list without removing duplicates.
+     *
      * @param key     The key associated with the list in storage.
-     * @param type    The Type of the list elements (e.g., new TypeToken<List<String>>(){}.getType()).
      * @param index   The position where the new element should be inserted.
      * @param element The element to be added to the list.
-     * @param <E>     The type of elements in the list.
-     * @throws IndexOutOfBoundsException If the index is invalid for the list size.
+     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
+     * @throws IllegalArgumentException  If the stored list type does not match the element's type.
      */
-    <E> void appendToList(String key, Type type, int index, E element);
+    default void appendToList(String key, int index, Object element) {
+        appendToList(key, index, element, false);
+    }
+
+
+    /**
+     * Appends an element to the end of a JSON-stored list with an option to remove duplicates.
+     *
+     * @param key             The key associated with the list in storage.
+     * @param element         The element to be added to the list.
+     * @param removeDuplicate If true, removes any existing occurrences of the element before adding.
+     * @throws IllegalArgumentException If the stored list type does not match the element's type.
+     */
+    default void appendToList(String key, Object element, boolean removeDuplicate) {
+        appendToList(key, -1, element, removeDuplicate);
+    }
+
+
+    /**
+     * Appends an element to the end of a JSON-stored list without removing duplicates.
+     *
+     * @param key     The key associated with the list in storage.
+     * @param element The element to be added to the list.
+     * @throws IllegalArgumentException If the stored list type does not match the element's type.
+     */
+    default void appendToList(String key, Object element) {
+        appendToList(key, -1, element, false);
+    }
 
 
     /**
