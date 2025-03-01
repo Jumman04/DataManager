@@ -551,11 +551,7 @@ class DataManagerImpl implements DataManager {
         if (element == null) return;
 
         // Retrieve the list from storage, or initialize it if null
-        List<Object> list = getList(key, new TypeToken<Object>() {
-        }.getType());
-        if (list == null) {
-            list = new ArrayList<>();
-        }
+        List<Object> list = getList(key, Object.class);
 
         // Ensure the retrieved list contains elements of the same type
         if (!list.isEmpty()) {
@@ -597,8 +593,7 @@ class DataManagerImpl implements DataManager {
     @Override
     public void removeFromList(String key, int index) {
         // Retrieve the list from storage
-        List<Object> list = getList(key, new TypeToken<List<Object>>() {
-        }.getType());
+        List<Object> list = getList(key, Object.class);
 
         // Ensure the index is within the valid range
         if (index < 0 || index >= list.size()) {
