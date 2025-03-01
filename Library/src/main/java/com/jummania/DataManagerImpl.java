@@ -634,6 +634,11 @@ class DataManagerImpl implements DataManager {
                 hasMoreFile = false; // Stop searching for more files
             }
         }
+
+        // Notify the listener about data changes, if applicable
+        if (onDataChangeListener != null) {
+            onDataChangeListener.onDataChanged(key);
+        }
     }
 
 
@@ -677,17 +682,19 @@ class DataManagerImpl implements DataManager {
      * @return true if the deletion was attempted, false if the file is null or does not exist.
      */
     private boolean remove(File file) {
-        // Check if the file is not null and exists
-        if (file != null && file.exists()) {
+        // Check if the file is not null
+        if (file != null) {
             // Try to delete the file
             if (file.delete()) {
                 // If the deletion is successful, print a success message
                 System.out.println("File deleted successfully: " + file.getAbsolutePath());
+
+                // Return true indicating the file was deleted
+                return true; // Return true indicating the file exists and deletion attempt was made
             } else {
                 // If the deletion fails, print an error message
                 System.err.println("Failed to delete file: " + file.getAbsolutePath());
             }
-            return true; // Return true indicating the file exists and deletion attempt was made
         }
         // If the file doesn't exist or is null, return false
         return false;
