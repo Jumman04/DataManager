@@ -190,8 +190,6 @@ public class DataManagerImpl implements DataManager {
      */
     @Override
     public <T> T getObject(String key, Type type) {
-        // Ensure DataManager is initialized
-        throwExceptionIfNull();
 
         // Validate input parameters
         if (key == null || type == null)
@@ -396,9 +394,6 @@ public class DataManagerImpl implements DataManager {
             remove(key);
             return;
         }
-
-        // Ensure that the DataManager is properly initialized before proceeding
-        throwExceptionIfNull();
 
         // Get the file corresponding to the key where the value will be stored
         File file = getFile(key);
@@ -711,21 +706,6 @@ public class DataManagerImpl implements DataManager {
     private File getFile(String key) {
         // Return the File object located in the directory with the provided key
         return new File(filesDir, key);
-    }
-
-
-    /**
-     * Checks if the DataManager is properly initialized.
-     * This method verifies that the necessary resources, such as `filesDir` and `gson`, are properly set before performing any operations.
-     * If any of the resources are null, an exception is thrown.
-     *
-     * @throws IllegalStateException If `filesDir` or `gson` are not properly initialized.
-     */
-    private void throwExceptionIfNull() {
-        // Check if filesDir or gson are null and throw an exception if they are
-        if (filesDir == null || converter == null) {
-            throw new IllegalStateException(this + " is not properly initialized. Call DataManagerFactory.create(filesDir) first.");
-        }
     }
 
 }
