@@ -1,6 +1,7 @@
 package com.jummania;
 
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.Reader;
 import java.lang.reflect.Type;
@@ -15,6 +16,15 @@ import java.util.List;
  * Dhaka, Bangladesh.
  */
 public interface DataManager {
+
+
+    /**
+     * Retrieves the raw JSON string associated with the given key.
+     *
+     * @param key The key used to identify the stored JSON data.
+     * @return The raw JSON string if the file exists and is readable; otherwise, {@code null}.
+     */
+    String getRawString(String key);
 
 
     /**
@@ -84,18 +94,6 @@ public interface DataManager {
 
 
     /**
-     * Retrieves a parameterized object associated with the specified key.
-     *
-     * @param key           The key for the stored object.
-     * @param rawType       The raw type of the object.
-     * @param typeArguments The type arguments for the parameterized object.
-     * @param <T>           The type of the object.
-     * @return The stored parameterized object of type T.
-     */
-    <T> T getParameterized(String key, Type rawType, Type... typeArguments);
-
-
-    /**
      * Retrieves a list of objects associated with the specified key.
      *
      * @param key  The key for the stored list.
@@ -104,6 +102,16 @@ public interface DataManager {
      * @return A list of objects of type T.
      */
     <T> List<T> getList(String key, Type type);
+
+
+    /**
+     * Retrieves a {@link Reader} for reading the stored JSON data associated with the given key.
+     *
+     * @param key The key used to identify the stored file.
+     * @return A {@link Reader} instance if the file exists and is readable; otherwise, {@code null}.
+     * @throws IllegalArgumentException If the key is {@code null}.
+     */
+    Reader getReader(String key);
 
 
     /**
@@ -346,6 +354,26 @@ public interface DataManager {
 
 
     /**
+     * Returns a parameterized {@link Type} representing a generic type with the specified raw type
+     * and type arguments.
+     * <p>
+     * This method is useful when working with Java's generic type system at runtime, particularly
+     * when using libraries like Gson that require type information for deserialization.
+     * </p>
+     *
+     * @param rawType       The raw class type that represents the generic type.
+     * @param typeArguments The type arguments that should be applied to the raw type.
+     *                      These define the generic parameters of the raw type.
+     * @return A {@link Type} representing the parameterized type with the specified type arguments.
+     * @throws IllegalArgumentException if the number of type arguments is inconsistent
+     *                                  with the number of parameters required by the raw type.
+     * @see TypeToken#getParameterized(Type, Type...)
+     * @see java.lang.reflect.ParameterizedType
+     */
+    Type getParameterized(Type rawType, Type... typeArguments);
+
+
+    /**
      * Removes the stored value associated with the specified key.
      *
      * @param key The key for the value to remove.
@@ -370,32 +398,38 @@ public interface DataManager {
 
     // Data change listener registration
 
+
     /**
-     * Registers a listener to be notified when data associated with a key changes.
+     * Registers a {@link DataObserver} to listen for data changes.
      *
-     * @param listener The listener to be registered.
+     * @param observer The observer to be registered.
      */
-    void registerOnDataChangeListener(OnDataChangeListener listener);
+    void addDataObserver(DataObserver observer);
+
+    /**
+     * Unregisters the currently registered {@link DataObserver}.
+     */
+    void removeDataObserver();
 
 
     /**
-     * Unregisters the currently registered data change listener.
+     * Observer interface for receiving notifications about data changes and errors.
      */
-    void unregisterOnDataChangeListener();
-
-
-    /**
-     * Interface for listeners to be notified when data changes.
-     */
-    interface OnDataChangeListener {
-
+    interface DataObserver {
 
         /**
-         * Called when data associated with a key changes.
+         * Called when the data associated with a specific key has changed.
          *
-         * @param key The key whose data has changed.
+         * @param key The key whose associated data has changed.
          */
-        void onDataChanged(String key);
+        void onDataChange(String key);
+
+        /**
+         * Called when an error occurs while processing data.
+         *
+         * @param error The exception or error encountered.
+         */
+        void onError(Throwable error);
     }
 
 

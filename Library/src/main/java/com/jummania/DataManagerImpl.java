@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +39,7 @@ public class DataManagerImpl implements DataManager {
     private final File filesDir;
 
     // Listener to notify data changes
-    private OnDataChangeListener onDataChangeListener;
+    private DataObserver dataObserver;
 
 
     /**
@@ -74,6 +75,32 @@ public class DataManagerImpl implements DataManager {
         } else {
             System.out.println("Folder already exists: " + this.filesDir.getAbsolutePath());
         }
+    }
+
+
+    /**
+     * Retrieves the raw JSON string stored in the file associated with the given key.
+     *
+     * @param key The key associated with the stored JSON data.
+     * @return The raw JSON string if the file exists and can be read; otherwise, {@code null}.
+     */
+    @Override
+    public String getRawString(String key) {
+        try (Reader reader = getReader(key); BufferedReader bufferedReader = new BufferedReader(reader)) {
+
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            return sb.toString();
+
+        } catch (IOException e) {
+            notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
+        }
+
+        return null; // Return null in case of an error
     }
 
 
@@ -192,8 +219,7 @@ public class DataManagerImpl implements DataManager {
     public <T> T getObject(String key, Type type) {
 
         // Validate input parameters
-        if (key == null || type == null)
-            throw new IllegalArgumentException("Key or type cannot be null");
+        if (type == null) throw new IllegalArgumentException("type cannot be null");
 
         File file = getFile(key);
         if (!file.exists()) {
@@ -201,39 +227,18 @@ public class DataManagerImpl implements DataManager {
             return null;
         }
 
-        try (BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024); InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
-            // Deserialize the file content to the given type
-            return fromReader(inputStreamReader, type);
+        try (Reader reader = getReader(key)) {
+            if (reader != null) {
+                return fromReader(reader, type);
+            }
         } catch (IOException e) {
-            // Log the error for debugging purposes
-            System.err.println("Error reading file for key " + key + ": " + e.getMessage());
+            notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
         } catch (JsonSyntaxException e) {
-            // Log JSON deserialization issues
-            System.err.println("Error deserializing JSON for key " + key + ": " + e.getMessage());
+            notifyError(new JsonSyntaxException("Error deserializing JSON for key '" + key + "': " + e.getMessage(), e));
         }
 
         // Return null if an error occurs
         return null;
-    }
-
-
-    /**
-     * Retrieves a parameterized object associated with the given key from the stored data.
-     * This method allows deserialization of complex types with generic type parameters.
-     * The generic type arguments are passed in as varargs, enabling support for parameterized types
-     * like lists or maps.
-     *
-     * @param key           The key used to identify the stored parameterized object.
-     * @param rawType       The raw type of the object to be retrieved (e.g., `List.class`, `Map.class`).
-     * @param typeArguments The type arguments (e.g., `String.class`, `Integer.class`) to specify
-     *                      the specific types for generics.
-     * @param <T>           The type of the object to be returned.
-     * @return The deserialized object of type `T`, or `null` if the object could not be retrieved.
-     */
-    @Override
-    public <T> T getParameterized(String key, Type rawType, Type... typeArguments) {
-        // Deserialize the object using the provided raw type and type arguments
-        return getObject(key, TypeToken.getParameterized(rawType, typeArguments).getType());
     }
 
 
@@ -278,6 +283,35 @@ public class DataManagerImpl implements DataManager {
 
         // Return the full list of retrieved objects
         return dataList;
+    }
+
+
+    /**
+     * Retrieves a {@link Reader} for the file associated with the given key.
+     *
+     * @param key The unique identifier for the file.
+     * @return A {@link Reader} to read the file's content, or {@code null} if the file does not exist or an error occurs.
+     * @throws IllegalArgumentException if the key is {@code null}.
+     */
+    @Override
+    public Reader getReader(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null");
+        }
+
+        File file = getFile(key);
+        if (!file.exists()) {
+            return null;
+        }
+
+        try {
+            BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(file.toPath()), 16 * 1024);
+            return new InputStreamReader(inputStream);
+        } catch (IOException e) {
+            notifyError(new IOException("Failed to open file for key '" + key + "': " + e.getMessage(), e));
+        }
+
+        return null;
     }
 
 
@@ -333,6 +367,29 @@ public class DataManagerImpl implements DataManager {
 
 
     /**
+     * Generates a parameterized {@link Type} with the specified raw type and type arguments.
+     * <p>
+     * This method is useful for dynamically constructing generic type representations
+     * at runtime, particularly when working with serialization libraries like Gson.
+     * </p>
+     *
+     * @param rawType       The base class type that the generic type is based on.
+     *                      For example, {@code List.class} for a List type.
+     * @param typeArguments The type parameters for the generic type.
+     *                      For example, {@code String.class} for {@code List<String>}.
+     * @return A {@link Type} representing the parameterized type with the given type arguments.
+     * @throws IllegalArgumentException If the number of type arguments does not match
+     *                                  the generic type parameters of the raw type.
+     * @see TypeToken#getParameterized(Type, Type...)
+     * @see java.lang.reflect.ParameterizedType
+     */
+    @Override
+    public Type getParameterized(Type rawType, Type... typeArguments) {
+        return TypeToken.getParameterized(rawType, typeArguments).getType();
+    }
+
+
+    /**
      * Checks if a file associated with the given key exists in the stored data.
      * This method determines whether a file corresponding to the provided key is present in the data storage directory.
      *
@@ -353,9 +410,9 @@ public class DataManagerImpl implements DataManager {
      * @param listener The listener that will be notified of data changes.
      */
     @Override
-    public void registerOnDataChangeListener(OnDataChangeListener listener) {
+    public void addDataObserver(DataObserver listener) {
         // Set the provided listener to be notified of data changes
-        onDataChangeListener = listener;
+        dataObserver = listener;
     }
 
 
@@ -364,9 +421,9 @@ public class DataManagerImpl implements DataManager {
      * This method removes the previously registered listener, preventing it from being notified of any future data changes.
      */
     @Override
-    public void unregisterOnDataChangeListener() {
+    public void removeDataObserver() {
         // Set the listener to null, effectively unregistering it
-        onDataChangeListener = null;
+        dataObserver = null;
     }
 
 
@@ -405,13 +462,12 @@ public class DataManagerImpl implements DataManager {
             writer.write(value);
 
             // Notify the listener about data changes, if applicable
-            if (onDataChangeListener != null) {
-                onDataChangeListener.onDataChanged(key);
+            if (dataObserver != null) {
+                dataObserver.onDataChange(key);
             }
 
-        } catch (Exception e) {
-            // Log the exception to standard error output
-            System.err.println("Failed to save data for key: " + key + ". Error: " + e.getMessage());
+        } catch (IOException e) {
+            notifyError(new IOException("Error saving data for key: '" + key + "'. Error: " + e.getMessage(), e));
         }
     }
 
@@ -631,8 +687,8 @@ public class DataManagerImpl implements DataManager {
         }
 
         // Notify the listener about data changes, if applicable
-        if (onDataChangeListener != null) {
-            onDataChangeListener.onDataChanged(key);
+        if (dataObserver != null) {
+            dataObserver.onDataChange(key);
         }
     }
 
@@ -707,5 +763,18 @@ public class DataManagerImpl implements DataManager {
         // Return the File object located in the directory with the provided key
         return new File(filesDir, key);
     }
+
+
+    /**
+     * Notifies the registered DataObserver of an error.
+     *
+     * @param error The exception or error encountered.
+     */
+    private void notifyError(Throwable error) {
+        if (dataObserver != null) {
+            dataObserver.onError(error);
+        }
+    }
+
 
 }

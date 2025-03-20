@@ -111,10 +111,16 @@ List<String> fruits = dataManager.getList("fruits", String.class);
 You can register a listener to detect when data changes:
 
 ```java
-dataManager.registerOnDataChangeListener(new OnDataChangeListener() {
+dataManager.addDataObserver(new DataObserver() {
     @Override
-    public void onDataChanged (String key){
+    public void onDataChange (String key){
         // Handle data change for the specific key
+    }
+
+    @Override
+    public void onError (Throwable error){
+        // Handle error if necessary
+        System.err.println("Error occurred for key '" + key + "': " + error.getMessage());
     }
 });
 ```

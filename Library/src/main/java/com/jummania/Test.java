@@ -23,14 +23,17 @@ public class Test {
 
          */
 
-        dataManager.clear();
+        // dataManager.clear();
 
-        for (int i = 0; i < 999; i++) {
-            dataManager.saveString("string_" + i, "i = " + i);
-            dataManager.saveInt("int_" + i, i);
-            dataManager.saveFloat("float_" + i, i);
-            dataManager.saveBoolean("boolean_" + i, i % 2 == 0);
-            dataManager.appendToList("key", "i = " + i);
-        }
+        //  dataManager.saveString("key", "hello");
+
+
+        // dataManager.appendToList("key", "key");
+
+        dataManager.appendToList("key", 1, "hello");
+        // dataManager.removeFromList("key", 1);
+
+        System.out.println(dataManager.getRawString("key"));
+
     }
 }
