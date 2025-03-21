@@ -156,29 +156,29 @@ DataManager dataManager = DataManagerFactory.create(getFilesDir(), new MyCustomC
 
 ## Methods Overview
 
-| Return Type   | Method Name                                                               | Description                                                |
-|---------------|---------------------------------------------------------------------------|------------------------------------------------------------|
-| `<T>`         | `fromJson(String value, Type typeOfT)`                                    | Converts JSON to an object of the specified type.          |
-| `<T>`         | `fromReader(Reader json, Type typeOfT)`                                   | Converts a JSON stream to an object of the specified type. |
-| `<T>`         | `getObject(String key, Type type)`                                        | Retrieves a stored object.                                 |
-| `<T>`         | `getParameterized(String key, Type rawType, Type... typeArguments)`       | Retrieves a parameterized object.                          |
-| `<T> List<T>` | `getList(String key, Type type)`                                          | Retrieves a list of objects.                               |
-| `boolean`     | `getBoolean(String key, boolean defValue)`                                | Retrieves a boolean value.                                 |
-| `float`       | `getFloat(String key, float defValue)`                                    | Retrieves a float value.                                   |
-| `int`         | `getInt(String key, int defValue)`                                        | Retrieves an int value.                                    |
-| `long`        | `getLong(String key, long defValue)`                                      | Retrieves a long value.                                    |
-| `String`      | `getString(String key, String defValue)`                                  | Retrieves a String value.                                  |
-| `String`      | `toJson(Object object)`                                                   | Converts an object to a JSON string.                       |
-| `void`        | `registerOnDataChangeListener(DataManager.OnDataChangeListener listener)` | Registers a data change listener.                          |
-| `void`        | `remove(String key)`                                                      | Removes the stored value.                                  |
-| `void`        | `saveBoolean(String key, boolean value)`                                  | Stores a boolean value.                                    |
-| `void`        | `saveFloat(String key, float value)`                                      | Stores a float value.                                      |
-| `void`        | `saveInt(String key, int value)`                                          | Stores an int value.                                       |
-| `void`        | `saveLong(String key, long value)`                                        | Stores a long value.                                       |
-| `void`        | `saveList(String key, List<T> value)`                                     | Stores a list of objects.                                  |
-| `void`        | `saveList(String key, List<T> value, int maxArraySize)`                   | Stores a list of objects with a size limit.                |
-| `void`        | `saveObject(String key, Object value)`                                    | Stores an object.                                          |
-| `void`        | `saveString(String key, String value)`                                    | Stores a String value.                                     |
+| Return Type   | Method Name                                                         | Description                                                |
+|---------------|---------------------------------------------------------------------|------------------------------------------------------------|
+| `<T>`         | `fromJson(String value, Type typeOfT)`                              | Converts JSON to an object of the specified type.          |
+| `<T>`         | `fromReader(Reader json, Type typeOfT)`                             | Converts a JSON stream to an object of the specified type. |
+| `<T>`         | `getObject(String key, Type type)`                                  | Retrieves a stored object.                                 |
+| `<T>`         | `getParameterized(String key, Type rawType, Type... typeArguments)` | Retrieves a parameterized object.                          |
+| `<T> List<T>` | `getList(String key, Type type)`                                    | Retrieves a list of objects.                               |
+| `boolean`     | `getBoolean(String key, boolean defValue)`                          | Retrieves a boolean value.                                 |
+| `float`       | `getFloat(String key, float defValue)`                              | Retrieves a float value.                                   |
+| `int`         | `getInt(String key, int defValue)`                                  | Retrieves an int value.                                    |
+| `long`        | `getLong(String key, long defValue)`                                | Retrieves a long value.                                    |
+| `String`      | `getString(String key, String defValue)`                            | Retrieves a String value.                                  |
+| `String`      | `toJson(Object object)`                                             | Converts an object to a JSON string.                       |
+| `void`        | `addDataObserver(DataManager.DataObserver observer)`                | Registers a data change listener.                          |
+| `void`        | `remove(String key)`                                                | Removes the stored value.                                  |
+| `void`        | `saveBoolean(String key, boolean value)`                            | Stores a boolean value.                                    |
+| `void`        | `saveFloat(String key, float value)`                                | Stores a float value.                                      |
+| `void`        | `saveInt(String key, int value)`                                    | Stores an int value.                                       |
+| `void`        | `saveLong(String key, long value)`                                  | Stores a long value.                                       |
+| `void`        | `saveList(String key, List<T> value)`                               | Stores a list of objects.                                  |
+| `void`        | `saveList(String key, List<T> value, int maxArraySize)`             | Stores a list of objects with a size limit.                |
+| `void`        | `saveObject(String key, Object value)`                              | Stores an object.                                          |
+| `void`        | `saveString(String key, String value)`                              | Stores a String value.                                     |
 
 For more methods, refer to
 the [documentation](https://jumman04.github.io/DataManager/doc/index.html).
