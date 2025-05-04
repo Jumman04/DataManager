@@ -30,7 +30,7 @@ import java.util.List;
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */
-public class DataManagerImpl implements DataManager {
+class DataManagerImpl implements DataManager {
 
     // Converter instance for serializing and deserializing data
     private final Converter converter;
@@ -50,7 +50,7 @@ public class DataManagerImpl implements DataManager {
      * @param converter The converter for serialization/deserialization.
      * @throws IllegalArgumentException If the provided filesDir or converter is null.
      */
-    public DataManagerImpl(File filesDir, Converter converter) {
+    DataManagerImpl(File filesDir, Converter converter) {
         // Ensure the filesDir argument is not null
         if (filesDir == null) {
             throw new IllegalArgumentException("The 'filesDir' argument cannot be null.");
@@ -775,6 +775,5 @@ public class DataManagerImpl implements DataManager {
             dataObserver.onError(error);
         }
     }
-
 
 }

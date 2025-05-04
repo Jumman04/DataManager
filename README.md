@@ -17,13 +17,7 @@ manipulate data using JSON serialization and deserialization.
 - **Type-Safe Operations**: Work with strongly-typed objects and use generics for flexibility.
 - **Customizable Converter**: **NEW in version 2.8!** You can choose from the following built-in
   converters:
-    - **FastJsonConverter**
-    - **GsonConverter**
-    - **JacksonConverter**
-    - **JsonIterConverter**
-    - **LoganSquareConverter**
-    - **MoshiConverter**
-    - **KotlinxSerializationConverter**
+    - **GsonConverter**: Uses the Google Gson library for serialization and deserialization.
 
   You can also create your own converter by implementing the `DataManager.Converter` interface,
   allowing for even greater flexibility in handling data.
@@ -56,7 +50,7 @@ dependencyResolutionManagement {
 Add the following dependency to your module-level `build.gradle` file:
 
 ```groovy
-implementation 'com.github.Jumman04:DataManager:2.8'
+implementation 'com.github.Jumman04:DataManager:3.0'
 ```
 
 ---
