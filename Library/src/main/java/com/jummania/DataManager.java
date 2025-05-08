@@ -1,124 +1,48 @@
 package com.jummania;
 
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
+import com.jummania.model.PaginatedData;
 
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Interface for managing data storage and retrieval, including primitives, objects, and collections.
- * Provides methods to store, retrieve, and remove data, as well as register listeners for data changes.
+ * Interface for managing data operations such as saving, retrieving, and deleting key-value data,
+ * including support for JSON serialization, pagination, and list management.
+ * <p>
+ * Implementations of this interface should provide persistent or in-memory storage functionality.
  * <p>
  * Created by Jummania on 20, November, 2024.
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */
+
+
 public interface DataManager {
 
 
     /**
-     * Retrieves the raw JSON string associated with the given key.
+     * Retrieves a string value associated with the given key.
+     * If no value is found or the value is null, returns the provided default value.
      *
-     * @param key The key used to identify the stored JSON data.
-     * @return The raw JSON string if the file exists and is readable; otherwise, {@code null}.
+     * @param key      the key to look up the value
+     * @param defValue the default value to return if no value is found or if the result is null
+     * @return the retrieved string value or the default value if not found
      */
-    String getRawString(String key);
+    default String getString(String key, String defValue) {
+        String value = getObject(key, String.class);
+        return value != null ? value : defValue;
+    }
 
 
     /**
-     * Retrieves a stored String value associated with the specified key.
-     * If no value is found, returns the provided default value.
+     * Retrieves a string value associated with the given key.
+     * If no value is found or the value is null, returns null.
+     * <p>
+     * This is a shorthand method that calls {@link #getString(String, String)} with a default value of null.
      *
-     * @param key      The key for the stored value.
-     * @param defValue The default value to return if no value is found.
-     * @return The stored String value or the default value.
-     */
-    String getString(String key, String defValue);
-
-
-    /**
-     * Retrieves a stored int value associated with the specified key.
-     * If no value is found, returns the provided default value.
-     *
-     * @param key      The key for the stored value.
-     * @param defValue The default value to return if no value is found.
-     * @return The stored int value or the default value.
-     */
-    int getInt(String key, int defValue);
-
-
-    /**
-     * Retrieves a stored long value associated with the specified key.
-     * If no value is found, returns the provided default value.
-     *
-     * @param key      The key for the stored value.
-     * @param defValue The default value to return if no value is found.
-     * @return The stored long value or the default value.
-     */
-    long getLong(String key, long defValue);
-
-
-    /**
-     * Retrieves a stored float value associated with the specified key.
-     * If no value is found, returns the provided default value.
-     *
-     * @param key      The key for the stored value.
-     * @param defValue The default value to return if no value is found.
-     * @return The stored float value or the default value.
-     */
-    float getFloat(String key, float defValue);
-
-
-    /**
-     * Retrieves a stored boolean value associated with the specified key.
-     * If no value is found, returns the provided default value.
-     *
-     * @param key      The key for the stored value.
-     * @param defValue The default value to return if no value is found.
-     * @return The stored boolean value or the default value.
-     */
-    boolean getBoolean(String key, boolean defValue);
-
-
-    /**
-     * Retrieves a stored object associated with the specified key.
-     *
-     * @param key  The key for the stored object.
-     * @param type The Type of the object to retrieve.
-     * @param <T>  The type of the object.
-     * @return The stored object of type T.
-     */
-    <T> T getObject(String key, Type type);
-
-
-    /**
-     * Retrieves a list of objects associated with the specified key.
-     *
-     * @param key  The key for the stored list.
-     * @param type The Type of the objects in the list.
-     * @param <T>  The type of objects in the list.
-     * @return A list of objects of type T.
-     */
-    <T> List<T> getList(String key, Type type);
-
-
-    /**
-     * Retrieves a {@link Reader} for reading the stored JSON data associated with the given key.
-     *
-     * @param key The key used to identify the stored file.
-     * @return A {@link Reader} instance if the file exists and is readable; otherwise, {@code null}.
-     * @throws IllegalArgumentException If the key is {@code null}.
-     */
-    Reader getReader(String key);
-
-
-    /**
-     * Retrieves a String value associated with the specified key, with a default value of null if not found.
-     *
-     * @param key The key for the stored value.
-     * @return The stored String value or null if no value is found.
+     * @param key the key to look up the value
+     * @return the retrieved string value or null if not found
      */
     default String getString(String key) {
         return getString(key, null);
@@ -126,10 +50,27 @@ public interface DataManager {
 
 
     /**
-     * Retrieves an int value associated with the specified key, with a default value of 0 if not found.
+     * Retrieves an integer value associated with the given key.
+     * If no value is found or the value is null, returns the provided default value.
      *
-     * @param key The key for the stored value.
-     * @return The stored int value or 0 if no value is found.
+     * @param key      the key to look up the value
+     * @param defValue the default value to return if no value is found or if the result is null
+     * @return the retrieved integer value or the default value if not found
+     */
+    default int getInt(String key, int defValue) {
+        Integer value = getObject(key, Integer.class);
+        return value != null ? value : defValue;
+    }
+
+
+    /**
+     * Retrieves an integer value associated with the given key.
+     * If no value is found or the value is null, returns 0.
+     * <p>
+     * This is a shorthand method that calls {@link #getInt(String, int)} with a default value of 0.
+     *
+     * @param key the key to look up the value
+     * @return the retrieved integer value or 0 if not found
      */
     default int getInt(String key) {
         return getInt(key, 0);
@@ -137,10 +78,27 @@ public interface DataManager {
 
 
     /**
-     * Retrieves a long value associated with the specified key, with a default value of 0L if not found.
+     * Retrieves a long value associated with the given key.
+     * If no value is found or the value is null, returns the provided default value.
      *
-     * @param key The key for the stored value.
-     * @return The stored long value or 0L if no value is found.
+     * @param key      the key to look up the value
+     * @param defValue the default value to return if no value is found or if the result is null
+     * @return the retrieved long value or the default value if not found
+     */
+    default long getLong(String key, long defValue) {
+        Long value = getObject(key, Long.class);
+        return value != null ? value : defValue;
+    }
+
+
+    /**
+     * Retrieves a long value associated with the given key.
+     * If no value is found or the value is null, returns 0.
+     * <p>
+     * This is a shorthand method that calls {@link #getLong(String, long)} with a default value of 0.
+     *
+     * @param key the key to look up the value
+     * @return the retrieved long value or 0 if not found
      */
     default long getLong(String key) {
         return getLong(key, 0L);
@@ -148,10 +106,27 @@ public interface DataManager {
 
 
     /**
-     * Retrieves a float value associated with the specified key, with a default value of 0F if not found.
+     * Retrieves a float value associated with the given key.
+     * If no value is found or the value is null, returns the provided default value.
      *
-     * @param key The key for the stored value.
-     * @return The stored float value or 0F if no value is found.
+     * @param key      the key to look up the value
+     * @param defValue the default value to return if no value is found or if the result is null
+     * @return the retrieved float value or the default value if not found
+     */
+    default float getFloat(String key, float defValue) {
+        Float value = getObject(key, Float.class);
+        return value != null ? value : defValue;
+    }
+
+
+    /**
+     * Retrieves a float value associated with the given key.
+     * If no value is found or the value is null, returns 0.
+     * <p>
+     * This is a shorthand method that calls {@link #getFloat(String, float)} with a default value of 0.
+     *
+     * @param key the key to look up the value
+     * @return the retrieved float value or 0 if not found
      */
     default float getFloat(String key) {
         return getFloat(key, 0F);
@@ -159,115 +134,212 @@ public interface DataManager {
 
 
     /**
-     * Retrieves a boolean value associated with the specified key, with a default value of false if not found.
+     * Retrieves a boolean value associated with the given key.
+     * If no value is found or the value is null, returns the provided default value.
      *
-     * @param key The key for the stored value.
-     * @return The stored boolean value or false if no value is found.
+     * @param key      the key to look up the value
+     * @param defValue the default value to return if no value is found or if the result is null
+     * @return the retrieved boolean value or the default value if not found
+     */
+    default boolean getBoolean(String key, boolean defValue) {
+        Boolean value = getObject(key, Boolean.class);
+        return value != null ? value : defValue;
+    }
+
+
+    /**
+     * Retrieves a boolean value associated with the given key.
+     * If no value is found or the value is null, returns false.
+     * <p>
+     * This is a shorthand method that calls {@link #getBoolean(String, boolean)} with a default value of false.
+     *
+     * @param key the key to look up the value
+     * @return the retrieved boolean value or false if not found
      */
     default boolean getBoolean(String key) {
         return getBoolean(key, false);
     }
 
 
-    // Data modification methods
+    /**
+     * Retrieves the raw string value associated with the given key.
+     * The value is returned as-is, without any defaulting behavior.
+     *
+     * @param key the key to look up the value
+     * @return the raw string value associated with the key, or null if not found
+     */
+    String getRawString(String key);
+
 
     /**
-     * Stores a String value with the specified key.
+     * Retrieves an object of the specified type associated with the given key.
+     * The object is deserialized from the underlying data source to match the specified type.
      *
-     * @param key   The key for the stored value.
-     * @param value The String value to store.
+     * @param key  the key to look up the object
+     * @param type the type of the object to be returned
+     * @param <T>  the type of the object to be returned
+     * @return the object of the specified type associated with the key, or null if not found or if the type doesn't match
+     */
+    <T> T getObject(String key, Type type);
+
+
+    /**
+     * Retrieves a list of objects of the specified type associated with the given key.
+     * The list is deserialized from the underlying data source to match the specified type.
+     *
+     * @param key  the key to look up the list of objects
+     * @param type the type of the objects in the list
+     * @param <T>  the type of the objects in the list
+     * @return the list of objects of the specified type associated with the key, or an empty list if not found
+     */
+    <T> List<T> getFullList(String key, Type type);
+
+
+    /**
+     * Retrieves a paginated list of objects of the specified type associated with the given key.
+     * The list is deserialized from the underlying data source to match the specified type, with pagination support.
+     *
+     * @param key  the key to look up the paginated list of objects
+     * @param type the type of the objects in the list
+     * @param page the page number to retrieve
+     * @param <T>  the type of the objects in the list
+     * @return a {@link PaginatedData} object containing the paginated list of objects of the specified type,
+     * or an empty paginated data if no objects are found
+     */
+    <T> PaginatedData<T> getPagedList(String key, Type type, int page);
+
+
+    /**
+     * Saves a string value associated with the given key.
+     * If the key already exists, the value will be updated.
+     *
+     * @param key   the key to associate with the string value
+     * @param value the string value to save
      */
     void saveString(String key, String value);
 
 
     /**
-     * Stores an int value with the specified key.
+     * Saves an integer value associated with the given key by converting the integer to a string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the integer value to a string.
      *
-     * @param key   The key for the stored value.
-     * @param value The int value to store.
+     * @param key   the key to associate with the integer value
+     * @param value the integer value to save
      */
-    void saveInt(String key, int value);
+    default void saveInt(String key, int value) {
+        saveString(key, Integer.toString(value));
+    }
 
 
     /**
-     * Stores a long value with the specified key.
+     * Saves a long value associated with the given key by converting the long to a string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the long value to a string.
      *
-     * @param key   The key for the stored value.
-     * @param value The long value to store.
+     * @param key   the key to associate with the long value
+     * @param value the long value to save
      */
-    void saveLong(String key, long value);
+    default void saveLong(String key, long value) {
+        saveString(key, Long.toString(value));
+    }
 
 
     /**
-     * Stores a float value with the specified key.
+     * Saves a float value associated with the given key by converting the float to a string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the float value to a string.
      *
-     * @param key   The key for the stored value.
-     * @param value The float value to store.
+     * @param key   the key to associate with the float value
+     * @param value the float value to save
      */
-    void saveFloat(String key, float value);
+    default void saveFloat(String key, float value) {
+        saveString(key, Float.toString(value));
+    }
 
 
     /**
-     * Stores a boolean value with the specified key.
+     * Saves a boolean value associated with the given key by converting the boolean to a string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the boolean value to a string.
      *
-     * @param key   The key for the stored value.
-     * @param value The boolean value to store.
+     * @param key   the key to associate with the boolean value
+     * @param value the boolean value to save
      */
-    void saveBoolean(String key, boolean value);
+    default void saveBoolean(String key, boolean value) {
+        saveString(key, Boolean.toString(value));
+    }
 
 
     /**
-     * Stores an object with the specified key.
+     * Saves an object associated with the given key by converting the object to a JSON string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the object to a JSON string using {@link #toJson(Object)}.
      *
-     * @param key   The key for the stored object.
-     * @param value The object to store.
+     * @param key   the key to associate with the object
+     * @param value the object to save
      */
-    void saveObject(String key, Object value);
+    default void saveObject(String key, Object value) {
+        saveString(key, toJson(value));
+    }
 
 
     /**
-     * Stores a list of objects with the specified key.
+     * Saves a list of objects associated with the given key by converting the list to a JSON string.
+     * If the key already exists, the value will be updated.
+     * The size of the list is capped to the specified maximum array size.
      *
-     * @param key   The key for the stored list.
-     * @param value The list of objects to store.
-     * @param <E>   The type of objects in the list.
-     */
-    <E> void saveList(String key, List<E> value);
-
-
-    /**
-     * Stores a list of objects with the specified key, limiting the size of the list.
-     *
-     * @param key          The key for the stored list.
-     * @param value        The list of objects to store.
-     * @param maxArraySize The maximum allowed size of the list.
-     * @param <E>          The type of objects in the list.
+     * @param key          the key to associate with the list of objects
+     * @param value        the list of objects to save
+     * @param maxArraySize the maximum number of elements in the list to be saved
+     * @param <E>          the type of elements in the list
      */
     <E> void saveList(String key, List<E> value, int maxArraySize);
 
 
     /**
-     * Appends an element at the specified index in a JSON-stored list.
+     * Saves a list of objects associated with the given key by converting the list to a JSON string.
+     * If the key already exists, the value will be updated. The size of the list is capped to 25 elements.
+     * <p>
+     * This is a shorthand method that calls {@link #saveList(String, List, int)} with a default maximum array size of 25.
      *
-     * @param key             The key associated with the list in storage.
-     * @param index           The position where the new element should be inserted.
-     *                        Use -1 to append at the end.
-     * @param element         The element to be added to the list.
-     * @param removeDuplicate If true, removes any existing occurrences of the element before adding.
-     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
-     * @throws IllegalArgumentException  If the stored list type does not match the element's type.
+     * @param key   the key to associate with the list of objects
+     * @param value the list of objects to save
+     * @param <E>   the type of elements in the list
+     */
+    default <E> void saveList(String key, List<E> value) {
+        saveList(key, value, 25);
+    }
+
+
+    /**
+     * Appends an element to a list associated with the given key at the specified index.
+     * If the list does not exist, a new list will be created.
+     * Optionally, duplicates can be removed before appending the element.
+     *
+     * @param key             the key to identify the list
+     * @param index           the position at which to insert the element in the list
+     * @param element         the element to append to the list
+     * @param removeDuplicate whether to remove duplicate elements before appending the new element
      */
     void appendToList(String key, int index, Object element, boolean removeDuplicate);
 
 
     /**
-     * Appends an element at the specified index in a JSON-stored list without removing duplicates.
+     * Appends an element to a list associated with the given key at the specified index.
+     * If the list does not exist, a new list will be created. Duplicates are not removed by default.
+     * <p>
+     * This is a shorthand method that calls {@link #appendToList(String, int, Object, boolean)} with the
+     * `removeDuplicate` flag set to false.
      *
-     * @param key     The key associated with the list in storage.
-     * @param index   The position where the new element should be inserted.
-     * @param element The element to be added to the list.
-     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
-     * @throws IllegalArgumentException  If the stored list type does not match the element's type.
+     * @param key     the key to identify the list
+     * @param index   the position at which to insert the element in the list
+     * @param element the element to append to the list
      */
     default void appendToList(String key, int index, Object element) {
         appendToList(key, index, element, false);
@@ -275,12 +347,15 @@ public interface DataManager {
 
 
     /**
-     * Appends an element to the end of a JSON-stored list with an option to remove duplicates.
+     * Appends an element to a list associated with the given key. The element is added at the end of the list.
+     * If the list does not exist, a new list will be created. Optionally, duplicates can be removed before appending the element.
+     * <p>
+     * This is a shorthand method that calls {@link #appendToList(String, int, Object, boolean)} with the index set to -1,
+     * indicating the element should be appended to the end of the list.
      *
-     * @param key             The key associated with the list in storage.
-     * @param element         The element to be added to the list.
-     * @param removeDuplicate If true, removes any existing occurrences of the element before adding.
-     * @throws IllegalArgumentException If the stored list type does not match the element's type.
+     * @param key             the key to identify the list
+     * @param element         the element to append to the list
+     * @param removeDuplicate whether to remove duplicate elements before appending the new element
      */
     default void appendToList(String key, Object element, boolean removeDuplicate) {
         appendToList(key, -1, element, removeDuplicate);
@@ -288,11 +363,15 @@ public interface DataManager {
 
 
     /**
-     * Appends an element to the end of a JSON-stored list without removing duplicates.
+     * Appends an element to a list associated with the given key. The element is added at the end of the list.
+     * If the list does not exist, a new list will be created. Duplicates are not removed by default.
+     * <p>
+     * This is a shorthand method that calls {@link #appendToList(String, Object, boolean)} with the index set to -1
+     * and the `removeDuplicate` flag set to false, meaning the element will be added to the end of the list without
+     * removing duplicates.
      *
-     * @param key     The key associated with the list in storage.
-     * @param element The element to be added to the list.
-     * @throws IllegalArgumentException If the stored list type does not match the element's type.
+     * @param key     the key to identify the list
+     * @param element the element to append to the list
      */
     default void appendToList(String key, Object element) {
         appendToList(key, -1, element, false);
@@ -300,104 +379,87 @@ public interface DataManager {
 
 
     /**
-     * Removes an element at the specified index from a JSON-stored list.
+     * Removes an element from the list associated with the given key at the specified index.
+     * If the list does not contain an element at the given index, no changes will be made.
      *
-     * <p>This method retrieves the list associated with the given key, removes the element
-     * at the specified index, and updates the storage.</p>
-     *
-     * @param key   The unique identifier for the stored list. Must not be null.
-     * @param index The zero-based position of the element to be removed.
-     * @throws IndexOutOfBoundsException If the index is out of bounds for the list size.
+     * @param key   the key to identify the list
+     * @param index the position of the element to remove from the list
      */
     void removeFromList(String key, int index);
 
 
     /**
-     * Converts the provided JSON string to an object of the specified type.
-     * <p>
-     * This method uses Gson to deserialize the JSON string into an object of the specified type.
-     * The type parameter allows the conversion to a specific object type.
-     * </p>
+     * Converts a JSON string into an object of the specified type.
+     * This method deserializes the given JSON string into an instance of the provided type using the Gson library (or similar).
      *
-     * @param value   the JSON string to deserialize.
-     * @param typeOfT the type of the object to deserialize into.
-     * @param <T>     the type of the object.
-     * @return the deserialized object of type T.
-     * @throws JsonSyntaxException if the JSON string is not a valid representation for the specified type.
+     * @param value   the JSON string to deserialize
+     * @param typeOfT the Type of the object to convert the JSON string into
+     * @param <T>     the type of the object to return
+     * @return the deserialized object of the specified type
      */
     <T> T fromJson(String value, Type typeOfT);
 
 
     /**
-     * Converts a JSON stream from a Reader into a Java object of the specified type.
+     * Converts a JSON input stream (Reader) into an object of the specified type.
+     * This method deserializes the provided JSON from the given reader into an instance of the provided type.
      *
-     * @param json    the Reader containing the JSON data to be converted
-     * @param typeOfT the type of the object to be returned
-     * @param <T>     the type of the object
-     * @return the Java object represented by the JSON data from the Reader
+     * @param json    the Reader that contains the JSON data to deserialize
+     * @param typeOfT the Type of the object to convert the JSON data into
+     * @param <T>     the type of the object to return
+     * @return the deserialized object of the specified type
      */
     <T> T fromReader(Reader json, Type typeOfT);
 
 
     /**
-     * Converts the given object to a JSON string.
-     * <p>
-     * This method uses Gson to serialize an object into its JSON representation.
-     * It can handle any object type, converting it into a JSON string.
-     * </p>
+     * Converts an object into its JSON string representation.
+     * This method serializes the given object into a JSON string using a serialization library such as Gson.
      *
-     * @param object the object to serialize into JSON.
-     * @return the JSON string representation of the object.
-     * @throws JsonSyntaxException if the object cannot be serialized.
+     * @param object the object to serialize into JSON
+     * @return the JSON string representation of the object
      */
     String toJson(Object object);
 
 
     /**
-     * Returns a parameterized {@link Type} representing a generic type with the specified raw type
-     * and type arguments.
-     * <p>
-     * This method is useful when working with Java's generic type system at runtime, particularly
-     * when using libraries like Gson that require type information for deserialization.
-     * </p>
+     * Creates a parameterized {@link Type} using the specified raw type and type arguments.
+     * This method is useful when dealing with generic types and allows the creation of a {@link Type}
+     * that can represent a generic type with its actual type parameters.
      *
-     * @param rawType       The raw class type that represents the generic type.
-     * @param typeArguments The type arguments that should be applied to the raw type.
-     *                      These define the generic parameters of the raw type.
-     * @return A {@link Type} representing the parameterized type with the specified type arguments.
-     * @throws IllegalArgumentException if the number of type arguments is inconsistent
-     *                                  with the number of parameters required by the raw type.
-     * @see TypeToken#getParameterized(Type, Type...)
-     * @see java.lang.reflect.ParameterizedType
+     * @param rawType       the raw type of the generic type (e.g., {@link java.util.List List})
+     * @param typeArguments the type arguments that the generic type should use (e.g., {@link java.lang.String String})
+     * @return the parameterized type representing the raw type with the provided type arguments
      */
     Type getParameterized(Type rawType, Type... typeArguments);
 
 
     /**
-     * Removes the stored value associated with the specified key.
+     * Removes the entry associated with the given key.
+     * If the key does not exist, no changes will be made.
      *
-     * @param key The key for the value to remove.
+     * @param key the key identifying the entry to remove
      */
     void remove(String key);
 
 
     /**
-     * Clears all stored data.
+     * Clears all entries from the data structure.
+     * After calling this method, the data structure will be empty.
      */
     void clear();
 
 
     /**
-     * Checks if a value associated with the specified key exists in the storage.
+     * Checks if the data structure contains an entry associated with the given key.
      *
-     * @param key The key to check.
-     * @return true if the key exists, false otherwise.
+     * @param key the key to check for existence in the data structure
+     * @return {@code true} if the key exists in the data structure, {@code false} otherwise
      */
     boolean contains(String key);
 
 
     // Data change listener registration
-
 
     /**
      * Registers a {@link DataObserver} to listen for data changes.
@@ -406,15 +468,13 @@ public interface DataManager {
      */
     void addDataObserver(DataObserver observer);
 
+
     /**
      * Unregisters the currently registered {@link DataObserver}.
      */
     void removeDataObserver();
 
 
-    /**
-     * Observer interface for receiving notifications about data changes and errors.
-     */
     interface DataObserver {
 
         /**
@@ -433,10 +493,6 @@ public interface DataManager {
     }
 
 
-    /**
-     * The Converter interface provides methods for converting
-     * data between JSON format and Java objects.
-     */
     interface Converter {
 
 
