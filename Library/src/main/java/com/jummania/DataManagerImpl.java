@@ -2,6 +2,8 @@ package com.jummania;
 
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.jummania.model.PaginatedData;
+import com.jummania.model.Pagination;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -18,13 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of the DataManager interface.
+ * Implementation of the {@link DataManager} interface.
  * <p>
- * This class provides concrete methods for storing, retrieving, and managing data.
- * It utilizes Gson for serializing and deserializing objects to and from JSON format and
- * stores the data in a specified directory.
+ * This class provides concrete logic for managing key-value data, including methods for:
+ * - Saving and retrieving primitive types and objects
+ * - JSON serialization/deserialization
+ * - Managing lists with pagination
+ * - Observing data changes
  * <p>
- * The class ensures thread-safety and proper directory management for storing the data.
+ * Typically used for local storage solutions such as SharedPreferences, file-based storage, or custom memory caches.
  * <p>
  * Created by Jummania on 20, November, 2024.
  * Email: sharifuddinjumman@gmail.com
@@ -67,13 +71,9 @@ class DataManagerImpl implements DataManager {
 
         // Check if the directory exists, and create it if necessary
         if (!this.filesDir.exists()) {
-            if (this.filesDir.mkdirs()) {
-                System.out.println("Folder created successfully: " + this.filesDir.getAbsolutePath());
-            } else {
-                System.err.println("Failed to create folder");
+            if (!this.filesDir.mkdirs()) {
+                System.err.println("Failed to create folder: " + this.filesDir.getAbsolutePath());
             }
-        } else {
-            System.out.println("Folder already exists: " + this.filesDir.getAbsolutePath());
         }
     }
 
@@ -86,120 +86,22 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public String getRawString(String key) {
-        try (Reader reader = getReader(key); BufferedReader bufferedReader = new BufferedReader(reader)) {
+        Reader reader = getReader(key);
+        if (reader == null) {
+            notifyError(new IOException("Reader for key '" + key + "' is null"));
+            return null;
+        }
 
+        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line);
             }
-
             return sb.toString();
-
         } catch (IOException e) {
             notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
-        }
-
-        return null; // Return null in case of an error
-    }
-
-
-    /**
-     * Retrieves a `String` from stored data using the specified key.
-     * This method delegates the retrieval task to `getObject`, passing `String.class` to deserialize the stored JSON data into a `String` object.
-     * If an error occurs during retrieval or deserialization, it logs the error and returns the default value.
-     *
-     * @param key      The key used to identify the stored data.
-     * @param defValue The default value to return if the data is not found or an error occurs.
-     * @return The retrieved `String` value, or the default value if an error occurs.
-     */
-    @Override
-    public String getString(String key, String defValue) {
-        try {
-            return getObject(key, String.class);
-        } catch (Exception e) {
-            // Return the default value if retrieval fails
-            return defValue;
-        }
-    }
-
-
-    /**
-     * Retrieves an `int` from stored data using the specified key.
-     * This method delegates the retrieval task to `getObject`, passing `Integer.class` to deserialize the stored JSON data into an `int` object.
-     * If an error occurs during retrieval or deserialization, it logs the error and returns the default value.
-     *
-     * @param key      The key used to identify the stored data.
-     * @param defValue The default value to return if the data is not found or an error occurs.
-     * @return The retrieved `int` value, or the default value if an error occurs.
-     */
-    @Override
-    public int getInt(String key, int defValue) {
-        try {
-            return getObject(key, Integer.class);
-        } catch (Exception e) {
-            // Return the default value if retrieval fails
-            return defValue;
-        }
-    }
-
-
-    /**
-     * Retrieves a `long` from stored data using the specified key.
-     * This method delegates the retrieval task to `getObject`, passing `Long.class` to deserialize the stored JSON data into a `long` object.
-     * If an error occurs during retrieval or deserialization, it logs the error and returns the default value.
-     *
-     * @param key      The key used to identify the stored data.
-     * @param defValue The default value to return if the data is not found or an error occurs.
-     * @return The retrieved `long` value, or the default value if an error occurs.
-     */
-    @Override
-    public long getLong(String key, long defValue) {
-        try {
-            return getObject(key, Long.class);
-        } catch (Exception e) {
-            // Return the default value if retrieval fails
-            return defValue;
-        }
-    }
-
-
-    /**
-     * Retrieves a `float` from stored data using the specified key.
-     * This method delegates the retrieval task to `getObject`, passing `Float.class` to deserialize the stored JSON data into a `float` object.
-     * If an error occurs during retrieval or deserialization, it logs the error and returns the default value.
-     *
-     * @param key      The key used to identify the stored data.
-     * @param defValue The default value to return if the data is not found or an error occurs.
-     * @return The retrieved `float` value, or the default value if an error occurs.
-     */
-    @Override
-    public float getFloat(String key, float defValue) {
-        try {
-            return getObject(key, Float.class);
-        } catch (Exception e) {
-            // Return the default value if retrieval fails
-            return defValue;
-        }
-    }
-
-
-    /**
-     * Retrieves a `boolean` from stored data using the specified key.
-     * This method delegates the retrieval task to `getObject`, passing `Boolean.class` to deserialize the stored JSON data into a `boolean` object.
-     * If an error occurs during retrieval or deserialization, it logs the error and returns the default value.
-     *
-     * @param key      The key used to identify the stored data.
-     * @param defValue The default value to return if the data is not found or an error occurs.
-     * @return The retrieved `boolean` value, or the default value if an error occurs.
-     */
-    @Override
-    public boolean getBoolean(String key, boolean defValue) {
-        try {
-            return getObject(key, Boolean.class);
-        } catch (Exception e) {
-            // Return the default value if retrieval fails
-            return defValue;
+            return null;
         }
     }
 
@@ -220,12 +122,6 @@ class DataManagerImpl implements DataManager {
 
         // Validate input parameters
         if (type == null) throw new IllegalArgumentException("type cannot be null");
-
-        File file = getFile(key);
-        if (!file.exists()) {
-            // File does not exist; return null
-            return null;
-        }
 
         try (Reader reader = getReader(key)) {
             if (reader != null) {
@@ -253,32 +149,25 @@ class DataManagerImpl implements DataManager {
      * @return A list of deserialized objects of type `T`. If no data is found, an empty list is returned.
      */
     @Override
-    public <T> List<T> getList(String key, Type type) {
+    public <T> List<T> getFullList(String key, Type type) {
         // Initialize the list that will hold the retrieved objects
         List<T> dataList = new ArrayList<>();
-        int index = 0;  // To iterate over the different parts of the data (key.0, key.1, ...)
-        boolean hasMoreData = true;  // Flag to control the loop for fetching multiple parts of data
 
         // Determine the full Type for the parameterized List
-        Type listType = TypeToken.getParameterized(List.class, type).getType();
+        Type listType = getParameterized(List.class, type);
 
-        // Try to get a batch of data (e.g., key.0, key.1, ...)
+        // Retrieve the total number of pages
+        int totalPages = getTotalPage(key);
 
         // Loop to retrieve data in batches until no more data is found
-        while (hasMoreData) {
+        for (int i = 1; i <= totalPages; i++) {
             // Try to get a batch of data (e.g., key.0, key.1, ...)
-            List<T> batchData = getObject(key + "." + index, listType);
+            List<T> batchData = getObject(key + "." + i, listType);
 
             // If batch data exists, add it to the dataList and move to the next batch
             if (batchData != null) {
                 dataList.addAll(batchData);
-                index++;  // Increment to check the next batch (key.1, key.2, ...)
-            } else {
-                batchData = getObject(key, listType);
-                if (batchData != null) dataList.addAll(batchData);
-                // If no more data is found, exit the loop
-                hasMoreData = false;
-            }
+            } else break;
         }
 
         // Return the full list of retrieved objects
@@ -287,31 +176,177 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Retrieves a {@link Reader} for the file associated with the given key.
+     * Retrieves a paginated list of data associated with the specified key.
+     * This method fetches a subset of data corresponding to the specified page and returns it along with pagination details.
+     * <p>
+     * The pagination details include the current page, previous page, next page, and total number of pages.
      *
-     * @param key The unique identifier for the file.
-     * @return A {@link Reader} to read the file's content, or {@code null} if the file does not exist or an error occurs.
-     * @throws IllegalArgumentException if the key is {@code null}.
+     * @param <T>  the type of the data in the paginated list
+     * @param key  the key used to fetch the data from storage
+     * @param type the type of the items in the list
+     * @param page the page number to retrieve
+     * @return a {@link PaginatedData} object containing the list of data for the specified page and pagination information
      */
     @Override
-    public Reader getReader(String key) {
+    public <T> PaginatedData<T> getPagedList(String key, Type type, int page) {
+        Type listType = getParameterized(List.class, type);
+        List<T> pageData = getObject(key + "." + page, listType);
+        if (pageData == null) pageData = new ArrayList<>();
+
+        int totalPages = getTotalPage(key);
+
+        // Pagination logic
+        Integer previousPage = (page > 1 && page <= totalPages) ? page - 1 : null;
+        Integer nextPage = (page < totalPages) ? page + 1 : null;
+
+        Pagination pagination = new Pagination(previousPage, page, nextPage, totalPages);
+        return new PaginatedData<>(pageData, pagination);
+    }
+
+
+    /**
+     * Stores a string value in persistent storage associated with the given key.
+     * If the provided value is `null`, the corresponding entry will be removed.
+     *
+     * <p>This method serializes the string and writes it to a file corresponding to the key.
+     * If an error occurs during the writing process, an error message is logged.</p>
+     *
+     * @param key   The unique identifier for the stored string value. Must not be null.
+     * @param value The string value to be stored. If null, the corresponding key will be removed.
+     * @throws IllegalArgumentException If the key is null.
+     */
+    @Override
+    public void saveString(String key, String value) {
+
+        // Validate inputs: Ensure the key is not null
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null");
         }
 
-        File file = getFile(key);
-        if (!file.exists()) {
-            return null;
+        // If the value is null, remove the corresponding entry and return
+        if (value == null) {
+            remove(key);
+            return;
         }
 
-        try {
-            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file), 16 * 1024);
-            return new InputStreamReader(inputStream);
+        // Write the string to the file using BufferedWriter for efficiency
+        try (FileOutputStream fos = new FileOutputStream(getFile(key)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
+
+            // Write the value to the file
+            writer.write(value);
+
+            // Notify the listener about data changes, if applicable
+            if (dataObserver != null) {
+                dataObserver.onDataChange(key);
+            }
+
         } catch (IOException e) {
-            notifyError(new IOException("Failed to open file for key '" + key + "': " + e.getMessage(), e));
+            notifyError(new IOException("Error saving data for key: '" + key + "'. Error: " + e.getMessage(), e));
+        }
+    }
+
+
+    /**
+     * Stores a list of objects in the storage associated with the provided key.
+     * This method divides the list into smaller batches (based on maxArraySize) and stores each batch separately.
+     *
+     * @param key          The key used to identify the stored list of objects.
+     * @param value        The list of objects to be stored.
+     * @param maxArraySize The maximum size of each batch. If the list is larger than this, it will be split into multiple batches.
+     */
+    @Override
+    public <E> void saveList(String key, List<E> value, int maxArraySize) {
+        // If the list becomes empty after removal, delete the key from storage
+        if (value == null || value.isEmpty()) {
+            remove(key);
+        } else {
+            // Ensure the batch size is at least 1
+            int batchSize = Math.max(Math.min(value.size(), maxArraySize), 1);
+            int pos = 1;
+
+            // Split the list into smaller batches and store each one
+            for (int i = 0; i < value.size(); i += batchSize) {
+                List<E> batch = value.subList(i, Math.min(i + batchSize, value.size()));
+                saveObject(key + "." + pos++, batch);  // Store each batch with a unique key
+            }
+
+            saveInt(key + ".totalPages", pos - 1);
+        }
+    }
+
+
+    /**
+     * Inserts an element at the specified index in a JSON-stored list.
+     * If the element already exists in the list, it will be removed before insertion.
+     *
+     * @param key             The key associated with the list in storage.
+     * @param index           The position where the new element should be inserted.
+     * @param element         The element to be added to the list.
+     * @param removeDuplicate If true, removes any existing occurrences of the element before adding.
+     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
+     * @throws IllegalArgumentException  If the stored list type does not match the element's type.
+     */
+    @Override
+    public void appendToList(String key, int index, Object element, boolean removeDuplicate) {
+
+        if (element == null) return;
+
+        // Retrieve the list from storage, or initialize it if null
+        List<Object> list = getFullList(key, Object.class);
+
+        // Ensure the retrieved list contains elements of the same type
+        if (!list.isEmpty()) {
+            Object obj = list.get(0);
+            Class<?> elementClass = element.getClass();
+            if (!elementClass.isInstance(obj)) {
+                throw new IllegalArgumentException("Type mismatch: Expected " + obj.getClass().getSimpleName() + ", but got " + elementClass.getSimpleName());
+            }
         }
 
-        return null;
+
+        // Remove existing instances if needed
+        if (removeDuplicate) {
+            list.remove(element);
+        }
+
+        // Ensure index is within bounds
+        if (index < 0 || index > list.size()) {
+            index = list.size(); // Append at the end if out of bounds
+        }
+
+        // Insert at the specified index
+        list.add(index, element);
+
+        // Save the updated list
+        saveList(key, list);
+    }
+
+
+    /**
+     * Removes an element from the list stored in JSON at the specified index.
+     *
+     * <p>This method retrieves the list associated with the given key, removes the element
+     * at the specified index, and then updates the storage.</p>
+     *
+     * @param key   The unique identifier for the list stored in storage. Must not be null.
+     * @param index The position of the element to be removed.
+     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
+     */
+    @Override
+    public void removeFromList(String key, int index) {
+        // Retrieve the list from storage
+        List<Object> list = getFullList(key, Object.class);
+
+        // Ensure the index is within the valid range
+        if (index < 0 || index >= list.size()) {
+            throw new IndexOutOfBoundsException("Invalid index: " + index + ". List size: " + list.size());
+        }
+
+        // Remove element at the specified index
+        list.remove(index);
+
+        // Save the updated list back to storage
+        saveList(key, list);
     }
 
 
@@ -390,6 +425,58 @@ class DataManagerImpl implements DataManager {
 
 
     /**
+     * Removes all files associated with the given key. This method checks for multiple
+     * files associated with a key by appending an index (e.g., key.0, key.1, ...) and deletes them.
+     * Once no more indexed files are found, it removes the main file associated with the key.
+     *
+     * @param key The key whose associated files are to be deleted.
+     */
+    @Override
+    public void remove(String key) {
+
+        int totalPages = getTotalPage(key);
+
+        for (int i = 1; i <= totalPages; i++) {
+            if (!remove(getFile(key + "." + i))) break;
+        }
+
+        //remove the base file
+        remove(getFile(key));
+        remove(getFile(key + ".totalPages"));
+
+        // Notify the listener about data changes, if applicable
+        if (dataObserver != null) {
+            dataObserver.onDataChange(key);
+        }
+    }
+
+
+    /**
+     * Clears all files in the directory (filesDir). This method iterates over all files in the
+     * directory and removes each one. If the directory is empty or does not exist, appropriate
+     * messages are logged.
+     */
+    @Override
+    public void clear() {
+        // Ensure the directory exists before attempting to list files
+        if (filesDir != null && filesDir.exists()) {
+            File[] files = filesDir.listFiles(); // List all files in the directory
+
+            // Check if there are any files to delete
+            if (files != null) {
+                // Loop through each file and remove it
+                for (File file : files) {
+                    remove(file); // Call the remove method for each file
+                }
+            }
+        } else {
+            // If the directory does not exist, log the error
+            notifyError(new IOException("Folder does not exist"));
+        }
+    }
+
+
+    /**
      * Checks if a file associated with the given key exists in the stored data.
      * This method determines whether a file corresponding to the provided key is present in the data storage directory.
      *
@@ -428,327 +515,37 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Stores a string value in persistent storage associated with the given key.
-     * If the provided value is `null`, the corresponding entry will be removed.
+     * Retrieves a {@link Reader} for the file associated with the given key.
      *
-     * <p>This method serializes the string and writes it to a file corresponding to the key.
-     * If an error occurs during the writing process, an error message is logged.</p>
-     *
-     * @param key   The unique identifier for the stored string value. Must not be null.
-     * @param value The string value to be stored. If null, the corresponding key will be removed.
-     * @throws IllegalArgumentException If the key is null.
+     * @param key The unique identifier for the file.
+     * @return A {@link Reader} to read the file's content, or {@code null} if the file does not exist or an error occurs.
+     * @throws IllegalArgumentException if the key is {@code null}.
      */
-    @Override
-    public void saveString(String key, String value) {
-
-        // Validate inputs: Ensure the key is not null
+    private Reader getReader(String key) {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null");
         }
 
-        // If the value is null, remove the corresponding entry and return
-        if (value == null) {
-            remove(key);
-            return;
+        try {
+            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(getFile(key)), 16 * 1024);
+            return new InputStreamReader(inputStream);
+        } catch (Exception e) {
+            notifyError(new IOException("Failed to open file for key '" + key + "': " + e.getMessage(), e));
         }
 
-        // Get the file corresponding to the key where the value will be stored
-        File file = getFile(key);
-
-        // Write the string to the file using BufferedWriter for efficiency
-        try (FileOutputStream fos = new FileOutputStream(file); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
-
-            // Write the value to the file
-            writer.write(value);
-
-            // Notify the listener about data changes, if applicable
-            if (dataObserver != null) {
-                dataObserver.onDataChange(key);
-            }
-
-        } catch (IOException e) {
-            notifyError(new IOException("Error saving data for key: '" + key + "'. Error: " + e.getMessage(), e));
-        }
+        return null;
     }
 
 
     /**
-     * Stores an int value in the storage associated with the provided key.
-     * This method serializes the int value and stores it in a file corresponding to the key.
+     * Deletes the specified file.
+     * This method attempts to delete the file and returns a boolean indicating whether the deletion was successful.
      *
-     * @param key   The key used to identify the stored int value.
-     * @param value The int value to be stored.
-     */
-    @Override
-    public void saveInt(String key, int value) {
-        // Delegate to saveObject to handle the actual storage of the value
-        saveString(key, Integer.toString(value));
-    }
-
-
-    /**
-     * Stores a long value in the storage associated with the provided key.
-     * This method serializes the long value and stores it in a file corresponding to the key.
-     *
-     * @param key   The key used to identify the stored long value.
-     * @param value The long value to be stored.
-     */
-    @Override
-    public void saveLong(String key, long value) {
-        // Delegate to saveObject to handle the actual storage of the value
-        saveString(key, Long.toString(value));
-    }
-
-
-    /**
-     * Stores a float value in the storage associated with the provided key.
-     * This method serializes the float value and stores it in a file corresponding to the key.
-     *
-     * @param key   The key used to identify the stored float value.
-     * @param value The float value to be stored.
-     */
-    @Override
-    public void saveFloat(String key, float value) {
-        // Delegate to saveObject to handle the actual storage of the value
-        saveString(key, Float.toString(value));
-    }
-
-
-    /**
-     * Stores a boolean value in the storage associated with the provided key.
-     * This method serializes the boolean value and stores it in a file corresponding to the key.
-     *
-     * @param key   The key used to identify the stored boolean value.
-     * @param value The boolean value to be stored.
-     */
-    @Override
-    public void saveBoolean(String key, boolean value) {
-        // Delegate to saveObject to handle the actual storage of the value
-        saveString(key, Boolean.toString(value));
-    }
-
-
-    /**
-     * Saves an object as a JSON string in the storage associated with the provided key.
-     * This method serializes the given object into JSON format and stores it in a file corresponding to the key.
-     * If the key already exists, the method will overwrite the existing file.
-     *
-     * @param key   The key used to identify the stored object.
-     * @param value The object to be serialized and stored. It cannot be null.
-     */
-    @Override
-    public void saveObject(String key, Object value) {
-        // Convert the object to a JSON string using Gson
-        saveString(key, toJson(value));
-    }
-
-
-    /**
-     * Stores a list of objects in the storage associated with the provided key.
-     * This method divides the list into smaller batches and stores each batch separately.
-     * The default batch size is 999, but you can specify a different size with the second method.
-     *
-     * @param key   The key used to identify the stored list of objects.
-     * @param value The list of objects to be stored.
-     */
-    @Override
-    public <E> void saveList(String key, List<E> value) {
-        // Delegate to saveList with a default max array size of 9999
-        saveList(key, value, 99);
-    }
-
-
-    /**
-     * Stores a list of objects in the storage associated with the provided key.
-     * This method divides the list into smaller batches (based on maxArraySize) and stores each batch separately.
-     *
-     * @param key          The key used to identify the stored list of objects.
-     * @param value        The list of objects to be stored.
-     * @param maxArraySize The maximum size of each batch. If the list is larger than this, it will be split into multiple batches.
-     */
-    @Override
-    public <E> void saveList(String key, List<E> value, int maxArraySize) {
-        // If the list becomes empty after removal, delete the key from storage
-        if (value.isEmpty()) {
-            remove(key);
-        } else {
-            // Ensure the batch size is at least 1
-            int batchSize = Math.max(Math.min(value.size(), maxArraySize), 1);
-            int pos = 0;
-
-            // Split the list into smaller batches and store each one
-            for (int i = 0; i < value.size(); i += batchSize) {
-                List<E> batch = value.subList(i, Math.min(i + batchSize, value.size()));
-                saveObject(key + "." + pos++, batch);  // Store each batch with a unique key
-            }
-        }
-    }
-
-
-    /**
-     * Inserts an element at the specified index in a JSON-stored list.
-     * If the element already exists in the list, it will be removed before insertion.
-     *
-     * @param key             The key associated with the list in storage.
-     * @param index           The position where the new element should be inserted.
-     * @param element         The element to be added to the list.
-     * @param removeDuplicate If true, removes any existing occurrences of the element before adding.
-     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
-     * @throws IllegalArgumentException  If the stored list type does not match the element's type.
-     */
-    @Override
-    public void appendToList(String key, int index, Object element, boolean removeDuplicate) {
-
-        if (element == null) return;
-
-        // Retrieve the list from storage, or initialize it if null
-        List<Object> list = getList(key, Object.class);
-
-        // Ensure the retrieved list contains elements of the same type
-        if (!list.isEmpty()) {
-            Object obj = list.get(0);
-            if (!element.getClass().isInstance(obj)) {
-                throw new IllegalArgumentException("Type mismatch: Expected " + obj.getClass().getSimpleName() + ", but got " + element.getClass().getSimpleName());
-            }
-        }
-
-
-        // Remove existing instances if needed
-        if (removeDuplicate) {
-            list.remove(element);
-        }
-
-        // Ensure index is within bounds
-        if (index < 0 || index > list.size()) {
-            index = list.size(); // Append at the end if out of bounds
-        }
-
-        // Insert at the specified index
-        list.add(index, element);
-
-        // Save the updated list
-        saveList(key, list);
-    }
-
-
-    /**
-     * Removes an element from the list stored in JSON at the specified index.
-     *
-     * <p>This method retrieves the list associated with the given key, removes the element
-     * at the specified index, and then updates the storage.</p>
-     *
-     * @param key   The unique identifier for the list stored in storage. Must not be null.
-     * @param index The position of the element to be removed.
-     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
-     */
-    @Override
-    public void removeFromList(String key, int index) {
-        // Retrieve the list from storage
-        List<Object> list = getList(key, Object.class);
-
-        // Ensure the index is within the valid range
-        if (index < 0 || index >= list.size()) {
-            throw new IndexOutOfBoundsException("Invalid index: " + index + ". List size: " + list.size());
-        }
-
-        // Remove element at the specified index
-        list.remove(index);
-
-        // Save the updated list back to storage
-        saveList(key, list);
-    }
-
-
-    /**
-     * Removes all files associated with the given key. This method checks for multiple
-     * files associated with a key by appending an index (e.g., key.0, key.1, ...) and deletes them.
-     * Once no more indexed files are found, it removes the main file associated with the key.
-     *
-     * @param key The key whose associated files are to be deleted.
-     */
-    @Override
-    public void remove(String key) {
-        int index = 0; // Initialize the index for searching files
-        boolean hasMoreFile = true; // Flag to check if there are more files to remove
-
-        // Loop through files associated with the key by checking for indexed filenames
-        while (hasMoreFile) {
-            // Construct the file path using the key and index (e.g., key.0, key.1, ...)
-            File file = getFile(key + "." + index);
-
-            // Attempt to remove the file
-            if (remove(file)) {
-                index++; // Increment index to check the next batch file
-            } else {
-                // If no more indexed files are found, remove the main file
-                remove(getFile(key));
-                hasMoreFile = false; // Stop searching for more files
-            }
-        }
-
-        // Notify the listener about data changes, if applicable
-        if (dataObserver != null) {
-            dataObserver.onDataChange(key);
-        }
-    }
-
-
-    /**
-     * Clears all files in the directory (filesDir). This method iterates over all files in the
-     * directory and removes each one. If the directory is empty or does not exist, appropriate
-     * messages are logged.
-     */
-    @Override
-    public void clear() {
-        // Ensure the directory exists before attempting to list files
-        if (filesDir != null && filesDir.exists()) {
-            File[] files = filesDir.listFiles(); // List all files in the directory
-
-            // Check if there are any files to delete
-            if (files != null && files.length > 0) {
-                // Loop through each file and remove it
-                for (File file : files) {
-                    remove(file); // Call the remove method for each file
-                }
-            } else {
-                // If the directory is empty, log the message
-                System.out.println("No files found in folder: " + filesDir.getAbsolutePath());
-            }
-        } else {
-            // If the directory does not exist, log the error
-            System.err.println("Folder does not exist");
-        }
-    }
-
-
-    /**
-     * Attempts to delete the specified file.
-     * <p>
-     * This method first checks if the provided file is not null and exists in the filesystem.
-     * If the file exists, it attempts to delete the file. Depending on the outcome of the deletion attempt,
-     * it will print a success or error message to the standard output.
-     * </p>
-     *
-     * @param file The file to be deleted.
-     * @return true if the deletion was attempted, false if the file is null or does not exist.
+     * @param file the file to delete
+     * @return {@code true} if the file was successfully deleted, {@code false} otherwise
      */
     private boolean remove(File file) {
-        // Check if the file is not null
-        if (file != null) {
-            // Try to delete the file
-            if (file.delete()) {
-                // If the deletion is successful, print a success message
-                System.out.println("File deleted successfully: " + file.getAbsolutePath());
-
-                // Return true indicating the file was deleted
-                return true; // Return true indicating the file exists and deletion attempt was made
-            } else {
-                // If the deletion fails, print an error message
-                System.err.println("Failed to delete file: " + file.getAbsolutePath());
-            }
-        }
-        // If the file doesn't exist or is null, return false
-        return false;
+        return file != null && file.delete();
     }
 
 
@@ -762,6 +559,18 @@ class DataManagerImpl implements DataManager {
     private File getFile(String key) {
         // Return the File object located in the directory with the provided key
         return new File(filesDir, key);
+    }
+
+
+    /**
+     * Retrieves the total number of pages for the given key.
+     * This method fetches the total pages value associated with the provided key.
+     *
+     * @param key the key used to fetch the total number of pages
+     * @return the total number of pages
+     */
+    private int getTotalPage(String key) {
+        return getInt(key + ".totalPages");
     }
 
 
