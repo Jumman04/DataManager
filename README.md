@@ -4,8 +4,9 @@
 [![](https://jitpack.io/v/Jumman04/DataManager.svg)](https://jitpack.io/#Jumman04/DataManager)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-A simple, efficient, and flexible data management library that allows you to store, retrieve, and
-manipulate data using JSON serialization and deserialization.
+A simple, efficient, and flexible data management library for Java and Android.
+Easily store, retrieve, and manipulate data using JSON serialization with support for type safety,
+pagination, and file-based persistence.
 
 ## Features
 
@@ -50,7 +51,7 @@ dependencyResolutionManagement {
 Add the following dependency to your module-level `build.gradle` file:
 
 ```groovy
-implementation 'com.github.Jumman04:DataManager:3.0'
+implementation 'com.github.Jumman04:DataManager:3.1'
 ```
 
 ---
@@ -97,7 +98,12 @@ int userAge = dataManager.getInt("user_age", 0);
 Retrieve a list of data:
 
 ```java
-List<String> fruits = dataManager.getList("fruits", String.class);
+// Retrieve the full list of fruits (not recommended for very large datasets)
+List<String> fruitsFull = dataManager.getFullList("fruits", String.class);
+
+// Retrieve a paginated list of fruits (page 1)
+PaginatedData<String> fruitsPage = dataManager.getPagedList("fruits", String.class, 1);
+
 ```
 
 ### 4. Data Change Listener
@@ -150,29 +156,44 @@ DataManager dataManager = DataManagerFactory.create(getFilesDir(), new MyCustomC
 
 ## Methods Overview
 
-| Return Type   | Method Name                                                         | Description                                                |
-|---------------|---------------------------------------------------------------------|------------------------------------------------------------|
-| `<T>`         | `fromJson(String value, Type typeOfT)`                              | Converts JSON to an object of the specified type.          |
-| `<T>`         | `fromReader(Reader json, Type typeOfT)`                             | Converts a JSON stream to an object of the specified type. |
-| `<T>`         | `getObject(String key, Type type)`                                  | Retrieves a stored object.                                 |
-| `<T>`         | `getParameterized(String key, Type rawType, Type... typeArguments)` | Retrieves a parameterized object.                          |
-| `<T> List<T>` | `getList(String key, Type type)`                                    | Retrieves a list of objects.                               |
-| `boolean`     | `getBoolean(String key, boolean defValue)`                          | Retrieves a boolean value.                                 |
-| `float`       | `getFloat(String key, float defValue)`                              | Retrieves a float value.                                   |
-| `int`         | `getInt(String key, int defValue)`                                  | Retrieves an int value.                                    |
-| `long`        | `getLong(String key, long defValue)`                                | Retrieves a long value.                                    |
-| `String`      | `getString(String key, String defValue)`                            | Retrieves a String value.                                  |
-| `String`      | `toJson(Object object)`                                             | Converts an object to a JSON string.                       |
-| `void`        | `addDataObserver(DataManager.DataObserver observer)`                | Registers a data change listener.                          |
-| `void`        | `remove(String key)`                                                | Removes the stored value.                                  |
-| `void`        | `saveBoolean(String key, boolean value)`                            | Stores a boolean value.                                    |
-| `void`        | `saveFloat(String key, float value)`                                | Stores a float value.                                      |
-| `void`        | `saveInt(String key, int value)`                                    | Stores an int value.                                       |
-| `void`        | `saveLong(String key, long value)`                                  | Stores a long value.                                       |
-| `void`        | `saveList(String key, List<T> value)`                               | Stores a list of objects.                                  |
-| `void`        | `saveList(String key, List<T> value, int maxArraySize)`             | Stores a list of objects with a size limit.                |
-| `void`        | `saveObject(String key, Object value)`                              | Stores an object.                                          |
-| `void`        | `saveString(String key, String value)`                              | Stores a String value.                                     |
+| Return Type   | Method Name                                                                    | Description                                                                 |
+|---------------|--------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| `String`      | `getRawString(String key)`                                                     | Retrieves the raw JSON string associated with the key.                      |
+| `<T>`         | `getObject(String key, Type type)`                                             | Retrieves an object of the specified type.                                  |
+| `<T> List<T>` | `getFullList(String key, Type type)`                                           | Retrieves the full list of objects (⚠️ not recommended for large datasets). |
+| `<T>`         | `PaginatedData<T> getPagedList(String key, Type type, int page)`               | Retrieves a paginated subset of the list.                                   |
+| `String`      | `getString(String key)`                                                        | Retrieves a String value or `null` if not found.                            |
+| `String`      | `getString(String key, String defValue)`                                       | Retrieves a String value with a fallback default.                           |
+| `int`         | `getInt(String key)`                                                           | Retrieves an int value or 0 if not found.                                   |
+| `int`         | `getInt(String key, int defValue)`                                             | Retrieves an int value with a fallback default.                             |
+| `long`        | `getLong(String key)`                                                          | Retrieves a long value or 0L if not found.                                  |
+| `long`        | `getLong(String key, long defValue)`                                           | Retrieves a long value with a fallback default.                             |
+| `float`       | `getFloat(String key)`                                                         | Retrieves a float value or 0.0f if not found.                               |
+| `float`       | `getFloat(String key, float defValue)`                                         | Retrieves a float value with a fallback default.                            |
+| `boolean`     | `getBoolean(String key)`                                                       | Retrieves a boolean value or `false` if not found.                          |
+| `boolean`     | `getBoolean(String key, boolean defValue)`                                     | Retrieves a boolean value with a fallback default.                          |
+| `<T>`         | `fromJson(String value, Type typeOfT)`                                         | Converts a JSON string to an object of the specified type.                  |
+| `<T>`         | `fromReader(Reader json, Type typeOfT)`                                        | Converts JSON from a `Reader` to an object of the specified type.           |
+| `String`      | `toJson(Object object)`                                                        | Converts an object to a JSON string.                                        |
+| `Type`        | `getParameterized(Type rawType, Type... typeArguments)`                        | Constructs a parameterized generic type.                                    |
+| `void`        | `saveString(String key, String value)`                                         | Saves a String value.                                                       |
+| `void`        | `saveInt(String key, int value)`                                               | Saves an int value.                                                         |
+| `void`        | `saveLong(String key, long value)`                                             | Saves a long value.                                                         |
+| `void`        | `saveFloat(String key, float value)`                                           | Saves a float value.                                                        |
+| `void`        | `saveBoolean(String key, boolean value)`                                       | Saves a boolean value.                                                      |
+| `void`        | `saveObject(String key, Object value)`                                         | Saves an object.                                                            |
+| `<E>`         | `saveList(String key, List<E> value)`                                          | Saves a full list.                                                          |
+| `<E>`         | `saveList(String key, List<E> value, int maxArraySize)`                        | Saves a list with a maximum size (for paging).                              |
+| `void`        | `appendToList(String key, Object element)`                                     | Appends an element to the end of the list.                                  |
+| `void`        | `appendToList(String key, Object element, boolean removeDuplicate)`            | Appends an element, optionally removing duplicates.                         |
+| `void`        | `appendToList(String key, int index, Object element)`                          | Inserts an element at a specific index.                                     |
+| `void`        | `appendToList(String key, int index, Object element, boolean removeDuplicate)` | Inserts at index with optional duplicate removal.                           |
+| `void`        | `removeFromList(String key, int index)`                                        | Removes an element at a specific index from the list.                       |
+| `void`        | `remove(String key)`                                                           | Removes the item associated with the key.                                   |
+| `void`        | `clear()`                                                                      | Clears all stored data.                                                     |
+| `boolean`     | `contains(String key)`                                                         | Checks if a key exists in storage.                                          |
+| `void`        | `addDataObserver(DataObserver observer)`                                       | Registers a data observer for change notifications.                         |
+| `void`        | `removeDataObserver(DataObserver observer)`                                    | Unregisters a data observer.                                                |
 
 For more methods, refer to
 the [documentation](https://jumman04.github.io/DataManager/doc/index.html).
