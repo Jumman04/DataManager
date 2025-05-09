@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -230,7 +231,7 @@ class DataManagerImpl implements DataManager {
         }
 
         // Write the string to the file using BufferedWriter for efficiency
-        try (FileOutputStream fos = new FileOutputStream(getFile(key)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
+        try (FileOutputStream fos = new FileOutputStream(getFile(key)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8))) {
 
             // Write the value to the file
             writer.write(value);
