@@ -56,14 +56,14 @@ public class GsonConverter implements DataManager.Converter {
     /**
      * Converts a JSON string into a Java object of the specified type.
      *
-     * @param json    the JSON string to be converted
-     * @param typeOfT the type of the object to be returned
-     * @param <T>     the type of the object
+     * @param json   the JSON string to be converted
+     * @param tClass the type of the object to be returned
+     * @param <T>    the type of the object
      * @return the Java object represented by the JSON string
      */
     @Override
-    public <T> T fromJson(String json, Type typeOfT) {
-        return gson.fromJson(json, typeOfT);
+    public <T> T fromJson(String json, Class<T> tClass) {
+        return gson.fromJson(json, tClass);
     }
 
 

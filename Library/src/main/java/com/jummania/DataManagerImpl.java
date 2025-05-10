@@ -144,18 +144,18 @@ class DataManagerImpl implements DataManager {
      * This method supports paginated or batched data retrieval, where data is stored in multiple parts
      * (e.g., "key.0", "key.1", ...) and will continue retrieving batches until no more data is found.
      *
-     * @param key  The key used to identify the list of objects in the stored data.
-     * @param type The type of individual objects in the list (e.g., `String.class`, `Book.class`).
-     * @param <T>  The type of objects contained in the list.
+     * @param key    The key used to identify the list of objects in the stored data.
+     * @param tClass The type of individual objects in the list (e.g., `String.class`, `Book.class`).
+     * @param <T>    The type of objects contained in the list.
      * @return A list of deserialized objects of type `T`. If no data is found, an empty list is returned.
      */
     @Override
-    public <T> List<T> getFullList(String key, Type type) {
+    public <T> List<T> getFullList(String key, Class<T> tClass) {
         // Initialize the list that will hold the retrieved objects
         List<T> dataList = new ArrayList<>();
 
         // Determine the full Type for the parameterized List
-        Type listType = getParameterized(List.class, type);
+        Type listType = getParameterized(List.class, tClass);
 
         // Retrieve the total number of pages
         int totalPages = getTotalPage(key);
@@ -182,15 +182,15 @@ class DataManagerImpl implements DataManager {
      * <p>
      * The pagination details include the current page, previous page, next page, and total number of pages.
      *
-     * @param <T>  the type of the data in the paginated list
-     * @param key  the key used to fetch the data from storage
-     * @param type the type of the items in the list
-     * @param page the page number to retrieve
+     * @param <T>    the type of the data in the paginated list
+     * @param key    the key used to fetch the data from storage
+     * @param tClass the type of the items in the list
+     * @param page   the page number to retrieve
      * @return a {@link PaginatedData} object containing the list of data for the specified page and pagination information
      */
     @Override
-    public <T> PaginatedData<T> getPagedList(String key, Type type, int page) {
-        Type listType = getParameterized(List.class, type);
+    public <T> PaginatedData<T> getPagedList(String key, Class<T> tClass, int page) {
+        Type listType = getParameterized(List.class, tClass);
         List<T> pageData = getObject(key + "." + page, listType);
         if (pageData == null) pageData = new ArrayList<>();
 
@@ -358,15 +358,15 @@ class DataManagerImpl implements DataManager {
      * The type parameter allows the conversion to a specific object type, including generic types.
      * </p>
      *
-     * @param value the JSON string to deserialize.
-     * @param type  the type of the object to deserialize into.
-     * @param <T>   the type of the object.
+     * @param value  the JSON string to deserialize.
+     * @param tClass the type of the object to deserialize into.
+     * @param <T>    the type of the object.
      * @return the deserialized object of type T.
      * @throws JsonSyntaxException if the JSON string is not a valid representation for the specified type.
      */
     @Override
-    public <T> T fromJson(String value, Type type) {
-        return converter.fromJson(value, type);
+    public <T> T fromJson(String value, Class<T> tClass) {
+        return converter.fromJson(value, tClass);
     }
 
 

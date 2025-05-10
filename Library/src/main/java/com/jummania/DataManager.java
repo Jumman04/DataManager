@@ -187,26 +187,26 @@ public interface DataManager {
      * Retrieves a list of objects of the specified type associated with the given key.
      * The list is deserialized from the underlying data source to match the specified type.
      *
-     * @param key  the key to look up the list of objects
-     * @param type the type of the objects in the list
-     * @param <T>  the type of the objects in the list
+     * @param key    the key to look up the list of objects
+     * @param tClass the type of the objects in the list
+     * @param <T>    the type of the objects in the list
      * @return the list of objects of the specified type associated with the key, or an empty list if not found
      */
-    <T> List<T> getFullList(String key, Type type);
+    <T> List<T> getFullList(String key, Class<T> tClass);
 
 
     /**
      * Retrieves a paginated list of objects of the specified type associated with the given key.
      * The list is deserialized from the underlying data source to match the specified type, with pagination support.
      *
-     * @param key  the key to look up the paginated list of objects
-     * @param type the type of the objects in the list
-     * @param page the page number to retrieve
-     * @param <T>  the type of the objects in the list
+     * @param key    the key to look up the paginated list of objects
+     * @param tClass the type of the objects in the list
+     * @param page   the page number to retrieve
+     * @param <T>    the type of the objects in the list
      * @return a {@link PaginatedData} object containing the paginated list of objects of the specified type,
      * or an empty paginated data if no objects are found
      */
-    <T> PaginatedData<T> getPagedList(String key, Type type, int page);
+    <T> PaginatedData<T> getPagedList(String key, Class<T> tClass, int page);
 
 
     /**
@@ -392,12 +392,12 @@ public interface DataManager {
      * Converts a JSON string into an object of the specified type.
      * This method deserializes the given JSON string into an instance of the provided type using the Gson library (or similar).
      *
-     * @param value   the JSON string to deserialize
-     * @param typeOfT the Type of the object to convert the JSON string into
-     * @param <T>     the type of the object to return
+     * @param value  the JSON string to deserialize
+     * @param tClass the Type of the object to convert the JSON string into
+     * @param <T>    the type of the object to return
      * @return the deserialized object of the specified type
      */
-    <T> T fromJson(String value, Type typeOfT);
+    <T> T fromJson(String value, Class<T> tClass);
 
 
     /**
@@ -509,12 +509,12 @@ public interface DataManager {
         /**
          * Converts a JSON string into a Java object of the specified type.
          *
-         * @param json    the JSON string to be converted
-         * @param typeOfT the type of the object to be returned
-         * @param <T>     the type of the object
+         * @param json   the JSON string to be converted
+         * @param tClass the type of the object to be returned
+         * @param <T>    the type of the object
          * @return the Java object represented by the JSON string
          */
-        <T> T fromJson(String json, Type typeOfT);
+        <T> T fromJson(String json, Class<T> tClass);
 
 
         /**
