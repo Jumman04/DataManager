@@ -51,7 +51,7 @@ dependencyResolutionManagement {
 Add the following dependency to your module-level `build.gradle` file:
 
 ```groovy
-implementation 'com.github.Jumman04:DataManager:3.1'
+implementation 'com.github.Jumman04:DataManager:3.0'
 ```
 
 ---
