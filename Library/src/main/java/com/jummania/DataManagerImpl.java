@@ -87,6 +87,7 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public String getRawString(String key) {
+        
         try (Reader reader = getReader(key)) {
             if (reader == null) {
                 notifyError(new IOException("Reader for key '" + key + "' is null"));
@@ -106,8 +107,8 @@ class DataManagerImpl implements DataManager {
             }
         } catch (Exception e) {
             notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
+            return null;
         }
-        return null;
     }
 
 
