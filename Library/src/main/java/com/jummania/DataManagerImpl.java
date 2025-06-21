@@ -87,23 +87,27 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public String getRawString(String key) {
-        Reader reader = getReader(key);
-        if (reader == null) {
-            notifyError(new IOException("Reader for key '" + key + "' is null"));
-            return null;
-        }
-
-        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
+        try (Reader reader = getReader(key)) {
+            if (reader == null) {
+                notifyError(new IOException("Reader for key '" + key + "' is null"));
+                return null;
             }
-            return sb.toString();
-        } catch (IOException e) {
+
+            try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+                return sb.toString();
+            } catch (IOException e) {
+                notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
+                return null;
+            }
+        } catch (Exception e) {
             notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
-            return null;
         }
+        return null;
     }
 
 
