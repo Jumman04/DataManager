@@ -101,8 +101,8 @@ class DataManagerImpl implements DataManager {
 
         } catch (Exception e) {
             notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
+            return null;
         }
-        return null;
     }
 
 
