@@ -162,13 +162,13 @@ public interface DataManager {
 
 
     /**
-     * Retrieves the raw CharSequence value associated with the given key.
+     * Retrieves the raw String value associated with the given key.
      * The value is returned as-is, without any defaulting behavior.
      *
      * @param key the key to look up the value
-     * @return the raw CharSequence value associated with the key, or null if not found
+     * @return the raw String value associated with the key, or null if not found
      */
-    CharSequence getRawChar(String key);
+    String getRawString(String key);
 
 
     /**

@@ -80,13 +80,13 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Retrieves the raw CharSequence stored in the file associated with the given key.
+     * Retrieves the raw String stored in the file associated with the given key.
      *
-     * @param key The key associated with the stored CharSequence.
-     * @return The raw CharSequence if the file exists and can be read; otherwise, {@code null}.
+     * @param key The key associated with the stored String.
+     * @return The raw String if the file exists and can be read; otherwise, {@code null}.
      */
     @Override
-    public CharSequence getRawChar(String key) {
+    public String getRawString(String key) {
 
         try (BufferedReader bufferedReader = new BufferedReader(getReader(key))) {
             StringBuilder sb = new StringBuilder();
@@ -94,7 +94,7 @@ class DataManagerImpl implements DataManager {
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line);
             }
-            return sb;
+            return sb.toString();
         } catch (Exception e) {
             notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
             return null;
