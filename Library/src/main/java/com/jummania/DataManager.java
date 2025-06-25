@@ -2,7 +2,7 @@ package com.jummania;
 
 import com.jummania.model.PaginatedData;
 
-import java.io.BufferedReader;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -162,13 +162,13 @@ public interface DataManager {
 
 
     /**
-     * Retrieves the raw string value associated with the given key.
+     * Retrieves the raw CharSequence value associated with the given key.
      * The value is returned as-is, without any defaulting behavior.
      *
      * @param key the key to look up the value
-     * @return the raw string value associated with the key, or null if not found
+     * @return the raw CharSequence value associated with the key, or null if not found
      */
-    String getRawString(String key);
+    CharSequence getRawChar(String key);
 
 
     /**
@@ -401,15 +401,15 @@ public interface DataManager {
 
 
     /**
-     * Converts a JSON input stream (BufferedReader) into an object of the specified type.
+     * Converts a JSON input stream (Reader) into an object of the specified type.
      * This method deserializes the provided JSON from the given reader into an instance of the provided type.
      *
-     * @param json    the BufferedReader that contains the JSON data to deserialize
+     * @param json    the Reader that contains the JSON data to deserialize
      * @param typeOfT the Type of the object to convert the JSON data into
      * @param <T>     the type of the object to return
      * @return the deserialized object of the specified type
      */
-    <T> T fromReader(BufferedReader json, Type typeOfT);
+    <T> T fromReader(Reader json, Type typeOfT);
 
 
     /**
@@ -520,12 +520,12 @@ public interface DataManager {
         /**
          * Converts a JSON stream from a Reader into a Java object of the specified type.
          *
-         * @param json    the BufferedReader containing the JSON data to be converted
+         * @param json    the Reader containing the JSON data to be converted
          * @param typeOfT the type of the object to be returned
          * @param <T>     the type of the object
          * @return the Java object represented by the JSON data from the Reader
          */
-        <T> T fromReader(BufferedReader json, Type typeOfT);
+        <T> T fromReader(Reader json, Type typeOfT);
     }
 
 

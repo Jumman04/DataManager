@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.jummania.model.PaginatedData;
 import com.jummania.model.Pagination;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -40,8 +42,7 @@ class DataManagerImpl implements DataManager {
 
     // Directory where the data will be stored
     private final File filesDir;
-    private final int defaultCharBufferSize = 32 * 1024;
-
+    private final int defaultCharBufferSize = 16 * 1024;
     // Listener to notify data changes
     private DataObserver dataObserver;
 
@@ -79,30 +80,26 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Retrieves the raw JSON string stored in the file associated with the given key.
+     * Retrieves the raw CharSequence stored in the file associated with the given key.
      *
-     * @param key The key associated with the stored JSON data.
-     * @return The raw JSON string if the file exists and can be read; otherwise, {@code null}.
+     * @param key The key associated with the stored CharSequence.
+     * @return The raw CharSequence if the file exists and can be read; otherwise, {@code null}.
      */
     @Override
-    public String getRawString(String key) {
-        try (BufferedReader reader = getReader(key)) {
-            if (reader == null) {
-                notifyError(new IOException("Reader for key '" + key + "' is null"));
-                return null;
-            }
+    public CharSequence getRawChar(String key) {
 
+        try (BufferedReader bufferedReader = new BufferedReader(getReader(key))) {
             StringBuilder sb = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line);
             }
-            return sb.toString();
-
+            return sb;
         } catch (Exception e) {
             notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
             return null;
         }
+
     }
 
 
@@ -123,7 +120,7 @@ class DataManagerImpl implements DataManager {
         // Validate input parameters
         if (type == null) throw new IllegalArgumentException("type cannot be null");
 
-        try (BufferedReader reader = getReader(key)) {
+        try (Reader reader = getReader(key)) {
             if (reader != null) {
                 return fromReader(reader, type);
             }
@@ -369,16 +366,16 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Converts a JSON stream from a BufferedReader into a Java object of the specified type.
+     * Converts a JSON stream from a Reader into a Java object of the specified type.
      *
-     * @param json    the BufferedReader containing the JSON data to be converted
+     * @param json    the Reader containing the JSON data to be converted
      * @param typeOfT the type of the object to be returned
      * @param <T>     the type of the object
-     * @return the Java object represented by the JSON data from the BufferedReader
+     * @return the Java object represented by the JSON data from the Reader
      * @throws IllegalArgumentException if the JSON data cannot be parsed into the specified type
      */
     @Override
-    public <T> T fromReader(BufferedReader json, Type typeOfT) {
+    public <T> T fromReader(Reader json, Type typeOfT) {
         return converter.fromReader(json, typeOfT);
     }
 
@@ -514,23 +511,25 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Retrieves a {@link BufferedReader} for the file associated with the given key.
+     * Retrieves a {@link Reader} for the file associated with the given key.
      *
      * @param key The unique identifier for the file.
-     * @return A {@link BufferedReader} to read the file's content, or {@code null} if the file does not exist or an error occurs.
+     * @return A {@link Reader} to read the file's content, or {@code null} if the file does not exist or an error occurs.
      * @throws IllegalArgumentException if the key is {@code null}.
      */
-    private BufferedReader getReader(String key) {
+    private Reader getReader(String key) {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null");
         }
 
         try {
-            return new BufferedReader(new InputStreamReader(new FileInputStream(getFile(key)), StandardCharsets.UTF_8), defaultCharBufferSize);
-        } catch (IOException e) {
+            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(getFile(key)), defaultCharBufferSize);
+            return new InputStreamReader(inputStream);
+        } catch (Exception e) {
             notifyError(new IOException("Failed to open file for key '" + key + "': " + e.getMessage(), e));
-            return null;
         }
+
+        return null;
     }
 
 

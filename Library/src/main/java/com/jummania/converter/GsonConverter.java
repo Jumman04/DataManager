@@ -1,9 +1,10 @@
+
 package com.jummania.converter;
 
 import com.google.gson.Gson;
 import com.jummania.DataManager;
 
-import java.io.BufferedReader;
+import java.io.Reader;
 import java.lang.reflect.Type;
 
 /**
@@ -76,7 +77,7 @@ public class GsonConverter implements DataManager.Converter {
      * @return the Java object represented by the JSON data from the Reader
      */
     @Override
-    public <T> T fromReader(BufferedReader json, Type typeOfT) {
+    public <T> T fromReader(Reader json, Type typeOfT) {
         return gson.fromJson(json, typeOfT);
     }
 }
