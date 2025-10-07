@@ -2,6 +2,7 @@ package com.jummania;
 
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.jummania.model.MetaData;
 import com.jummania.model.PaginatedData;
 import com.jummania.model.Pagination;
 
@@ -153,22 +154,13 @@ class DataManagerImpl implements DataManager {
         // Determine the full Type for the parameterized List
         Type listType = getParameterized(List.class, tClass);
 
-        // Retrieve the total number of pages
-        int totalPages = getTotalPage(key);
+        int position = 0;
 
-        // Loop to retrieve data in batches until no more data is found
-        for (int i = 1; i <= totalPages; i++) {
-            // Try to get a batch of data (e.g., key.0, key.1, ...)
-            List<T> batchData = getObject(key + "." + i, listType);
-
-            // If batch data exists, add it to the dataList and move to the next batch
-            if (batchData != null) {
-                dataList.addAll(batchData);
-            } else break;
+        while (true) {
+            List<T> batchData = getObject(key + "." + ++position, listType);
+            if (batchData == null) return dataList;
+            dataList.addAll(batchData);
         }
-
-        // Return the full list of retrieved objects
-        return dataList;
     }
 
 
@@ -186,11 +178,11 @@ class DataManagerImpl implements DataManager {
      */
     @Override
     public <T> PaginatedData<T> getPagedList(String key, Class<T> tClass, int page) {
-        Type listType = getParameterized(List.class, tClass);
-        List<T> pageData = getObject(key + "." + page, listType);
+        List<T> pageData = getPageItems(key, tClass, page);
         if (pageData == null) pageData = new ArrayList<>();
 
-        int totalPages = getTotalPage(key);
+        MetaData metaData = getMetaData(key);
+        int totalPages = metaData.getTotalPages();
 
         // Pagination logic
         Integer previousPage = (page > 1 && page <= totalPages) ? page - 1 : null;
@@ -253,96 +245,61 @@ class DataManagerImpl implements DataManager {
     @Override
     public <E> void saveList(String key, List<E> value, int maxArraySize) {
         // If the list becomes empty after removal, delete the key from storage
-        if (value == null || value.isEmpty()) {
+        if (value == null) {
             remove(key);
         } else {
+            int valueSize = value.size();
+            if (valueSize == 0) {
+                remove(key);
+                return;
+            }
+
             // Ensure the batch size is at least 1
-            int batchSize = Math.max(Math.min(value.size(), maxArraySize), 1);
-            int pos = 1;
+            int batchSize = Math.max(Math.min(valueSize, maxArraySize), 1);
+            int pos = 0;
 
             // Split the list into smaller batches and store each one
-            for (int i = 0; i < value.size(); i += batchSize) {
-                List<E> batch = value.subList(i, Math.min(i + batchSize, value.size()));
-                saveObject(key + "." + pos++, batch);  // Store each batch with a unique key
+            for (int i = 0; i < valueSize; i += batchSize) {
+                List<E> batch = value.subList(i, Math.min(i + batchSize, valueSize));
+                saveObject(key + "." + ++pos, batch);  // Store each batch with a unique key
             }
 
-            saveInt(key + ".totalPages", pos - 1);
+            saveString(key + ".meta", MetaData.toMeta(pos, valueSize, maxArraySize));
         }
     }
 
 
     /**
-     * Inserts an element at the specified index in a JSON-stored list.
-     * If the element already exists in the list, it will be removed before insertion.
+     * Appends an element to the end of a paginated list stored under the given key.
+     * <p>
+     * The list is divided into pages of a fixed maximum size. This method retrieves
+     * the last page, adds the element to it, and creates a new page if the last page
+     * is already full. Metadata is updated to reflect the new total number of items
+     * and pages.
      *
-     * @param key             The key associated with the list in storage.
-     * @param index           The position where the new element should be inserted.
-     * @param element         The element to be added to the list.
-     * @param removeDuplicate If true, removes any existing occurrences of the element before adding.
-     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
-     * @throws IllegalArgumentException  If the stored list type does not match the element's type.
+     * @param key     the base key of the list to which the element will be appended
+     * @param element the element to append; if {@code null}, no action is taken
+     * @param tClass  the class type of the list items
+     * @param <T>     the type of the list items
      */
-    @Override
-    public void appendToList(String key, int index, Object element, boolean removeDuplicate) {
-
+    public <T> void appendToList(String key, T element, Class<T> tClass) {
         if (element == null) return;
 
-        // Retrieve the list from storage, or initialize it if null
-        List<Object> list = getFullList(key, Object.class);
+        MetaData metaData = getMetaData(key);
+        if (metaData == null) return;
 
-        // Ensure the retrieved list contains elements of the same type
-        if (!list.isEmpty()) {
-            Object obj = list.get(0);
-            Class<?> elementClass = element.getClass();
-            if (!elementClass.isInstance(obj)) {
-                throw new IllegalArgumentException("Type mismatch: Expected " + obj.getClass().getSimpleName() + ", but got " + elementClass.getSimpleName());
-            }
+        int totalPage = metaData.getTotalPages(), maxArraySize = metaData.getMaxArraySize();
+        List<T> lastPage = getPageItems(key, tClass, totalPage);
+        if (lastPage == null) lastPage = new ArrayList<>();
+
+        if (lastPage.size() >= maxArraySize) {
+            ++totalPage;
+            lastPage = new ArrayList<>();
         }
 
-
-        // Remove existing instances if needed
-        if (removeDuplicate) {
-            list.remove(element);
-        }
-
-        // Ensure index is within bounds
-        if (index < 0 || index > list.size()) {
-            index = list.size(); // Append at the end if out of bounds
-        }
-
-        // Insert at the specified index
-        list.add(index, element);
-
-        // Save the updated list
-        saveList(key, list);
-    }
-
-
-    /**
-     * Removes an element from the list stored in JSON at the specified index.
-     *
-     * <p>This method retrieves the list associated with the given key, removes the element
-     * at the specified index, and then updates the storage.</p>
-     *
-     * @param key   The unique identifier for the list stored in storage. Must not be null.
-     * @param index The position of the element to be removed.
-     * @throws IndexOutOfBoundsException If the index is out of range for the list size.
-     */
-    @Override
-    public void removeFromList(String key, int index) {
-        // Retrieve the list from storage
-        List<Object> list = getFullList(key, Object.class);
-
-        // Ensure the index is within the valid range
-        if (index < 0 || index >= list.size()) {
-            throw new IndexOutOfBoundsException("Invalid index: " + index + ". List size: " + list.size());
-        }
-
-        // Remove element at the specified index
-        list.remove(index);
-
-        // Save the updated list back to storage
-        saveList(key, list);
+        lastPage.add(element);
+        saveObject(key + "." + totalPage, lastPage);
+        saveString(key + ".meta", MetaData.toMeta(totalPage, metaData.getItemCount() + 1, maxArraySize));
     }
 
 
@@ -421,24 +378,31 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Removes all files associated with the given key. This method checks for multiple
-     * files associated with a key by appending an index (e.g., key.0, key.1, ...) and deletes them.
-     * Once no more indexed files are found, it removes the main file associated with the key.
+     * Removes all data associated with the specified key, including all paginated files
+     * and the metadata file. After removal, notifies the registered data observer (if any)
+     * about the change.
+     * <p>
+     * The method works as follows:
+     * <ol>
+     *     <li>Iterates through all paginated files with keys in the format {@code key.1, key.2, ...} and deletes them.</li>
+     *     <li>Deletes the metadata file stored under {@code key.meta}.</li>
+     *     <li>Deletes the base file associated with {@code key}.</li>
+     *     <li>If a {@link DataObserver} is registered, calls {@code onDataChange(key)} to notify about the deletion.</li>
+     * </ol>
      *
-     * @param key The key whose associated files are to be deleted.
+     * @param key the base key of the data to be removed
      */
-    @Override
     public void remove(String key) {
+        int position = 0;
 
-        int totalPages = getTotalPage(key);
-
-        for (int i = 1; i <= totalPages; i++) {
-            if (!remove(getFile(key + "." + i))) break;
+        while (true) {
+            if (!remove(getFile(key + "." + ++position))) break;
         }
 
-        //remove the base file
+        remove(getFile(key + ".meta"));
+
+        // Remove the base file
         remove(getFile(key));
-        remove(getFile(key + ".totalPages"));
 
         // Notify the listener about data changes, if applicable
         if (dataObserver != null) {
@@ -559,14 +523,22 @@ class DataManagerImpl implements DataManager {
 
 
     /**
-     * Retrieves the total number of pages for the given key.
-     * This method fetches the total pages value associated with the provided key.
+     * Retrieves the metadata associated with a specific list key.
+     * <p>
+     * The metadata contains information about the list such as:
+     * <ul>
+     *     <li>Total number of pages</li>
+     *     <li>Total number of items</li>
+     *     <li>Maximum array size per page</li>
+     * </ul>
+     * This metadata is stored under the key suffix ".meta".
      *
-     * @param key the key used to fetch the total number of pages
-     * @return the total number of pages
+     * @param key the base key of the list for which metadata is retrieved
+     * @return the {@link MetaData} object containing information about the list,
+     * or {@code null} if no metadata exists for the given key
      */
-    private int getTotalPage(String key) {
-        return getInt(key + ".totalPages");
+    private MetaData getMetaData(String key) {
+        return getObject(key + ".meta", MetaData.class);
     }
 
 
@@ -579,6 +551,24 @@ class DataManagerImpl implements DataManager {
         if (dataObserver != null) {
             dataObserver.onError(error);
         }
+    }
+
+    /**
+     * Retrieves a specific page (batch) of items from a stored list.
+     * <p>
+     * The list is split into pages with a fixed maximum size, and each page is
+     * stored under a key in the format {@code key.page}. This method fetches
+     * the data for the requested page.
+     *
+     * @param key    the base key of the list
+     * @param tClass the class type of the list items
+     * @param page   the page number to retrieve (1-based index)
+     * @param <T>    the type of items in the list
+     * @return a {@link List} of items for the specified page, or {@code null} if the page does not exist
+     */
+    private <T> List<T> getPageItems(String key, Class<T> tClass, int page) {
+        Type listType = getParameterized(List.class, tClass);
+        return getObject(key + "." + page, listType);
     }
 
 }

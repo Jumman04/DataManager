@@ -322,70 +322,10 @@ public interface DataManager {
      * If the list does not exist, a new list will be created.
      * Optionally, duplicates can be removed before appending the element.
      *
-     * @param key             the key to identify the list
-     * @param index           the position at which to insert the element in the list
-     * @param element         the element to append to the list
-     * @param removeDuplicate whether to remove duplicate elements before appending the new element
-     */
-    void appendToList(String key, int index, Object element, boolean removeDuplicate);
-
-
-    /**
-     * Appends an element to a list associated with the given key at the specified index.
-     * If the list does not exist, a new list will be created. Duplicates are not removed by default.
-     * <p>
-     * This is a shorthand method that calls {@link #appendToList(String, int, Object, boolean)} with the
-     * `removeDuplicate` flag set to false.
-     *
-     * @param key     the key to identify the list
-     * @param index   the position at which to insert the element in the list
-     * @param element the element to append to the list
-     */
-    default void appendToList(String key, int index, Object element) {
-        appendToList(key, index, element, false);
-    }
-
-
-    /**
-     * Appends an element to a list associated with the given key. The element is added at the end of the list.
-     * If the list does not exist, a new list will be created. Optionally, duplicates can be removed before appending the element.
-     * <p>
-     * This is a shorthand method that calls {@link #appendToList(String, int, Object, boolean)} with the index set to -1,
-     * indicating the element should be appended to the end of the list.
-     *
-     * @param key             the key to identify the list
-     * @param element         the element to append to the list
-     * @param removeDuplicate whether to remove duplicate elements before appending the new element
-     */
-    default void appendToList(String key, Object element, boolean removeDuplicate) {
-        appendToList(key, -1, element, removeDuplicate);
-    }
-
-
-    /**
-     * Appends an element to a list associated with the given key. The element is added at the end of the list.
-     * If the list does not exist, a new list will be created. Duplicates are not removed by default.
-     * <p>
-     * This is a shorthand method that calls {@link #appendToList(String, Object, boolean)} with the index set to -1
-     * and the `removeDuplicate` flag set to false, meaning the element will be added to the end of the list without
-     * removing duplicates.
-     *
      * @param key     the key to identify the list
      * @param element the element to append to the list
      */
-    default void appendToList(String key, Object element) {
-        appendToList(key, -1, element, false);
-    }
-
-
-    /**
-     * Removes an element from the list associated with the given key at the specified index.
-     * If the list does not contain an element at the given index, no changes will be made.
-     *
-     * @param key   the key to identify the list
-     * @param index the position of the element to remove from the list
-     */
-    void removeFromList(String key, int index);
+    <T> void appendToList(String key, T element, Class<T> tClass);
 
 
     /**
