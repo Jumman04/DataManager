@@ -10,10 +10,10 @@ import java.util.List;
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  *
- * @param <T> the type of data items in the list
+ * @param <E> the type of data items in the list
  */
-public class PaginatedData<T> {
-    public List<T> data;
+public class PaginatedData<E> {
+    public List<E> data;
     public Pagination pagination;
 
 
@@ -23,7 +23,7 @@ public class PaginatedData<T> {
      * @param data       the list of data items for the current page
      * @param pagination the pagination information (e.g., current page, total pages)
      */
-    public PaginatedData(List<T> data, Pagination pagination) {
+    public PaginatedData(List<E> data, Pagination pagination) {
         this.data = data;
         this.pagination = pagination;
     }

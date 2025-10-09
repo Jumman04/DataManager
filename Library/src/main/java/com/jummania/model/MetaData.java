@@ -8,7 +8,7 @@ package com.jummania.model;
  * <ul>
  *     <li>{@code totalPages} — the total number of pages currently in the list</li>
  *     <li>{@code itemCount} — the total number of items across all pages</li>
- *     <li>{@code maxArraySize} — the maximum number of items allowed per page</li>
+ *     <li>{@code batchSizeLimit} — the maximum number of items allowed per page</li>
  * </ul>
  * <p>
  * It also provides a utility method {@link #toMeta(int, int, int)} to generate
@@ -17,19 +17,19 @@ package com.jummania.model;
 public class MetaData {
     private final int totalPages;
     private final int itemCount;
-    private final int maxArraySize;
+    private final int maxBatchSize;
 
     /**
      * Constructs a new MetaData object.
      *
      * @param totalPages   the total number of pages
      * @param itemCount    the total number of items across all pages
-     * @param maxArraySize the maximum number of items per page
+     * @param maxBatchSize the maximum number of items per page
      */
-    public MetaData(int totalPages, int itemCount, int maxArraySize) {
+    public MetaData(int totalPages, int itemCount, int maxBatchSize) {
         this.totalPages = totalPages;
         this.itemCount = itemCount;
-        this.maxArraySize = maxArraySize;
+        this.maxBatchSize = maxBatchSize;
     }
 
     /**
@@ -37,11 +37,11 @@ public class MetaData {
      *
      * @param totalPages   the total number of pages
      * @param itemCount    the total number of items
-     * @param maxArraySize the maximum number of items per page
+     * @param maxBatchSize the maximum number of items per page
      * @return a JSON string representing the metadata
      */
-    public static String toMeta(int totalPages, int itemCount, int maxArraySize) {
-        return "{\"totalPages\":" + totalPages + ",\"itemCount\":" + itemCount + ",\"maxArraySize\":" + maxArraySize + "}";
+    public static String toMeta(int totalPages, int itemCount, int maxBatchSize) {
+        return "{\"totalPages\":" + totalPages + ",\"itemCount\":" + itemCount + ",\"maxBatchSize\":" + maxBatchSize + "}";
     }
 
     /**
@@ -67,7 +67,7 @@ public class MetaData {
      *
      * @return the max array size
      */
-    public int getMaxArraySize() {
-        return maxArraySize;
+    public int getMaxBatchSize() {
+        return maxBatchSize;
     }
 }

@@ -5,6 +5,7 @@ import com.jummania.model.PaginatedData;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Interface for managing data operations such as saving, retrieving, and deleting key-value data,
@@ -188,11 +189,11 @@ public interface DataManager {
      * The list is deserialized from the underlying data source to match the specified type.
      *
      * @param key    the key to look up the list of objects
-     * @param tClass the type of the objects in the list
-     * @param <T>    the type of the objects in the list
+     * @param eClass the type of the objects in the list
+     * @param <E>    the type of the objects in the list
      * @return the list of objects of the specified type associated with the key, or an empty list if not found
      */
-    <T> List<T> getFullList(String key, Class<T> tClass);
+    <E> List<E> getFullList(String key, Class<E> eClass);
 
 
     /**
@@ -200,13 +201,17 @@ public interface DataManager {
      * The list is deserialized from the underlying data source to match the specified type, with pagination support.
      *
      * @param key    the key to look up the paginated list of objects
-     * @param tClass the type of the objects in the list
+     * @param eClass the type of the objects in the list
      * @param page   the page number to retrieve
-     * @param <T>    the type of the objects in the list
+     * @param <E>    the type of the objects in the list
      * @return a {@link PaginatedData} object containing the paginated list of objects of the specified type,
      * or an empty paginated data if no objects are found
      */
-    <T> PaginatedData<T> getPagedList(String key, Class<T> tClass, int page);
+    <E> PaginatedData<E> getPagedList(String key, Class<E> eClass, int page, boolean reverse);
+
+    default <E> PaginatedData<E> getPagedList(String key, Class<E> eClass, int page) {
+        return getPagedList(key, eClass, page, false);
+    }
 
 
     /**
@@ -294,26 +299,26 @@ public interface DataManager {
      * If the key already exists, the value will be updated.
      * The size of the list is capped to the specified maximum array size.
      *
-     * @param key          the key to associate with the list of objects
-     * @param value        the list of objects to save
-     * @param maxArraySize the maximum number of elements in the list to be saved
-     * @param <E>          the type of elements in the list
+     * @param key            the key to associate with the list of objects
+     * @param list           the list of objects to save
+     * @param batchSizeLimit the maximum number of elements in the list to be saved
+     * @param <E>            the type of elements in the list
      */
-    <E> void saveList(String key, List<E> value, int maxArraySize);
+    <E> void saveList(String key, List<E> list, int listSizeLimit, int batchSizeLimit);
 
 
     /**
      * Saves a list of objects associated with the given key by converting the list to a JSON string.
-     * If the key already exists, the value will be updated. The size of the list is capped to 25 elements.
+     * If the key already exists, the list will be updated. The size of the list is capped to 25 elements.
      * <p>
-     * This is a shorthand method that calls {@link #saveList(String, List, int)} with a default maximum array size of 25.
+     * This is a shorthand method that calls {@link #saveList(String, List, int, int)} with a default maximum array size of 25.
      *
-     * @param key   the key to associate with the list of objects
-     * @param value the list of objects to save
-     * @param <E>   the type of elements in the list
+     * @param key  the key to associate with the list of objects
+     * @param list the list of objects to save
+     * @param <E>  the type of elements in the list
      */
-    default <E> void saveList(String key, List<E> value) {
-        saveList(key, value, 25);
+    default <E> void saveList(String key, List<E> list) {
+        saveList(key, list, list.size(), 25);
     }
 
 
@@ -325,7 +330,11 @@ public interface DataManager {
      * @param key     the key to identify the list
      * @param element the element to append to the list
      */
-    <T> void appendToList(String key, T element, Class<T> tClass);
+    <E> void appendToList(String key, E element, Class<E> eClass, int maxListSize, Predicate<? super E> filter);
+
+    default <E> void appendToList(String key, E element, Class<E> eClass) {
+        appendToList(key, element, eClass, Integer.MAX_VALUE, null);
+    }
 
 
     /**

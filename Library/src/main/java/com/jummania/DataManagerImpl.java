@@ -18,8 +18,13 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Implementation of the {@link DataManager} interface.
@@ -142,22 +147,22 @@ class DataManagerImpl implements DataManager {
      * (e.g., "key.0", "key.1", ...) and will continue retrieving batches until no more data is found.
      *
      * @param key    The key used to identify the list of objects in the stored data.
-     * @param tClass The type of individual objects in the list (e.g., `String.class`, `Book.class`).
-     * @param <T>    The type of objects contained in the list.
+     * @param eClass The type of individual objects in the list (e.g., `String.class`, `Book.class`).
+     * @param <E>    The type of objects contained in the list.
      * @return A list of deserialized objects of type `T`. If no data is found, an empty list is returned.
      */
     @Override
-    public <T> List<T> getFullList(String key, Class<T> tClass) {
+    public <E> List<E> getFullList(String key, Class<E> eClass) {
         // Initialize the list that will hold the retrieved objects
-        List<T> dataList = new ArrayList<>();
+        List<E> dataList = new ArrayList<>();
 
         // Determine the full Type for the parameterized List
-        Type listType = getParameterized(List.class, tClass);
+        Type listType = getParameterized(List.class, eClass);
 
         int position = 0;
 
         while (true) {
-            List<T> batchData = getObject(key + "." + ++position, listType);
+            List<E> batchData = getObject(key + "." + ++position, listType);
             if (batchData == null) return dataList;
             dataList.addAll(batchData);
         }
@@ -170,22 +175,33 @@ class DataManagerImpl implements DataManager {
      * <p>
      * The pagination details include the current page, previous page, next page, and total number of pages.
      *
-     * @param <T>    the type of the data in the paginated list
+     * @param <E>    the type of the data in the paginated list
      * @param key    the key used to fetch the data from storage
-     * @param tClass the type of the items in the list
+     * @param eClass the type of the items in the list
      * @param page   the page number to retrieve
      * @return a {@link PaginatedData} object containing the list of data for the specified page and pagination information
      */
     @Override
-    public <T> PaginatedData<T> getPagedList(String key, Class<T> tClass, int page) {
-        List<T> pageData = getPageItems(key, tClass, page);
-        if (pageData == null) pageData = new ArrayList<>();
-
+    public <E> PaginatedData<E> getPagedList(String key, Class<E> eClass, int page, boolean reverse) {
         MetaData metaData = getMetaData(key);
+        if (metaData == null) {
+            return getEmptyPaginateData(page, 0);
+        }
+
         int totalPages = metaData.getTotalPages();
 
-        // Pagination logic
-        Integer previousPage = (page > 1 && page <= totalPages) ? page - 1 : null;
+        // If reverse: flip the page index (1 => N, 2 => N-1, etc.)
+        int targetPage = reverse ? (totalPages - page + 1) : page;
+        if (targetPage < 1 || targetPage > totalPages) {
+            return getEmptyPaginateData(page, totalPages);
+        }
+
+        Type listType = getParameterized(List.class, eClass);
+        List<E> pageData = getObject(key + "." + targetPage, listType);
+        if (pageData == null) pageData = Collections.emptyList();
+
+        // Previous/Next still follow the user's requested page (not the flipped index)
+        Integer previousPage = (page > 1) ? page - 1 : null;
         Integer nextPage = (page < totalPages) ? page + 1 : null;
 
         Pagination pagination = new Pagination(previousPage, page, nextPage, totalPages);
@@ -236,36 +252,38 @@ class DataManagerImpl implements DataManager {
 
     /**
      * Stores a list of objects in the storage associated with the provided key.
-     * This method divides the list into smaller batches (based on maxArraySize) and stores each batch separately.
+     * This method divides the list into smaller batches (based on maxBatchSize) and stores each batch separately.
      *
      * @param key          The key used to identify the stored list of objects.
-     * @param value        The list of objects to be stored.
-     * @param maxArraySize The maximum size of each batch. If the list is larger than this, it will be split into multiple batches.
+     * @param list         The list of objects to be stored.
+     * @param maxBatchSize The maximum size of each batch. If the list is larger than this, it will be split into multiple batches.
      */
     @Override
-    public <E> void saveList(String key, List<E> value, int maxArraySize) {
+    public <E> void saveList(String key, List<E> list, int listSizeLimit, int maxBatchSize) {
         // If the list becomes empty after removal, delete the key from storage
-        if (value == null) {
-            remove(key);
-        } else {
-            int valueSize = value.size();
-            if (valueSize == 0) {
+        if (list != null) {
+
+            listSizeLimit = Math.min(list.size(), listSizeLimit);
+
+            if (listSizeLimit == 0) {
                 remove(key);
                 return;
             }
 
             // Ensure the batch size is at least 1
-            int batchSize = Math.max(Math.min(valueSize, maxArraySize), 1);
+            int batchSizeLimit = Math.max(Math.min(listSizeLimit, maxBatchSize), 1);
             int pos = 0;
 
             // Split the list into smaller batches and store each one
-            for (int i = 0; i < valueSize; i += batchSize) {
-                List<E> batch = value.subList(i, Math.min(i + batchSize, valueSize));
+            for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
+                List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
                 saveObject(key + "." + ++pos, batch);  // Store each batch with a unique key
             }
 
-            saveString(key + ".meta", MetaData.toMeta(pos, valueSize, maxArraySize));
-        }
+            saveString(key + ".meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize));
+            remove(getFile(key + "." + ++pos));
+
+        } else remove(key);
     }
 
 
@@ -279,27 +297,70 @@ class DataManagerImpl implements DataManager {
      *
      * @param key     the base key of the list to which the element will be appended
      * @param element the element to append; if {@code null}, no action is taken
-     * @param tClass  the class type of the list items
-     * @param <T>     the type of the list items
+     * @param eClass  the class type of the list items
+     * @param <E>     the type of the list items
      */
-    public <T> void appendToList(String key, T element, Class<T> tClass) {
+    public <E> void appendToList(String key, E element, Class<E> eClass, int maxListSize, Predicate<? super E> itemToRemove) {
         if (element == null) return;
 
         MetaData metaData = getMetaData(key);
-        if (metaData == null) return;
+        if (metaData == null) {
+            saveList(key, Collections.singletonList(element));
+            return;
+        }
 
-        int totalPage = metaData.getTotalPages(), maxArraySize = metaData.getMaxArraySize();
-        List<T> lastPage = getPageItems(key, tClass, totalPage);
-        if (lastPage == null) lastPage = new ArrayList<>();
+        int totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), batchSizeLimit = metaData.getMaxBatchSize();
 
-        if (lastPage.size() >= maxArraySize) {
+        String baseKey = key + ".";
+
+        if (itemCount >= maxListSize) {
+            Path rootPath = filesDir.toPath();
+            for (int i = 2; i <= totalPage; i++) {
+                Path oldPath = rootPath.resolve(baseKey + i);
+                Path newPath = rootPath.resolve(baseKey + (i - 1));
+
+                try {
+                    Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    break;
+                }
+            }
+            --totalPage;
+            itemCount -= batchSizeLimit;
+        }
+
+        String fileKey = baseKey + totalPage;
+        Type listType = getParameterized(List.class, eClass);
+        List<E> lastPage = getObject(fileKey, listType);
+        if (lastPage == null) lastPage = new ArrayList<>(1);
+
+        boolean removed = false;
+        if (itemToRemove != null) {
+            removed = removeFirstMatch(lastPage, itemToRemove);
+            if (!removed) {
+                List<E> removedList;
+                for (int i = totalPage - 1; i > 0; --i) {
+                    fileKey = baseKey + i;
+                    removedList = getObject(fileKey, listType);
+                    if (removedList == null) break;
+                    removed = removeFirstMatch(removedList, itemToRemove);
+                    if (removed) {
+                        saveObject(fileKey, removedList);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (lastPage.size() >= batchSizeLimit) {
             ++totalPage;
-            lastPage = new ArrayList<>();
+            lastPage = new ArrayList<>(1);
         }
 
         lastPage.add(element);
-        saveObject(key + "." + totalPage, lastPage);
-        saveString(key + ".meta", MetaData.toMeta(totalPage, metaData.getItemCount() + 1, maxArraySize));
+        saveObject(baseKey + totalPage, lastPage);
+        saveString(key + ".meta", MetaData.toMeta(totalPage, removed ? itemCount : itemCount + 1, batchSizeLimit));
+        remove(getFile(baseKey + ++totalPage));
     }
 
 
@@ -394,9 +455,8 @@ class DataManagerImpl implements DataManager {
      */
     public void remove(String key) {
         int position = 0;
-
-        while (true) {
-            if (!remove(getFile(key + "." + ++position))) break;
+        while (remove(getFile(key + "." + ++position))) {
+            // keep deleting until no more files exist
         }
 
         remove(getFile(key + ".meta"));
@@ -553,22 +613,19 @@ class DataManagerImpl implements DataManager {
         }
     }
 
-    /**
-     * Retrieves a specific page (batch) of items from a stored list.
-     * <p>
-     * The list is split into pages with a fixed maximum size, and each page is
-     * stored under a key in the format {@code key.page}. This method fetches
-     * the data for the requested page.
-     *
-     * @param key    the base key of the list
-     * @param tClass the class type of the list items
-     * @param page   the page number to retrieve (1-based index)
-     * @param <T>    the type of items in the list
-     * @return a {@link List} of items for the specified page, or {@code null} if the page does not exist
-     */
-    private <T> List<T> getPageItems(String key, Class<T> tClass, int page) {
-        Type listType = getParameterized(List.class, tClass);
-        return getObject(key + "." + page, listType);
+    private <E> PaginatedData<E> getEmptyPaginateData(int currentPage, int totalPages) {
+        return new PaginatedData<>(Collections.emptyList(), new Pagination(null, currentPage, null, totalPages));
+    }
+
+    private <E> boolean removeFirstMatch(List<E> list, Predicate<? super E> filter) {
+        if (list == null || filter == null) return false;
+        for (int i = list.size() - 1; i >= 0; --i) {
+            if (filter.test(list.get(i))) {
+                list.remove(i);
+                return true; // removed 1 element
+            }
+        }
+        return false; // nothing removed
     }
 
 }
