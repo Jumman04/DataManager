@@ -299,12 +299,12 @@ public interface DataManager {
      * If the key already exists, the value will be updated.
      * The size of the list is capped to the specified maximum array size.
      *
-     * @param key            the key to associate with the list of objects
-     * @param list           the list of objects to save
-     * @param batchSizeLimit the maximum number of elements in the list to be saved
-     * @param <E>            the type of elements in the list
+     * @param key          the key to associate with the list of objects
+     * @param list         the list of objects to save
+     * @param maxBatchSize the maximum number of elements in the list to be saved
+     * @param <E>          the type of elements in the list
      */
-    <E> void saveList(String key, List<E> list, int listSizeLimit, int batchSizeLimit);
+    <E> void saveList(String key, List<E> list, int listSizeLimit, int maxBatchSize);
 
 
     /**
@@ -330,10 +330,10 @@ public interface DataManager {
      * @param key     the key to identify the list
      * @param element the element to append to the list
      */
-    <E> void appendToList(String key, E element, Class<E> eClass, int maxListSize, Predicate<? super E> filter);
+    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> itemToRemove);
 
     default <E> void appendToList(String key, E element, Class<E> eClass) {
-        appendToList(key, element, eClass, Integer.MAX_VALUE, null);
+        appendToList(key, element, eClass, Integer.MAX_VALUE, 25, null);
     }
 
 

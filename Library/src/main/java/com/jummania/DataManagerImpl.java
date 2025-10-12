@@ -123,9 +123,6 @@ class DataManagerImpl implements DataManager {
     @Override
     public <T> T getObject(String key, Type type) {
 
-        // Validate input parameters
-        if (type == null) throw new IllegalArgumentException("type cannot be null");
-
         try (Reader reader = getReader(key)) {
             if (reader != null) {
                 return fromReader(reader, type);
@@ -161,8 +158,10 @@ class DataManagerImpl implements DataManager {
 
         int position = 0;
 
+        key += ".";
+
         while (true) {
-            List<E> batchData = getObject(key + "." + ++position, listType);
+            List<E> batchData = getObject(key + ++position, listType);
             if (batchData == null) return dataList;
             dataList.addAll(batchData);
         }
@@ -274,14 +273,16 @@ class DataManagerImpl implements DataManager {
             int batchSizeLimit = Math.max(Math.min(listSizeLimit, maxBatchSize), 1);
             int pos = 0;
 
+            key += ".";
+
             // Split the list into smaller batches and store each one
             for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
                 List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
-                saveObject(key + "." + ++pos, batch);  // Store each batch with a unique key
+                saveObject(key + ++pos, batch);  // Store each batch with a unique key
             }
 
-            saveString(key + ".meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize));
-            remove(getFile(key + "." + ++pos));
+            saveString(key + "meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize));
+            remove(getFile(key + ++pos));
 
         } else remove(key);
     }
@@ -300,24 +301,25 @@ class DataManagerImpl implements DataManager {
      * @param eClass  the class type of the list items
      * @param <E>     the type of the list items
      */
-    public <E> void appendToList(String key, E element, Class<E> eClass, int maxListSize, Predicate<? super E> itemToRemove) {
+    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> itemToRemove) {
         if (element == null) return;
 
         MetaData metaData = getMetaData(key);
         if (metaData == null) {
-            saveList(key, Collections.singletonList(element));
+            saveList(key, Collections.singletonList(element), listSizeLimit, maxBatchSize); //maxBatchSize is only needed for initial list creation.
             return;
         }
 
-        int totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), batchSizeLimit = metaData.getMaxBatchSize();
+        int totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount();
+        maxBatchSize = metaData.getMaxBatchSize();
 
-        String baseKey = key + ".";
+        key += ".";
 
-        if (itemCount >= maxListSize) {
+        if (itemCount >= listSizeLimit) {
             Path rootPath = filesDir.toPath();
             for (int i = 2; i <= totalPage; i++) {
-                Path oldPath = rootPath.resolve(baseKey + i);
-                Path newPath = rootPath.resolve(baseKey + (i - 1));
+                Path oldPath = rootPath.resolve(key + i);
+                Path newPath = rootPath.resolve(key + (i - 1));
 
                 try {
                     Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
@@ -326,21 +328,20 @@ class DataManagerImpl implements DataManager {
                 }
             }
             --totalPage;
-            itemCount -= batchSizeLimit;
+            itemCount -= maxBatchSize; // we don't know actual size, so just subtract maxBatchSize
         }
 
-        String fileKey = baseKey + totalPage;
+        String fileKey = key + totalPage;
         Type listType = getParameterized(List.class, eClass);
         List<E> lastPage = getObject(fileKey, listType);
         if (lastPage == null) lastPage = new ArrayList<>(1);
 
-        boolean removed = false;
         if (itemToRemove != null) {
-            removed = removeFirstMatch(lastPage, itemToRemove);
+            boolean removed = removeFirstMatch(lastPage, itemToRemove);
             if (!removed) {
                 List<E> removedList;
                 for (int i = totalPage - 1; i > 0; --i) {
-                    fileKey = baseKey + i;
+                    fileKey = key + i;
                     removedList = getObject(fileKey, listType);
                     if (removedList == null) break;
                     removed = removeFirstMatch(removedList, itemToRemove);
@@ -350,17 +351,18 @@ class DataManagerImpl implements DataManager {
                     }
                 }
             }
+            if (removed) --itemCount;
         }
 
-        if (lastPage.size() >= batchSizeLimit) {
+        if (lastPage.size() >= maxBatchSize) {
             ++totalPage;
             lastPage = new ArrayList<>(1);
         }
 
         lastPage.add(element);
-        saveObject(baseKey + totalPage, lastPage);
-        saveString(key + ".meta", MetaData.toMeta(totalPage, removed ? itemCount : itemCount + 1, batchSizeLimit));
-        remove(getFile(baseKey + ++totalPage));
+        saveObject(key + totalPage, lastPage);
+        saveString(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize));
+        remove(getFile(key + ++totalPage));
     }
 
 
@@ -455,11 +457,14 @@ class DataManagerImpl implements DataManager {
      */
     public void remove(String key) {
         int position = 0;
-        while (remove(getFile(key + "." + ++position))) {
+
+        String baseKey = key + ".";
+
+        while (remove(getFile(baseKey + ++position))) {
             // keep deleting until no more files exist
         }
 
-        remove(getFile(key + ".meta"));
+        remove(getFile(baseKey + "meta"));
 
         // Remove the base file
         remove(getFile(key));
