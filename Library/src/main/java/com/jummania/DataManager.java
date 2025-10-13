@@ -23,6 +23,115 @@ public interface DataManager {
 
 
     /**
+     * Saves an object to the storage system associated with the given key, using the specified type.
+     * <p>
+     * This is useful for objects with generic types or when the runtime class
+     * does not fully capture the type information. Implementations should
+     * serialize the object using {@code typeOfSrc}.
+     * </p>
+     *
+     * @param key       the unique key identifying the storage location; must not be {@code null}
+     * @param value     the object to save; may be {@code null} to remove the key
+     * @param typeOfSrc the {@link Type} representing the object's type for serialization
+     * @see #saveObject(String, Object)
+     */
+    void saveObject(String key, Object value, Type typeOfSrc);
+
+
+    /**
+     * Saves an object to the storage system associated with the given key.
+     * <p>
+     * This is a convenience method equivalent to calling
+     * {@link #saveObject(String, Object, Type)} using the object's runtime class.
+     * </p>
+     *
+     * @param key   the unique key identifying the storage location; must not be {@code null}
+     * @param value the object to save; may be {@code null} to remove the key
+     * @see #saveObject(String, Object, Type)
+     */
+    default void saveObject(String key, Object value) {
+        saveObject(key, value, value.getClass());
+    }
+
+
+    /**
+     * Retrieves an object of the specified type associated with the given key.
+     * The object is deserialized from the underlying data source to match the specified type.
+     *
+     * @param key  the key to look up the object
+     * @param type the type of the object to be returned
+     * @param <T>  the type of the object to be returned
+     * @return the object of the specified type associated with the key, or null if not found or if the type doesn't match
+     */
+    <T> T getObject(String key, Type type);
+
+
+    /**
+     * Retrieves the raw String value associated with the given key.
+     * The value is returned as-is, without any defaulting behavior.
+     *
+     * @param key the key to look up the value
+     * @return the raw String value associated with the key, or null if not found
+     */
+    String getRawString(String key);
+
+    /**
+     * Saves an integer value associated with the given key by converting the integer to a string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveObject(String, Object)} by converting the integer value to a string.
+     *
+     * @param key   the key to associate with the integer value
+     * @param value the integer value to save
+     */
+    default void saveInt(String key, int value) {
+        saveObject(key, Integer.toString(value));
+    }
+
+
+    /**
+     * Saves a long value associated with the given key by converting the long to a string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveObject(String, Object)} by converting the long value to a string.
+     *
+     * @param key   the key to associate with the long value
+     * @param value the long value to save
+     */
+    default void saveLong(String key, long value) {
+        saveObject(key, Long.toString(value));
+    }
+
+
+    /**
+     * Saves a float value associated with the given key by converting the float to a string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveObject(String, Object)} by converting the float value to a string.
+     *
+     * @param key   the key to associate with the float value
+     * @param value the float value to save
+     */
+    default void saveFloat(String key, float value) {
+        saveObject(key, Float.toString(value));
+    }
+
+
+    /**
+     * Saves a boolean value associated with the given key by converting the boolean to a string.
+     * If the key already exists, the value will be updated.
+     * <p>
+     * This is a shorthand method that calls {@link #saveObject(String, Object)} by converting the boolean value to a string.
+     *
+     * @param key   the key to associate with the boolean value
+     * @param value the boolean value to save
+     */
+    default void saveBoolean(String key, boolean value) {
+        saveObject(key, Boolean.toString(value));
+    }
+
+
+    /**
      * Retrieves a string value associated with the given key.
      * If no value is found or the value is null, returns the provided default value.
      *
@@ -163,28 +272,6 @@ public interface DataManager {
 
 
     /**
-     * Retrieves the raw String value associated with the given key.
-     * The value is returned as-is, without any defaulting behavior.
-     *
-     * @param key the key to look up the value
-     * @return the raw String value associated with the key, or null if not found
-     */
-    String getRawString(String key);
-
-
-    /**
-     * Retrieves an object of the specified type associated with the given key.
-     * The object is deserialized from the underlying data source to match the specified type.
-     *
-     * @param key  the key to look up the object
-     * @param type the type of the object to be returned
-     * @param <T>  the type of the object to be returned
-     * @return the object of the specified type associated with the key, or null if not found or if the type doesn't match
-     */
-    <T> T getObject(String key, Type type);
-
-
-    /**
      * Retrieves a list of objects of the specified type associated with the given key.
      * The list is deserialized from the underlying data source to match the specified type.
      *
@@ -197,112 +284,64 @@ public interface DataManager {
 
 
     /**
-     * Retrieves a paginated list of objects of the specified type associated with the given key.
-     * The list is deserialized from the underlying data source to match the specified type, with pagination support.
+     * Retrieves a paginated list of elements associated with the specified key.
+     * <p>
+     * This method allows fetching a specific page of data from storage.
+     * Pages are 1-based. If {@code reverse} is {@code true}, pages are
+     * counted from the last page backward (e.g., 1 → last page, 2 → second-to-last, etc.).
+     * </p>
      *
-     * @param key    the key to look up the paginated list of objects
-     * @param eClass the type of the objects in the list
-     * @param page   the page number to retrieve
-     * @param <E>    the type of the objects in the list
-     * @return a {@link PaginatedData} object containing the paginated list of objects of the specified type,
-     * or an empty paginated data if no objects are found
+     * @param <E>     the type of elements in the list
+     * @param key     the unique key identifying the dataset
+     * @param eClass  the class type of the list elements (for deserialization)
+     * @param page    the page number to retrieve (1-based)
+     * @param reverse if {@code true}, pages are fetched in reverse order
+     * @return a {@link PaginatedData} object containing the elements for the requested page
+     * @see PaginatedData
+     * @see com.jummania.model.Pagination
      */
     <E> PaginatedData<E> getPagedList(String key, Class<E> eClass, int page, boolean reverse);
 
+
+    /**
+     * Retrieves a paginated list of elements associated with the specified key.
+     * <p>
+     * This is a convenience method equivalent to calling
+     * {@link #getPagedList(String, Class, int, boolean)} with {@code reverse = false}.
+     * </p>
+     *
+     * @param <E>    the type of elements in the list
+     * @param key    the unique key identifying the dataset
+     * @param eClass the class type of the list elements (for deserialization)
+     * @param page   the page number to retrieve (1-based)
+     * @return a {@link PaginatedData} object containing the elements for the requested page
+     * @see #getPagedList(String, Class, int, boolean)
+     */
     default <E> PaginatedData<E> getPagedList(String key, Class<E> eClass, int page) {
         return getPagedList(key, eClass, page, false);
     }
 
 
     /**
-     * Saves a string value associated with the given key.
-     * If the key already exists, the value will be updated.
-     *
-     * @param key   the key to associate with the string value
-     * @param value the string value to save
-     */
-    void saveString(String key, String value);
-
-
-    /**
-     * Saves an integer value associated with the given key by converting the integer to a string.
-     * If the key already exists, the value will be updated.
+     * Saves a list of elements to storage, splitting it into batches if necessary.
      * <p>
-     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the integer value to a string.
-     *
-     * @param key   the key to associate with the integer value
-     * @param value the integer value to save
-     */
-    default void saveInt(String key, int value) {
-        saveString(key, Integer.toString(value));
-    }
-
-
-    /**
-     * Saves a long value associated with the given key by converting the long to a string.
-     * If the key already exists, the value will be updated.
+     * The list is divided into smaller sublists (batches) according to {@code maxBatchSize},
+     * and each batch is stored separately. Metadata about the total items, total pages,
+     * and batch size is stored under a special {@code key.meta} entry.
+     * </p>
      * <p>
-     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the long value to a string.
+     * If the list is {@code null} or becomes empty after applying {@code listSizeLimit},
+     * the key is removed from storage.
+     * </p>
      *
-     * @param key   the key to associate with the long value
-     * @param value the long value to save
-     */
-    default void saveLong(String key, long value) {
-        saveString(key, Long.toString(value));
-    }
-
-
-    /**
-     * Saves a float value associated with the given key by converting the float to a string.
-     * If the key already exists, the value will be updated.
-     * <p>
-     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the float value to a string.
-     *
-     * @param key   the key to associate with the float value
-     * @param value the float value to save
-     */
-    default void saveFloat(String key, float value) {
-        saveString(key, Float.toString(value));
-    }
-
-
-    /**
-     * Saves a boolean value associated with the given key by converting the boolean to a string.
-     * If the key already exists, the value will be updated.
-     * <p>
-     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the boolean value to a string.
-     *
-     * @param key   the key to associate with the boolean value
-     * @param value the boolean value to save
-     */
-    default void saveBoolean(String key, boolean value) {
-        saveString(key, Boolean.toString(value));
-    }
-
-
-    /**
-     * Saves an object associated with the given key by converting the object to a JSON string.
-     * If the key already exists, the value will be updated.
-     * <p>
-     * This is a shorthand method that calls {@link #saveString(String, String)} by converting the object to a JSON string using {@link #toJson(Object)}.
-     *
-     * @param key   the key to associate with the object
-     * @param value the object to save
-     */
-    default void saveObject(String key, Object value) {
-        saveString(key, toJson(value));
-    }
-
-
-    /**
-     * Saves a list of objects associated with the given key by converting the list to a JSON string.
-     * If the key already exists, the value will be updated.
-     * The size of the list is capped to the specified maximum array size.
-     *
-     * @param key          the key to associate with the list of objects
-     * @param list         the list of objects to save
-     * @param maxBatchSize the maximum number of elements in the list to be saved
-     * @param <E>          the type of elements in the list
+     * @param <E>           the type of elements in the list
+     * @param key           the unique key identifying the dataset
+     * @param list          the list of elements to save; may be {@code null}
+     * @param listSizeLimit the maximum total number of elements to store
+     * @param maxBatchSize  the maximum number of elements per batch (must be ≥ 1)
+     * @see #saveObject(String, Object, Type)
+     * @see #remove(String)
+     * @see com.jummania.model.MetaData#toMeta(int, int, int)
      */
     <E> void saveList(String key, List<E> list, int listSizeLimit, int maxBatchSize);
 
@@ -323,15 +362,40 @@ public interface DataManager {
 
 
     /**
-     * Appends an element to a list associated with the given key at the specified index.
-     * If the list does not exist, a new list will be created.
-     * Optionally, duplicates can be removed before appending the element.
+     * Appends a single element to a paginated list stored under the given key.
+     * <p>
+     * If the list does not exist, a new one is created. The list is stored in
+     * batches according to {@code maxBatchSize}, and the total number of elements
+     * is limited by {@code listSizeLimit}. Optionally, an existing element can
+     * be removed before adding the new element using the {@code itemToRemove} predicate.
+     * </p>
      *
-     * @param key     the key to identify the list
-     * @param element the element to append to the list
+     * @param <E>           the type of elements in the list
+     * @param key           the unique key identifying the stored paginated list
+     * @param element       the element to append; ignored if {@code null}
+     * @param eClass        the class type of the list elements (for deserialization)
+     * @param listSizeLimit the maximum total number of elements allowed in storage
+     * @param maxBatchSize  the maximum number of elements per batch
+     * @param itemToRemove  a predicate to identify and remove an existing element; may be {@code null}
+     * @see #saveList(String, List, int, int)
+     * @see #saveObject(String, Object, Type)
      */
     <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> itemToRemove);
 
+
+    /**
+     * Appends a single element to a paginated list with default limits.
+     * <p>
+     * This convenience method uses a default {@code listSizeLimit} of {@link Integer#MAX_VALUE},
+     * a {@code maxBatchSize} of 25, and does not remove any existing element.
+     * </p>
+     *
+     * @param <E>     the type of elements in the list
+     * @param key     the unique key identifying the stored paginated list
+     * @param element the element to append; ignored if {@code null}
+     * @param eClass  the class type of the list elements (for deserialization)
+     * @see #appendToList(String, Object, Class, int, int, Predicate)
+     */
     default <E> void appendToList(String key, E element, Class<E> eClass) {
         appendToList(key, element, eClass, Integer.MAX_VALUE, 25, null);
     }
@@ -372,6 +436,21 @@ public interface DataManager {
 
 
     /**
+     * Serializes the given object into JSON using the specified type and writes it to the provided {@link Appendable}.
+     * <p>
+     * This is useful when the object type includes generics or is not fully captured by its runtime class.
+     * The method allows streaming the JSON output directly to a {@link java.io.Writer},
+     * {@link StringBuilder}, or any other {@link Appendable}.
+     * </p>
+     *
+     * @param src       the source object to serialize; must not be {@code null}
+     * @param typeOfSrc the specific {@link Type} of the object to serialize
+     * @param writer    the destination {@link Appendable} to write the JSON output to
+     */
+    void toJson(Object src, Type typeOfSrc, Appendable writer);
+
+
+    /**
      * Creates a parameterized {@link Type} using the specified raw type and type arguments.
      * This method is useful when dealing with generic types and allows the creation of a {@link Type}
      * that can represent a generic type with its actual type parameters.
@@ -384,10 +463,19 @@ public interface DataManager {
 
 
     /**
-     * Removes the entry associated with the given key.
-     * If the key does not exist, no changes will be made.
+     * Removes all data associated with the specified key, including all paginated files
+     * and the metadata file. After removal, notifies the registered data observer (if any)
+     * about the change.
+     * <p>
+     * The method works as follows:
+     * <ol>
+     *     <li>Iterates through all paginated files with keys in the format {@code key.1, key.2, ...} and deletes them.</li>
+     *     <li>Deletes the metadata file stored under {@code key.meta}.</li>
+     *     <li>Deletes the base file associated with {@code key}.</li>
+     *     <li>If a {@link DataObserver} is registered, calls {@code onDataChange(key)} to notify about the deletion.</li>
+     * </ol>
      *
-     * @param key the key identifying the entry to remove
+     * @param key the base key of the data to be removed
      */
     void remove(String key);
 
@@ -442,11 +530,17 @@ public interface DataManager {
     }
 
 
+    /**
+     * Interface for converting between Java objects and JSON representations.
+     * <p>
+     * Implementations are responsible for serializing Java objects to JSON strings or streams,
+     * and deserializing JSON strings or streams back to Java objects.
+     * </p>
+     */
     interface Converter {
 
-
         /**
-         * Converts a Java object to its JSON representation.
+         * Converts a Java object to its JSON string representation.
          *
          * @param data the Java object to be converted to JSON
          * @param <T>  the type of the object
@@ -456,23 +550,37 @@ public interface DataManager {
 
 
         /**
+         * Serializes the given object into JSON using the specified type and writes it to the provided {@link Appendable}.
+         * <p>
+         * This is useful when the object type includes generics or is not fully captured by its runtime class.
+         * The method allows streaming the JSON output directly to a {@link java.io.Writer},
+         * {@link StringBuilder}, or any other {@link Appendable}.
+         * </p>
+         *
+         * @param src       the source object to serialize; must not be {@code null}
+         * @param typeOfSrc the specific {@link Type} of the object to serialize
+         * @param writer    the destination {@link Appendable} to write the JSON output to
+         */
+        void toJson(Object src, Type typeOfSrc, Appendable writer);
+
+
+        /**
          * Converts a JSON string into a Java object of the specified type.
          *
          * @param json   the JSON string to be converted
-         * @param tClass the type of the object to be returned
+         * @param tClass the class type of the object to return
          * @param <T>    the type of the object
          * @return the Java object represented by the JSON string
          */
         <T> T fromJson(String json, Class<T> tClass);
 
-
         /**
-         * Converts a JSON stream from a Reader into a Java object of the specified type.
+         * Converts a JSON stream from a {@link Reader} into a Java object of the specified type.
          *
-         * @param json    the Reader containing the JSON data to be converted
+         * @param json    the {@link Reader} containing the JSON data
          * @param typeOfT the type of the object to be returned
          * @param <T>     the type of the object
-         * @return the Java object represented by the JSON data from the Reader
+         * @return the Java object represented by the JSON data from the {@link Reader}
          */
         <T> T fromReader(Reader json, Type typeOfT);
     }

@@ -1,4 +1,3 @@
-
 package com.jummania.converter;
 
 import com.google.gson.Gson;
@@ -41,41 +40,24 @@ public class GsonConverter implements DataManager.Converter {
     }
 
 
-    /**
-     * Converts a Java object to its JSON representation.
-     *
-     * @param data the Java object to be converted to JSON
-     * @param <T>  the type of the object
-     * @return a JSON string representing the object
-     */
     @Override
     public <T> String toJson(T data) {
         return gson.toJson(data);
     }
 
 
-    /**
-     * Converts a JSON string into a Java object of the specified type.
-     *
-     * @param json   the JSON string to be converted
-     * @param tClass the type of the object to be returned
-     * @param <T>    the type of the object
-     * @return the Java object represented by the JSON string
-     */
+    @Override
+    public void toJson(Object src, Type typeOfSrc, Appendable writer) {
+        gson.toJson(src, typeOfSrc, writer);
+    }
+
+
     @Override
     public <T> T fromJson(String json, Class<T> tClass) {
         return gson.fromJson(json, tClass);
     }
 
 
-    /**
-     * Converts a JSON stream from a Reader into a Java object of the specified type.
-     *
-     * @param json    the Reader containing the JSON data to be converted
-     * @param typeOfT the type of the object to be returned
-     * @param <T>     the type of the object
-     * @return the Java object represented by the JSON data from the Reader
-     */
     @Override
     public <T> T fromReader(Reader json, Type typeOfT) {
         return gson.fromJson(json, typeOfT);
