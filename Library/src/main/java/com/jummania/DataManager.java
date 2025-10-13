@@ -409,11 +409,12 @@ public interface DataManager {
      * @param eClass             the class type of the list elements (for deserialization)
      * @param listSizeLimit      the maximum total number of elements allowed in storage
      * @param maxBatchSize       the maximum number of elements per batch
+     * @param addFirst           if {@code true}, the new element is added to the beginning of the list
      * @param preventDuplication a predicate to identify and remove an existing element; may be {@code null}
      * @see #saveList(String, List, int, int)
      * @see #saveObject(String, Object, Type)
      */
-    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> preventDuplication);
+    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Predicate<? super E> preventDuplication);
 
 
     /**
@@ -427,10 +428,10 @@ public interface DataManager {
      * @param key     the unique key identifying the stored paginated list
      * @param element the element to append; ignored if {@code null}
      * @param eClass  the class type of the list elements (for deserialization)
-     * @see #appendToList(String, Object, Class, int, int, Predicate)
+     * @see #appendToList(String, Object, Class, int, int, boolean, Predicate)
      */
     default <E> void appendToList(String key, E element, Class<E> eClass) {
-        appendToList(key, element, eClass, Integer.MAX_VALUE, 25, null);
+        appendToList(key, element, eClass, Integer.MAX_VALUE, 25, false, null);
     }
 
 

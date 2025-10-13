@@ -255,7 +255,7 @@ class DataManagerImpl implements DataManager {
 
 
     @Override
-    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> preventDuplication) {
+    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Predicate<? super E> preventDuplication) {
 
         if (element == null) return;
 
@@ -320,7 +320,9 @@ class DataManagerImpl implements DataManager {
         }
 
         // Add the new element to the current batch and update metadata
-        lastPage.add(element);
+        if (addFirst) lastPage.add(0, element);
+        else lastPage.add(element);
+
         saveObject(key + totalPage, lastPage, listType);
         saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize));
     }
