@@ -105,7 +105,11 @@ loadScripts(document, 'script');
                                         class="type-name-link" href="DataManager.Converter.html"
                                         title="interface in com.jummania">DataManager.Converter</a></code>
                                 </div>
-                                <div class="col-last even-row-color">&nbsp;</div>
+                                <div class="col-last even-row-color">
+                                    <div class="block">Interface for converting between Java objects
+                                        and JSON representations.
+                                    </div>
+                                </div>
                                 <div class="col-first odd-row-color"><code>static
                                     interface&nbsp;</code></div>
                                 <div class="col-second odd-row-color"><code><a
@@ -123,45 +127,36 @@ loadScripts(document, 'script');
                             <div id="method-summary-table">
                                 <div aria-orientation="horizontal" class="table-tabs"
                                      role="tablist">
-                                    <button aria-controls="method-summary-table.tabpanel"
+                                    <button aria-controls="method-summary-table.tabpanel" class="active-table-tab"
                                             aria-selected="true"
-                                            class="active-table-tab"
                                             id="method-summary-table-tab0"
+                                            onkeydown="switchTab(event)" role="tab"
                                             onclick="show('method-summary-table', 'method-summary-table', 3)"
-                                            onkeydown="switchTab(event)"
-                                            role="tab"
                                             tabindex="0">All Methods
                                     </button>
-                                    <button aria-controls="method-summary-table.tabpanel"
+                                    <button aria-controls="method-summary-table.tabpanel" class="table-tab"
                                             aria-selected="false"
-                                            class="table-tab"
                                             id="method-summary-table-tab2"
+                                            onkeydown="switchTab(event)" role="tab"
                                             onclick="show('method-summary-table', 'method-summary-table-tab2', 3)"
-                                            onkeydown="switchTab(event)"
-                                            role="tab"
                                             tabindex="-1">Instance Methods
                                     </button>
-                                    <button aria-controls="method-summary-table.tabpanel"
+                                    <button aria-controls="method-summary-table.tabpanel" class="table-tab"
                                             aria-selected="false"
-                                            class="table-tab"
                                             id="method-summary-table-tab3"
+                                            onkeydown="switchTab(event)" role="tab"
                                             onclick="show('method-summary-table', 'method-summary-table-tab3', 3)"
-                                            onkeydown="switchTab(event)"
-                                            role="tab"
                                             tabindex="-1">Abstract Methods
                                     </button>
-                                    <button aria-controls="method-summary-table.tabpanel"
+                                    <button aria-controls="method-summary-table.tabpanel" class="table-tab"
                                             aria-selected="false"
-                                            class="table-tab"
                                             id="method-summary-table-tab5"
+                                            onkeydown="switchTab(event)" role="tab"
                                             onclick="show('method-summary-table', 'method-summary-table-tab5', 3)"
-                                            onkeydown="switchTab(event)"
-                                            role="tab"
                                             tabindex="-1">Default Methods
                                     </button>
                                 </div>
-                                <div aria-labelledby="method-summary-table-tab0"
-                                     id="method-summary-table.tabpanel"
+                                <div aria-labelledby="method-summary-table-tab0" id="method-summary-table.tabpanel"
                                      role="tabpanel">
                                     <div class="summary-table three-column-summary">
                                         <div class="table-header col-first">Modifier and Type</div>
@@ -185,83 +180,48 @@ loadScripts(document, 'script');
                                             </div>
                                         </div>
                                         <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <code>default void</code></div>
+                                            <code>default &lt;E&gt;&nbsp;void</code></div>
                                         <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <code><a
                                                     class="member-name-link"
-                                                    href="#appendToList(java.lang.String,int,java.lang.Object)">appendToList</a>
+                                                    href="#appendToList(java.lang.String,E,java.lang.Class)">appendToList</a>
                                                 <wbr>
                                                 (<a class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
-                                                int&nbsp;index,
+                                                E&nbsp;element,
                                                 <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-                                                   title="class or interface in java.lang">Object</a>&nbsp;element)</code>
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+                                                   title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass)</code>
                                         </div>
                                         <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <div class="block">Appends an element to a list
-                                                associated with the given key at the specified
-                                                index.
+                                            <div class="block">Appends a single element to a
+                                                paginated list with default limits.
                                             </div>
                                         </div>
                                         <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <code>void</code></div>
+                                            <code>&lt;E&gt;&nbsp;void</code></div>
                                         <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
                                                     class="member-name-link"
-                                                    href="#appendToList(java.lang.String,int,java.lang.Object,boolean)">appendToList</a>
+                                                    href="#appendToList(java.lang.String,E,java.lang.Class,int,int,java.util.function.Predicate)">appendToList</a>
                                                 <wbr>
                                                 (<a class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
-                                                int&nbsp;index,
+                                                E&nbsp;element,
                                                 <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-                                                   title="class or interface in java.lang">Object</a>&nbsp;element,
-                                                boolean&nbsp;removeDuplicate)</code></div>
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+                                                   title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass,
+                                                int&nbsp;listSizeLimit,
+                                                int&nbsp;maxBatchSize,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html"
+                                                   title="class or interface in java.util.function">Predicate</a>&lt;? super E&gt;&nbsp;itemToRemove)</code>
+                                        </div>
                                         <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Appends an element to a list
-                                                associated with the given key at the specified
-                                                index.
-                                            </div>
-                                        </div>
-                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <code>default void</code></div>
-                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <code><a
-                                                    class="member-name-link"
-                                                    href="#appendToList(java.lang.String,java.lang.Object)">appendToList</a>
-                                                <wbr>
-                                                (<a class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
-                                                <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-                                                   title="class or interface in java.lang">Object</a>&nbsp;element)</code>
-                                        </div>
-                                        <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <div class="block">Appends an element to a list
-                                                associated with the given key.
-                                            </div>
-                                        </div>
-                                        <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <code>default void</code></div>
-                                        <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <code><a
-                                                    class="member-name-link"
-                                                    href="#appendToList(java.lang.String,java.lang.Object,boolean)">appendToList</a>
-                                                <wbr>
-                                                (<a class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
-                                                <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-                                                   title="class or interface in java.lang">Object</a>&nbsp;element,
-                                                boolean&nbsp;removeDuplicate)</code></div>
-                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <div class="block">Appends an element to a list
-                                                associated with the given key.
+                                            <div class="block">Appends a single element to a
+                                                paginated list stored under the given key.
                                             </div>
                                         </div>
                                         <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -295,14 +255,14 @@ loadScripts(document, 'script');
                                         <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
                                                     class="member-name-link"
-                                                    href="#fromJson(java.lang.String,java.lang.reflect.Type)">fromJson</a>
+                                                    href="#fromJson(java.lang.String,java.lang.Class)">fromJson</a>
                                                 <wbr>
                                                 (<a class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;value,
                                                 <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-                                                   title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfT)</code>
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+                                                   title="class or interface in java.lang">Class</a>&lt;T&gt;&nbsp;tClass)</code>
                                         </div>
                                         <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <div class="block">Converts a JSON string into an object
@@ -389,22 +349,22 @@ loadScripts(document, 'script');
                                             </div>
                                         </div>
                                         <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <code>&lt;T&gt;&nbsp;<a
-                                                    class="external-link"
+                                            <code>&lt;E&gt;&nbsp;<a
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html"
-                                                    title="class or interface in java.util">List</a>&lt;T&gt;</code>
+                                                    class="external-link"
+                                                    title="class or interface in java.util">List</a>&lt;E&gt;</code>
                                         </div>
                                         <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
                                                     class="member-name-link"
-                                                    href="#getFullList(java.lang.String,java.lang.reflect.Type)">getFullList</a>
+                                                    href="#getFullList(java.lang.String,java.lang.Class)">getFullList</a>
                                                 <wbr>
                                                 (<a class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
                                                 <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-                                                   title="class or interface in java.lang.reflect">Type</a>&nbsp;type)</code>
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+                                                   title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass)</code>
                                         </div>
                                         <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <div class="block">Retrieves a list of objects of the
@@ -490,34 +450,56 @@ loadScripts(document, 'script');
                                                 type associated with the given key.
                                             </div>
                                         </div>
-                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <code>&lt;T&gt;&nbsp;<a href="model/PaginatedData.html"
-                                                                    title="class in com.jummania.model">PaginatedData</a>&lt;T&gt;</code>
+                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+                                            <code>default &lt;E&gt;&nbsp;<a
+                                                    href="model/PaginatedData.html"
+                                                    title="class in com.jummania.model">PaginatedData</a>&lt;E&gt;</code>
                                         </div>
-                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <code><a
                                                     class="member-name-link"
-                                                    href="#getPagedList(java.lang.String,java.lang.reflect.Type,int)">getPagedList</a>
+                                                    href="#getPagedList(java.lang.String,java.lang.Class,int)">getPagedList</a>
                                                 <wbr>
                                                 (<a class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
                                                 <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-                                                   title="class or interface in java.lang.reflect">Type</a>&nbsp;type,
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+                                                   title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass,
                                                 int&nbsp;page)</code></div>
-                                        <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Retrieves a paginated list of objects
-                                                of the specified type associated with the given key.
+                                        <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+                                            <div class="block">Retrieves a paginated list of
+                                                elements associated with the specified key.
                                             </div>
                                         </div>
                                         <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <code>&lt;E&gt;&nbsp;<a href="model/PaginatedData.html"
+                                                                    title="class in com.jummania.model">PaginatedData</a>&lt;E&gt;</code>
+                                        </div>
+                                        <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <code><a
+                                                    class="member-name-link"
+                                                    href="#getPagedList(java.lang.String,java.lang.Class,int,boolean)">getPagedList</a>
+                                                <wbr>
+                                                (<a class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+                                                   title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass,
+                                                int&nbsp;page,
+                                                boolean&nbsp;reverse)</code></div>
+                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <div class="block">Retrieves a paginated list of
+                                                elements associated with the specified key.
+                                            </div>
+                                        </div>
+                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
                                                     class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-                                                    title="class or interface in java.lang.reflect">Type</a></code>
-                                        </div>
-                                        <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                                    title="class or interface in java.lang.reflect">Type</a></code></div>
+                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
                                                     class="member-name-link"
                                                     href="#getParameterized(java.lang.reflect.Type,java.lang.reflect.Type...)">getParameterized</a>
@@ -529,21 +511,20 @@ loadScripts(document, 'script');
                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
                                                    title="class or interface in java.lang.reflect">Type</a>...&nbsp;typeArguments)</code>
                                         </div>
-                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                        <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <div class="block">Creates a parameterized <a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang.reflect"><code>Type</code></a>
                                                 using the specified raw type and type arguments.
                                             </div>
                                         </div>
-                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                        <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a></code>
-                                        </div>
-                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a></code></div>
+                                        <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a class="member-name-link"
                                                      href="#getRawString(java.lang.String)">getRawString</a>
                                                 <wbr>
@@ -551,18 +532,17 @@ loadScripts(document, 'script');
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key)</code>
                                         </div>
-                                        <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Retrieves the raw string value
+                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <div class="block">Retrieves the raw String value
                                                 associated with the given key.
                                             </div>
                                         </div>
-                                        <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <code>default <a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a></code>
-                                        </div>
-                                        <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a></code></div>
+                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <code><a class="member-name-link"
                                                      href="#getString(java.lang.String)">getString</a>
                                                 <wbr>
@@ -570,18 +550,17 @@ loadScripts(document, 'script');
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key)</code>
                                         </div>
-                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+                                        <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <div class="block">Retrieves a string value associated
                                                 with the given key.
                                             </div>
                                         </div>
-                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+                                        <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <code>default <a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a></code>
-                                        </div>
-                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a></code></div>
+                                        <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <code><a
                                                     class="member-name-link"
                                                     href="#getString(java.lang.String,java.lang.String)">getString</a>
@@ -593,14 +572,14 @@ loadScripts(document, 'script');
                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                    title="class or interface in java.lang">String</a>&nbsp;defValue)</code>
                                         </div>
-                                        <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <div class="block">Retrieves a string value associated
                                                 with the given key.
                                             </div>
                                         </div>
-                                        <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code>void</code></div>
-                                        <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a class="member-name-link"
                                                      href="#remove(java.lang.String)">remove</a>
                                                 <wbr>
@@ -608,37 +587,22 @@ loadScripts(document, 'script');
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key)</code>
                                         </div>
-                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Removes the entry associated with the
-                                                given key.
-                                            </div>
-                                        </div>
-                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <code>void</code></div>
-                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <code><a class="member-name-link"
-                                                     href="#removeDataObserver()">removeDataObserver</a>()</code>
-                                        </div>
                                         <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Unregisters the currently registered
-                                                <a href="DataManager.DataObserver.html"
-                                                   title="interface in com.jummania"><code>DataManager.DataObserver</code></a>.
+                                            <div class="block">Removes all data associated with the
+                                                specified key, including all paginated files
+                                                and the metadata file.
                                             </div>
                                         </div>
                                         <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code>void</code></div>
                                         <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a class="member-name-link"
-                                                     href="#removeFromList(java.lang.String,int)">removeFromList</a>
-                                                <wbr>
-                                                (<a class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
-                                                int&nbsp;index)</code></div>
+                                                     href="#removeDataObserver()">removeDataObserver</a>()</code>
+                                        </div>
                                         <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Removes an element from the list
-                                                associated with the given key at the specified
-                                                index.
+                                            <div class="block">Unregisters the currently registered
+                                                <a href="DataManager.DataObserver.html"
+                                                   title="interface in com.jummania"><code>DataManager.DataObserver</code></a>.
                                             </div>
                                         </div>
                                         <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -699,7 +663,7 @@ loadScripts(document, 'script');
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
                                                 <a class="external-link"
                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html"
-                                                   title="class or interface in java.util">List</a>&lt;E&gt;&nbsp;value)</code>
+                                                   title="class or interface in java.util">List</a>&lt;E&gt;&nbsp;list)</code>
                                         </div>
                                         <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
                                             <div class="block">Saves a list of objects associated
@@ -712,19 +676,19 @@ loadScripts(document, 'script');
                                         <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
                                                     class="member-name-link"
-                                                    href="#saveList(java.lang.String,java.util.List,int)">saveList</a>
+                                                    href="#saveList(java.lang.String,java.util.List,int,int)">saveList</a>
                                                 <wbr>
                                                 (<a class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
                                                 <a class="external-link"
                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html"
-                                                   title="class or interface in java.util">List</a>&lt;E&gt;&nbsp;value,
-                                                int&nbsp;maxArraySize)</code></div>
+                                                   title="class or interface in java.util">List</a>&lt;E&gt;&nbsp;list,
+                                                int&nbsp;listSizeLimit,
+                                                int&nbsp;maxBatchSize)</code></div>
                                         <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Saves a list of objects associated
-                                                with the given key by converting the list to a JSON
-                                                string.
+                                            <div class="block">Saves a list of elements to storage,
+                                                splitting it into batches if necessary.
                                             </div>
                                         </div>
                                         <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -757,8 +721,8 @@ loadScripts(document, 'script');
                                                    title="class or interface in java.lang">Object</a>&nbsp;value)</code>
                                         </div>
                                         <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-                                            <div class="block">Saves an object associated with the
-                                                given key by converting the object to a JSON string.
+                                            <div class="block">Saves an object to the storage system
+                                                associated with the given key.
                                             </div>
                                         </div>
                                         <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -766,26 +730,29 @@ loadScripts(document, 'script');
                                         <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
                                                     class="member-name-link"
-                                                    href="#saveString(java.lang.String,java.lang.String)">saveString</a>
+                                                    href="#saveObject(java.lang.String,java.lang.Object,java.lang.reflect.Type)">saveObject</a>
                                                 <wbr>
                                                 (<a class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
                                                 <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                   title="class or interface in java.lang">String</a>&nbsp;value)</code>
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
+                                                   title="class or interface in java.lang">Object</a>&nbsp;value,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                   title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfSrc)</code>
                                         </div>
                                         <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Saves a string value associated with
-                                                the given key.
+                                            <div class="block">Saves an object to the storage system
+                                                associated with the given key, using the specified
+                                                type.
                                             </div>
                                         </div>
                                         <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a></code>
-                                        </div>
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a></code></div>
                                         <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a class="member-name-link"
                                                      href="#toJson(java.lang.Object)">toJson</a>
@@ -797,6 +764,32 @@ loadScripts(document, 'script');
                                         <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <div class="block">Converts an object into its JSON
                                                 string representation.
+                                            </div>
+                                        </div>
+                                        <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <code>void</code></div>
+                                        <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <code><a
+                                                    class="member-name-link"
+                                                    href="#toJson(java.lang.Object,java.lang.reflect.Type,java.lang.Appendable)">toJson</a>
+                                                <wbr>
+                                                (<a class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
+                                                    title="class or interface in java.lang">Object</a>&nbsp;src,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                   title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfSrc,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                                   title="class or interface in java.lang">Appendable</a>&nbsp;writer)</code>
+                                        </div>
+                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <div class="block">Serializes the given object into JSON
+                                                using the specified type and writes it to the
+                                                provided <a
+                                                        class="external-link"
+                                                        href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                                        title="class or interface in java.lang"><code>Appendable</code></a>.
                                             </div>
                                         </div>
                                     </div>
@@ -815,329 +808,91 @@ loadScripts(document, 'script');
                             <ul class="member-list">
                                 <li>
                                     <section class="detail"
-                                             id="getString(java.lang.String,java.lang.String)">
-                                        <h3>getString</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type"><a
-                                                class="external-link"
-                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                title="class or interface in java.lang">String</a></span>&nbsp;<span
-                                                class="element-name">getString</span>
+                                             id="saveObject(java.lang.String,java.lang.Object,java.lang.reflect.Type)">
+                                        <h3>saveObject</h3>
+                                        <div class="member-signature"><span
+                                                class="return-type">void</span>&nbsp;<span
+                                                class="element-name">saveObject</span>
                                             <wbr>
                                             <span class="parameters">(<a
                                                     class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-    title="class or interface in java.lang">String</a>&nbsp;defValue)</span>
-                                        </div>
-                                        <div class="block">Retrieves a string value associated with
-                                            the given key.
-                                            If no value is found or the value is null, returns the
-                                            provided default value.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dd><code>defValue</code> - the default value to return
-                                                if no value is found or if the result is null
-                                            </dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved string value or the default value if
-                                                not found
-                                            </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getString(java.lang.String)">
-                                        <h3>getString</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type"><a
-                                                class="external-link"
-                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                title="class or interface in java.lang">String</a></span>&nbsp;<span
-                                                class="element-name">getString</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
-                                        </div>
-                                        <div class="block">Retrieves a string value associated with
-                                            the given key.
-                                            If no value is found or the value is null, returns null.
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang">Object</a>&nbsp;value,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+    title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfSrc)</span></div>
+                                        <div class="block">Saves an object to the storage system
+                                            associated with the given key, using the specified type.
                                             <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#getString(java.lang.String,java.lang.String)"><code>getString(String,
-                                                String)</code></a> with a default value of null.
-                                        </div>
+                                                This is useful for objects with generic types or
+                                                when the runtime class
+                                                does not fully capture the type information.
+                                                Implementations should
+                                                serialize the object using <code>typeOfSrc</code>.
+                                            </p></div>
                                         <dl class="notes">
                                             <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved string value or null if not found</dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getInt(java.lang.String,int)">
-                                        <h3>getInt</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">int</span>&nbsp;<span
-                                                class="element-name">getInt</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- int&nbsp;defValue)</span></div>
-                                        <div class="block">Retrieves an integer value associated
-                                            with the given key.
-                                            If no value is found or the value is null, returns the
-                                            provided default value.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dd><code>defValue</code> - the default value to return
-                                                if no value is found or if the result is null
+                                            <dd><code>key</code> - the unique key identifying the
+                                                storage location; must not be <code>null</code></dd>
+                                            <dd><code>value</code> - the object to save; may be
+                                                <code>null</code> to remove the key
                                             </dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved integer value or the default value if
-                                                not found
-                                            </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getInt(java.lang.String)">
-                                        <h3>getInt</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">int</span>&nbsp;<span
-                                                class="element-name">getInt</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
+                                            <dd><code>typeOfSrc</code> - the <a
                                                     class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
-                                        </div>
-                                        <div class="block">Retrieves an integer value associated
-                                            with the given key.
-                                            If no value is found or the value is null, returns 0.
-                                            <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#getInt(java.lang.String,int)"><code>getInt(String,
-                                                int)</code></a> with a default value of 0.</div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved integer value or 0 if not found</dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getLong(java.lang.String,long)">
-                                        <h3>getLong</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">long</span>&nbsp;<span
-                                                class="element-name">getLong</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- long&nbsp;defValue)</span></div>
-                                        <div class="block">Retrieves a long value associated with
-                                            the given key.
-                                            If no value is found or the value is null, returns the
-                                            provided default value.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dd><code>defValue</code> - the default value to return
-                                                if no value is found or if the result is null
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                    title="class or interface in java.lang.reflect"><code>Type</code></a>
+                                                representing the object's type for serialization
                                             </dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved long value or the default value if not
-                                                found
+                                            <dt>See Also:</dt>
+                                            <dd>
+                                                <ul class="see-list-long">
+                                                    <li>
+                                                        <a href="#saveObject(java.lang.String,java.lang.Object)"><code>saveObject(String,
+                                                            Object)</code></a></li>
+                                                </ul>
                                             </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getLong(java.lang.String)">
-                                        <h3>getLong</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">long</span>&nbsp;<span
-                                                class="element-name">getLong</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
-                                        </div>
-                                        <div class="block">Retrieves a long value associated with
-                                            the given key.
-                                            If no value is found or the value is null, returns 0.
-                                            <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#getLong(java.lang.String,long)"><code>getLong(String,
-                                                long)</code></a> with a default value of 0.</div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved long value or 0 if not found</dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getFloat(java.lang.String,float)">
-                                        <h3>getFloat</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">float</span>&nbsp;<span
-                                                class="element-name">getFloat</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- float&nbsp;defValue)</span></div>
-                                        <div class="block">Retrieves a float value associated with
-                                            the given key.
-                                            If no value is found or the value is null, returns the
-                                            provided default value.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dd><code>defValue</code> - the default value to return
-                                                if no value is found or if the result is null
-                                            </dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved float value or the default value if
-                                                not found
-                                            </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getFloat(java.lang.String)">
-                                        <h3>getFloat</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">float</span>&nbsp;<span
-                                                class="element-name">getFloat</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
-                                        </div>
-                                        <div class="block">Retrieves a float value associated with
-                                            the given key.
-                                            If no value is found or the value is null, returns 0.
-                                            <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#getFloat(java.lang.String,float)"><code>getFloat(String,
-                                                float)</code></a> with a default value of 0.</div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved float value or 0 if not found</dd>
                                         </dl>
                                     </section>
                                 </li>
                                 <li>
                                     <section class="detail"
-                                             id="getBoolean(java.lang.String,boolean)">
-                                        <h3>getBoolean</h3>
+                                             id="saveObject(java.lang.String,java.lang.Object)">
+                                        <h3>saveObject</h3>
                                         <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">boolean</span>&nbsp;<span
-                                                class="element-name">getBoolean</span>
+                                                class="return-type">void</span>&nbsp;<span
+                                                class="element-name">saveObject</span>
                                             <wbr>
                                             <span class="parameters">(<a
                                                     class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
- boolean&nbsp;defValue)</span></div>
-                                        <div class="block">Retrieves a boolean value associated with
-                                            the given key.
-                                            If no value is found or the value is null, returns the
-                                            provided default value.
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang">Object</a>&nbsp;value)</span>
                                         </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dd><code>defValue</code> - the default value to return
-                                                if no value is found or if the result is null
-                                            </dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved boolean value or the default value if
-                                                not found
-                                            </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getBoolean(java.lang.String)">
-                                        <h3>getBoolean</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">boolean</span>&nbsp;<span
-                                                class="element-name">getBoolean</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
-                                        </div>
-                                        <div class="block">Retrieves a boolean value associated with
-                                            the given key.
-                                            If no value is found or the value is null, returns
-                                            false.
+                                        <div class="block">Saves an object to the storage system
+                                            associated with the given key.
                                             <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#getBoolean(java.lang.String,boolean)"><code>getBoolean(String,
-                                                boolean)</code></a> with a default value of false.
-                                        </div>
+                                                This is a convenience method equivalent to calling
+                                                <a href="#saveObject(java.lang.String,java.lang.Object,java.lang.reflect.Type)"><code>saveObject(String,
+                                                    Object, Type)</code></a> using the object's
+                                                runtime class.
+                                            </p></div>
                                         <dl class="notes">
                                             <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the retrieved boolean value or false if not found
+                                            <dd><code>key</code> - the unique key identifying the
+                                                storage location; must not be <code>null</code></dd>
+                                            <dd><code>value</code> - the object to save; may be
+                                                <code>null</code> to remove the key
                                             </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail" id="getRawString(java.lang.String)">
-                                        <h3>getRawString</h3>
-                                        <div class="member-signature"><span class="return-type"><a
-                                                class="external-link"
-                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                title="class or interface in java.lang">String</a></span>&nbsp;<span
-                                                class="element-name">getRawString</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
-                                        </div>
-                                        <div class="block">Retrieves the raw string value associated
-                                            with the given key.
-                                            The value is returned as-is, without any defaulting
-                                            behavior.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the value</dd>
-                                            <dt>Returns:</dt>
-                                            <dd>the raw string value associated with the key, or
-                                                null if not found
+                                            <dt>See Also:</dt>
+                                            <dd>
+                                                <ul class="see-list-long">
+                                                    <li>
+                                                        <a href="#saveObject(java.lang.String,java.lang.Object,java.lang.reflect.Type)"><code>saveObject(String,
+                                                            Object, Type)</code></a></li>
+                                                </ul>
                                             </dd>
                                         </dl>
                                     </section>
@@ -1155,8 +910,7 @@ loadScripts(document, 'script');
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-    title="class or interface in java.lang.reflect">Type</a>&nbsp;type)</span>
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect">Type</a>&nbsp;type)</span>
                                         </div>
                                         <div class="block">Retrieves an object of the specified type
                                             associated with the given key.
@@ -1183,118 +937,31 @@ loadScripts(document, 'script');
                                     </section>
                                 </li>
                                 <li>
-                                    <section class="detail"
-                                             id="getFullList(java.lang.String,java.lang.reflect.Type)">
-                                        <h3>getFullList</h3>
-                                        <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span
-                                                class="return-type"><a
+                                    <section class="detail" id="getRawString(java.lang.String)">
+                                        <h3>getRawString</h3>
+                                        <div class="member-signature"><span class="return-type"><a
                                                 class="external-link"
-                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html"
-                                                title="class or interface in java.util">List</a>&lt;T&gt;</span>&nbsp;<span
-                                                class="element-name">getFullList</span>
+                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                title="class or interface in java.lang">String</a></span>&nbsp;<span
+                                                class="element-name">getRawString</span>
                                             <wbr>
                                             <span class="parameters">(<a
                                                     class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-    title="class or interface in java.lang.reflect">Type</a>&nbsp;type)</span>
+                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
                                         </div>
-                                        <div class="block">Retrieves a list of objects of the
-                                            specified type associated with the given key.
-                                            The list is deserialized from the underlying data source
-                                            to match the specified type.
+                                        <div class="block">Retrieves the raw String value associated
+                                            with the given key.
+                                            The value is returned as-is, without any defaulting
+                                            behavior.
                                         </div>
                                         <dl class="notes">
-                                            <dt>Type Parameters:</dt>
-                                            <dd><code>T</code> - the type of the objects in the list
-                                            </dd>
                                             <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the list of
-                                                objects
-                                            </dd>
-                                            <dd><code>type</code> - the type of the objects in the
-                                                list
-                                            </dd>
+                                            <dd><code>key</code> - the key to look up the value</dd>
                                             <dt>Returns:</dt>
-                                            <dd>the list of objects of the specified type associated
-                                                with the key, or an empty list if not found
+                                            <dd>the raw String value associated with the key, or
+                                                null if not found
                                             </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail"
-                                             id="getPagedList(java.lang.String,java.lang.reflect.Type,int)">
-                                        <h3>getPagedList</h3>
-                                        <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span
-                                                class="return-type"><a
-                                                href="model/PaginatedData.html"
-                                                title="class in com.jummania.model">PaginatedData</a>&lt;T&gt;</span>&nbsp;<span
-                                                class="element-name">getPagedList</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-    title="class or interface in java.lang.reflect">Type</a>&nbsp;type,
- int&nbsp;page)</span></div>
-                                        <div class="block">Retrieves a paginated list of objects of
-                                            the specified type associated with the given key.
-                                            The list is deserialized from the underlying data source
-                                            to match the specified type, with pagination support.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Type Parameters:</dt>
-                                            <dd><code>T</code> - the type of the objects in the list
-                                            </dd>
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to look up the paginated
-                                                list of objects
-                                            </dd>
-                                            <dd><code>type</code> - the type of the objects in the
-                                                list
-                                            </dd>
-                                            <dd><code>page</code> - the page number to retrieve</dd>
-                                            <dt>Returns:</dt>
-                                            <dd>a <a href="model/PaginatedData.html"
-                                                     title="class in com.jummania.model"><code>PaginatedData</code></a>
-                                                object containing the paginated list of objects of
-                                                the specified type,
-                                                or an empty paginated data if no objects are found
-                                            </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail"
-                                             id="saveString(java.lang.String,java.lang.String)">
-                                        <h3>saveString</h3>
-                                        <div class="member-signature"><span
-                                                class="return-type">void</span>&nbsp;<span
-                                                class="element-name">saveString</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-    title="class or interface in java.lang">String</a>&nbsp;value)</span>
-                                        </div>
-                                        <div class="block">Saves a string value associated with the
-                                            given key.
-                                            If the key already exists, the value will be updated.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to associate with the
-                                                string value
-                                            </dd>
-                                            <dd><code>value</code> - the string value to save</dd>
                                         </dl>
                                     </section>
                                 </li>
@@ -1315,8 +982,8 @@ loadScripts(document, 'script');
                                             If the key already exists, the value will be updated.
                                             <p>
                                                 This is a shorthand method that calls <a
-                                                    href="#saveString(java.lang.String,java.lang.String)"><code>saveString(String,
-                                                String)</code></a> by converting the integer value
+                                                    href="#saveObject(java.lang.String,java.lang.Object)"><code>saveObject(String,
+                                                Object)</code></a> by converting the integer value
                                                 to a string.</div>
                                         <dl class="notes">
                                             <dt>Parameters:</dt>
@@ -1344,8 +1011,8 @@ loadScripts(document, 'script');
                                             If the key already exists, the value will be updated.
                                             <p>
                                                 This is a shorthand method that calls <a
-                                                    href="#saveString(java.lang.String,java.lang.String)"><code>saveString(String,
-                                                String)</code></a> by converting the long value to a
+                                                    href="#saveObject(java.lang.String,java.lang.Object)"><code>saveObject(String,
+                                                Object)</code></a> by converting the long value to a
                                                 string.</div>
                                         <dl class="notes">
                                             <dt>Parameters:</dt>
@@ -1373,8 +1040,8 @@ loadScripts(document, 'script');
                                             If the key already exists, the value will be updated.
                                             <p>
                                                 This is a shorthand method that calls <a
-                                                    href="#saveString(java.lang.String,java.lang.String)"><code>saveString(String,
-                                                String)</code></a> by converting the float value to
+                                                    href="#saveObject(java.lang.String,java.lang.Object)"><code>saveObject(String,
+                                                Object)</code></a> by converting the float value to
                                                 a string.</div>
                                         <dl class="notes">
                                             <dt>Parameters:</dt>
@@ -1403,8 +1070,8 @@ loadScripts(document, 'script');
                                             If the key already exists, the value will be updated.
                                             <p>
                                                 This is a shorthand method that calls <a
-                                                    href="#saveString(java.lang.String,java.lang.String)"><code>saveString(String,
-                                                String)</code></a> by converting the boolean value
+                                                    href="#saveObject(java.lang.String,java.lang.Object)"><code>saveObject(String,
+                                                Object)</code></a> by converting the boolean value
                                                 to a string.</div>
                                         <dl class="notes">
                                             <dt>Parameters:</dt>
@@ -1417,73 +1084,525 @@ loadScripts(document, 'script');
                                 </li>
                                 <li>
                                     <section class="detail"
-                                             id="saveObject(java.lang.String,java.lang.Object)">
-                                        <h3>saveObject</h3>
+                                             id="getString(java.lang.String,java.lang.String)">
+                                        <h3>getString</h3>
                                         <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">void</span>&nbsp;<span
-                                                class="element-name">saveObject</span>
+                                                class="return-type"><a
+                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                class="external-link"
+                                                title="class or interface in java.lang">String</a></span>&nbsp;<span
+                                                class="element-name">getString</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-    title="class or interface in java.lang">Object</a>&nbsp;value)</span>
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang">String</a>&nbsp;defValue)</span>
                                         </div>
-                                        <div class="block">Saves an object associated with the given
-                                            key by converting the object to a JSON string.
-                                            If the key already exists, the value will be updated.
-                                            <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#saveString(java.lang.String,java.lang.String)"><code>saveString(String,
-                                                String)</code></a> by converting the object to a
-                                                JSON string using <a
-                                                    href="#toJson(java.lang.Object)"><code>toJson(Object)</code></a>.
+                                        <div class="block">Retrieves a string value associated with
+                                            the given key.
+                                            If no value is found or the value is null, returns the
+                                            provided default value.
                                         </div>
                                         <dl class="notes">
                                             <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to associate with the
-                                                object
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dd><code>defValue</code> - the default value to return
+                                                if no value is found or if the result is null
                                             </dd>
-                                            <dd><code>value</code> - the object to save</dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved string value or the default value if
+                                                not found
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail" id="getString(java.lang.String)">
+                                        <h3>getString</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type"><a
+                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                class="external-link"
+                                                title="class or interface in java.lang">String</a></span>&nbsp;<span
+                                                class="element-name">getString</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
+                                        </div>
+                                        <div class="block">Retrieves a string value associated with
+                                            the given key.
+                                            If no value is found or the value is null, returns null.
+                                            <p>
+                                                This is a shorthand method that calls <a
+                                                    href="#getString(java.lang.String,java.lang.String)"><code>getString(String,
+                                                String)</code></a> with a default value of null.
+                                        </div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved string value or null if not found</dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail" id="getInt(java.lang.String,int)">
+                                        <h3>getInt</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type">int</span>&nbsp;<span
+                                                class="element-name">getInt</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key,
+ int&nbsp;defValue)</span></div>
+                                        <div class="block">Retrieves an integer value associated
+                                            with the given key.
+                                            If no value is found or the value is null, returns the
+                                            provided default value.
+                                        </div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dd><code>defValue</code> - the default value to return
+                                                if no value is found or if the result is null
+                                            </dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved integer value or the default value if
+                                                not found
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail" id="getInt(java.lang.String)">
+                                        <h3>getInt</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type">int</span>&nbsp;<span
+                                                class="element-name">getInt</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
+                                        </div>
+                                        <div class="block">Retrieves an integer value associated
+                                            with the given key.
+                                            If no value is found or the value is null, returns 0.
+                                            <p>
+                                                This is a shorthand method that calls <a
+                                                    href="#getInt(java.lang.String,int)"><code>getInt(String,
+                                                int)</code></a> with a default value of 0.</div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved integer value or 0 if not found</dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail" id="getLong(java.lang.String,long)">
+                                        <h3>getLong</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type">long</span>&nbsp;<span
+                                                class="element-name">getLong</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key,
+ long&nbsp;defValue)</span></div>
+                                        <div class="block">Retrieves a long value associated with
+                                            the given key.
+                                            If no value is found or the value is null, returns the
+                                            provided default value.
+                                        </div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dd><code>defValue</code> - the default value to return
+                                                if no value is found or if the result is null
+                                            </dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved long value or the default value if not
+                                                found
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail" id="getLong(java.lang.String)">
+                                        <h3>getLong</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type">long</span>&nbsp;<span
+                                                class="element-name">getLong</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
+                                        </div>
+                                        <div class="block">Retrieves a long value associated with
+                                            the given key.
+                                            If no value is found or the value is null, returns 0.
+                                            <p>
+                                                This is a shorthand method that calls <a
+                                                    href="#getLong(java.lang.String,long)"><code>getLong(String,
+                                                long)</code></a> with a default value of 0.</div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved long value or 0 if not found</dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail" id="getFloat(java.lang.String,float)">
+                                        <h3>getFloat</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type">float</span>&nbsp;<span
+                                                class="element-name">getFloat</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key,
+ float&nbsp;defValue)</span></div>
+                                        <div class="block">Retrieves a float value associated with
+                                            the given key.
+                                            If no value is found or the value is null, returns the
+                                            provided default value.
+                                        </div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dd><code>defValue</code> - the default value to return
+                                                if no value is found or if the result is null
+                                            </dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved float value or the default value if
+                                                not found
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail" id="getFloat(java.lang.String)">
+                                        <h3>getFloat</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type">float</span>&nbsp;<span
+                                                class="element-name">getFloat</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
+                                        </div>
+                                        <div class="block">Retrieves a float value associated with
+                                            the given key.
+                                            If no value is found or the value is null, returns 0.
+                                            <p>
+                                                This is a shorthand method that calls <a
+                                                    href="#getFloat(java.lang.String,float)"><code>getFloat(String,
+                                                float)</code></a> with a default value of 0.</div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved float value or 0 if not found</dd>
                                         </dl>
                                     </section>
                                 </li>
                                 <li>
                                     <section class="detail"
-                                             id="saveList(java.lang.String,java.util.List,int)">
+                                             id="getBoolean(java.lang.String,boolean)">
+                                        <h3>getBoolean</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type">boolean</span>&nbsp;<span
+                                                class="element-name">getBoolean</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key,
+ boolean&nbsp;defValue)</span></div>
+                                        <div class="block">Retrieves a boolean value associated with
+                                            the given key.
+                                            If no value is found or the value is null, returns the
+                                            provided default value.
+                                        </div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dd><code>defValue</code> - the default value to return
+                                                if no value is found or if the result is null
+                                            </dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved boolean value or the default value if
+                                                not found
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail" id="getBoolean(java.lang.String)">
+                                        <h3>getBoolean</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="return-type">boolean</span>&nbsp;<span
+                                                class="element-name">getBoolean</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key)</span>
+                                        </div>
+                                        <div class="block">Retrieves a boolean value associated with
+                                            the given key.
+                                            If no value is found or the value is null, returns
+                                            false.
+                                            <p>
+                                                This is a shorthand method that calls <a
+                                                    href="#getBoolean(java.lang.String,boolean)"><code>getBoolean(String,
+                                                boolean)</code></a> with a default value of false.
+                                        </div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the value</dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the retrieved boolean value or false if not found
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail"
+                                             id="getFullList(java.lang.String,java.lang.Class)">
+                                        <h3>getFullList</h3>
+                                        <div class="member-signature"><span class="type-parameters">&lt;E&gt;</span>&nbsp;<span
+                                                class="return-type"><a
+                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html"
+                                                class="external-link"
+                                                title="class or interface in java.util">List</a>&lt;E&gt;</span>&nbsp;<span
+                                                class="element-name">getFullList</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+    title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass)</span></div>
+                                        <div class="block">Retrieves a list of objects of the
+                                            specified type associated with the given key.
+                                            The list is deserialized from the underlying data source
+                                            to match the specified type.
+                                        </div>
+                                        <dl class="notes">
+                                            <dt>Type Parameters:</dt>
+                                            <dd><code>E</code> - the type of the objects in the list
+                                            </dd>
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the key to look up the list of
+                                                objects
+                                            </dd>
+                                            <dd><code>eClass</code> - the type of the objects in the
+                                                list
+                                            </dd>
+                                            <dt>Returns:</dt>
+                                            <dd>the list of objects of the specified type associated
+                                                with the key, or an empty list if not found
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail"
+                                             id="getPagedList(java.lang.String,java.lang.Class,int,boolean)">
+                                        <h3>getPagedList</h3>
+                                        <div class="member-signature"><span class="type-parameters">&lt;E&gt;</span>&nbsp;<span
+                                                class="return-type"><a
+                                                href="model/PaginatedData.html"
+                                                title="class in com.jummania.model">PaginatedData</a>&lt;E&gt;</span>&nbsp;<span
+                                                class="element-name">getPagedList</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass,
+ int&nbsp;page,
+ boolean&nbsp;reverse)</span></div>
+                                        <div class="block">Retrieves a paginated list of elements
+                                            associated with the specified key.
+                                            <p>
+                                                This method allows fetching a specific page of data
+                                                from storage.
+                                                Pages are 1-based. If <code>reverse</code> is <code>true</code>,
+                                                pages are
+                                                counted from the last page backward (e.g., 1 → last
+                                                page, 2 → second-to-last, etc.).
+                                            </p></div>
+                                        <dl class="notes">
+                                            <dt>Type Parameters:</dt>
+                                            <dd><code>E</code> - the type of elements in the list
+                                            </dd>
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the unique key identifying the
+                                                dataset
+                                            </dd>
+                                            <dd><code>eClass</code> - the class type of the list
+                                                elements (for deserialization)
+                                            </dd>
+                                            <dd><code>page</code> - the page number to retrieve
+                                                (1-based)
+                                            </dd>
+                                            <dd><code>reverse</code> - if <code>true</code>, pages
+                                                are fetched in reverse order
+                                            </dd>
+                                            <dt>Returns:</dt>
+                                            <dd>a <a href="model/PaginatedData.html"
+                                                     title="class in com.jummania.model"><code>PaginatedData</code></a>
+                                                object containing the elements for the requested
+                                                page
+                                            </dd>
+                                            <dt>See Also:</dt>
+                                            <dd>
+                                                <ul class="see-list">
+                                                    <li><a href="model/PaginatedData.html"
+                                                           title="class in com.jummania.model"><code>PaginatedData</code></a>
+                                                    </li>
+                                                    <li><a href="model/Pagination.html"
+                                                           title="class in com.jummania.model"><code>Pagination</code></a>
+                                                    </li>
+                                                </ul>
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail"
+                                             id="getPagedList(java.lang.String,java.lang.Class,int)">
+                                        <h3>getPagedList</h3>
+                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="type-parameters">&lt;E&gt;</span>&nbsp;<span
+                                                class="return-type"><a
+                                                href="model/PaginatedData.html"
+                                                title="class in com.jummania.model">PaginatedData</a>&lt;E&gt;</span>&nbsp;<span
+                                                class="element-name">getPagedList</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a>&nbsp;key,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass,
+ int&nbsp;page)</span></div>
+                                        <div class="block">Retrieves a paginated list of elements
+                                            associated with the specified key.
+                                            <p>
+                                                This is a convenience method equivalent to calling
+                                                <a href="#getPagedList(java.lang.String,java.lang.Class,int,boolean)"><code>getPagedList(String,
+                                                    Class, int, boolean)</code></a> with <code>reverse
+                                                = false</code>.
+                                            </p></div>
+                                        <dl class="notes">
+                                            <dt>Type Parameters:</dt>
+                                            <dd><code>E</code> - the type of elements in the list
+                                            </dd>
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the unique key identifying the
+                                                dataset
+                                            </dd>
+                                            <dd><code>eClass</code> - the class type of the list
+                                                elements (for deserialization)
+                                            </dd>
+                                            <dd><code>page</code> - the page number to retrieve
+                                                (1-based)
+                                            </dd>
+                                            <dt>Returns:</dt>
+                                            <dd>a <a href="model/PaginatedData.html"
+                                                     title="class in com.jummania.model"><code>PaginatedData</code></a>
+                                                object containing the elements for the requested
+                                                page
+                                            </dd>
+                                            <dt>See Also:</dt>
+                                            <dd>
+                                                <ul class="see-list-long">
+                                                    <li>
+                                                        <a href="#getPagedList(java.lang.String,java.lang.Class,int,boolean)"><code>getPagedList(String,
+                                                            Class, int, boolean)</code></a></li>
+                                                </ul>
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail"
+                                             id="saveList(java.lang.String,java.util.List,int,int)">
                                         <h3>saveList</h3>
                                         <div class="member-signature"><span class="type-parameters">&lt;E&gt;</span>&nbsp;<span
                                                 class="return-type">void</span>&nbsp;<span
                                                 class="element-name">saveList</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html"
-    title="class or interface in java.util">List</a>&lt;E&gt;&nbsp;value,
- int&nbsp;maxArraySize)</span></div>
-                                        <div class="block">Saves a list of objects associated with
-                                            the given key by converting the list to a JSON string.
-                                            If the key already exists, the value will be updated.
-                                            The size of the list is capped to the specified maximum
-                                            array size.
-                                        </div>
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util">List</a>&lt;E&gt;&nbsp;list,
+ int&nbsp;listSizeLimit,
+ int&nbsp;maxBatchSize)</span></div>
+                                        <div class="block">Saves a list of elements to storage,
+                                            splitting it into batches if necessary.
+                                            <p>
+                                                The list is divided into smaller sublists (batches)
+                                                according to <code>maxBatchSize</code>,
+                                                and each batch is stored separately. Metadata about
+                                                the total items, total pages,
+                                                and batch size is stored under a special <code>key.meta</code>
+                                                entry.
+                                            </p>
+                                            <p>
+                                                If the list is <code>null</code> or becomes empty
+                                                after applying <code>listSizeLimit</code>,
+                                                the key is removed from storage.
+                                            </p></div>
                                         <dl class="notes">
                                             <dt>Type Parameters:</dt>
                                             <dd><code>E</code> - the type of elements in the list
                                             </dd>
                                             <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to associate with the
-                                                list of objects
+                                            <dd><code>key</code> - the unique key identifying the
+                                                dataset
                                             </dd>
-                                            <dd><code>value</code> - the list of objects to save
+                                            <dd><code>list</code> - the list of elements to save;
+                                                may be <code>null</code></dd>
+                                            <dd><code>listSizeLimit</code> - the maximum total
+                                                number of elements to store
                                             </dd>
-                                            <dd><code>maxArraySize</code> - the maximum number of
-                                                elements in the list to be saved
+                                            <dd><code>maxBatchSize</code> - the maximum number of
+                                                elements per batch (must be ≥ 1)
+                                            </dd>
+                                            <dt>See Also:</dt>
+                                            <dd>
+                                                <ul class="see-list-long">
+                                                    <li>
+                                                        <a href="#saveObject(java.lang.String,java.lang.Object,java.lang.reflect.Type)"><code>saveObject(String,
+                                                            Object, Type)</code></a></li>
+                                                    <li><a href="#remove(java.lang.String)"><code>remove(String)</code></a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="model/MetaData.html#toMeta(int,int,int)"><code>MetaData.toMeta(int,
+                                                            int, int)</code></a></li>
+                                                </ul>
                                             </dd>
                                         </dl>
                                     </section>
@@ -1498,21 +1617,21 @@ loadScripts(document, 'script');
                                                 class="element-name">saveList</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
  <a class="external-link"
     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html"
-    title="class or interface in java.util">List</a>&lt;E&gt;&nbsp;value)</span></div>
+    title="class or interface in java.util">List</a>&lt;E&gt;&nbsp;list)</span></div>
                                         <div class="block">Saves a list of objects associated with
                                             the given key by converting the list to a JSON string.
-                                            If the key already exists, the value will be updated.
-                                            The size of the list is capped to 25 elements.
+                                            If the key already exists, the list will be updated. The
+                                            size of the list is capped to 25 elements.
                                             <p>
                                                 This is a shorthand method that calls <a
-                                                    href="#saveList(java.lang.String,java.util.List,int)"><code>saveList(String,
-                                                List, int)</code></a> with a default maximum array
-                                                size of 25.</div>
+                                                    href="#saveList(java.lang.String,java.util.List,int,int)"><code>saveList(String,
+                                                List, int, int)</code></a> with a default maximum
+                                                array size of 25.</div>
                                         <dl class="notes">
                                             <dt>Type Parameters:</dt>
                                             <dd><code>E</code> - the type of elements in the list
@@ -1521,208 +1640,148 @@ loadScripts(document, 'script');
                                             <dd><code>key</code> - the key to associate with the
                                                 list of objects
                                             </dd>
-                                            <dd><code>value</code> - the list of objects to save
-                                            </dd>
+                                            <dd><code>list</code> - the list of objects to save</dd>
                                         </dl>
                                     </section>
                                 </li>
                                 <li>
                                     <section class="detail"
-                                             id="appendToList(java.lang.String,int,java.lang.Object,boolean)">
-                                        <h3>appendToList</h3>
-                                        <div class="member-signature"><span
+                                             id="appendToList(java.lang.String,E,java.lang.Class,int,int,java.util.function.Predicate)">
+                                        <h3 id="appendToList(java.lang.String,java.lang.Object,java.lang.Class,int,int,java.util.function.Predicate)">
+                                            appendToList</h3>
+                                        <div class="member-signature"><span class="type-parameters">&lt;E&gt;</span>&nbsp;<span
                                                 class="return-type">void</span>&nbsp;<span
                                                 class="element-name">appendToList</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- int&nbsp;index,
- <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-    title="class or interface in java.lang">Object</a>&nbsp;element,
- boolean&nbsp;removeDuplicate)</span></div>
-                                        <div class="block">Appends an element to a list associated
-                                            with the given key at the specified index.
-                                            If the list does not exist, a new list will be created.
-                                            Optionally, duplicates can be removed before appending
-                                            the element.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to identify the list</dd>
-                                            <dd><code>index</code> - the position at which to insert
-                                                the element in the list
-                                            </dd>
-                                            <dd><code>element</code> - the element to append to the
-                                                list
-                                            </dd>
-                                            <dd><code>removeDuplicate</code> - whether to remove
-                                                duplicate elements before appending the new element
-                                            </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail"
-                                             id="appendToList(java.lang.String,int,java.lang.Object)">
-                                        <h3>appendToList</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">void</span>&nbsp;<span
-                                                class="element-name">appendToList</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
                                                     class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
- int&nbsp;index,
+ E&nbsp;element,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-    title="class or interface in java.lang">Object</a>&nbsp;element)</span>
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass,
+ int&nbsp;listSizeLimit,
+ int&nbsp;maxBatchSize,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function">Predicate</a>&lt;? super E&gt;&nbsp;itemToRemove)</span>
                                         </div>
-                                        <div class="block">Appends an element to a list associated
-                                            with the given key at the specified index.
-                                            If the list does not exist, a new list will be created.
-                                            Duplicates are not removed by default.
+                                        <div class="block">Appends a single element to a paginated
+                                            list stored under the given key.
                                             <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#appendToList(java.lang.String,int,java.lang.Object,boolean)"><code>appendToList(String,
-                                                int, Object, boolean)</code></a> with the
-                                                `removeDuplicate` flag set to false.</div>
+                                                If the list does not exist, a new one is created.
+                                                The list is stored in
+                                                batches according to <code>maxBatchSize</code>, and
+                                                the total number of elements
+                                                is limited by <code>listSizeLimit</code>.
+                                                Optionally, an existing element can
+                                                be removed before adding the new element using the
+                                                <code>itemToRemove</code> predicate.
+                                            </p></div>
                                         <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to identify the list</dd>
-                                            <dd><code>index</code> - the position at which to insert
-                                                the element in the list
+                                            <dt>Type Parameters:</dt>
+                                            <dd><code>E</code> - the type of elements in the list
                                             </dd>
-                                            <dd><code>element</code> - the element to append to the
-                                                list
+                                            <dt>Parameters:</dt>
+                                            <dd><code>key</code> - the unique key identifying the
+                                                stored paginated list
+                                            </dd>
+                                            <dd><code>element</code> - the element to append;
+                                                ignored if <code>null</code></dd>
+                                            <dd><code>eClass</code> - the class type of the list
+                                                elements (for deserialization)
+                                            </dd>
+                                            <dd><code>listSizeLimit</code> - the maximum total
+                                                number of elements allowed in storage
+                                            </dd>
+                                            <dd><code>maxBatchSize</code> - the maximum number of
+                                                elements per batch
+                                            </dd>
+                                            <dd><code>itemToRemove</code> - a predicate to identify
+                                                and remove an existing element; may be
+                                                <code>null</code></dd>
+                                            <dt>See Also:</dt>
+                                            <dd>
+                                                <ul class="see-list-long">
+                                                    <li>
+                                                        <a href="#saveList(java.lang.String,java.util.List,int,int)"><code>saveList(String,
+                                                            List, int, int)</code></a></li>
+                                                    <li>
+                                                        <a href="#saveObject(java.lang.String,java.lang.Object,java.lang.reflect.Type)"><code>saveObject(String,
+                                                            Object, Type)</code></a></li>
+                                                </ul>
                                             </dd>
                                         </dl>
                                     </section>
                                 </li>
                                 <li>
                                     <section class="detail"
-                                             id="appendToList(java.lang.String,java.lang.Object,boolean)">
-                                        <h3>appendToList</h3>
+                                             id="appendToList(java.lang.String,E,java.lang.Class)">
+                                        <h3 id="appendToList(java.lang.String,java.lang.Object,java.lang.Class)">
+                                            appendToList</h3>
                                         <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
+                                                class="type-parameters">&lt;E&gt;</span>&nbsp;<span
                                                 class="return-type">void</span>&nbsp;<span
                                                 class="element-name">appendToList</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">String</a>&nbsp;key,
+ E&nbsp;element,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-    title="class or interface in java.lang">Object</a>&nbsp;element,
- boolean&nbsp;removeDuplicate)</span></div>
-                                        <div class="block">Appends an element to a list associated
-                                            with the given key. The element is added at the end of
-                                            the list.
-                                            If the list does not exist, a new list will be created.
-                                            Optionally, duplicates can be removed before appending
-                                            the element.
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+    title="class or interface in java.lang">Class</a>&lt;E&gt;&nbsp;eClass)</span></div>
+                                        <div class="block">Appends a single element to a paginated
+                                            list with default limits.
                                             <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#appendToList(java.lang.String,int,java.lang.Object,boolean)"><code>appendToList(String,
-                                                int, Object, boolean)</code></a> with the index set
-                                                to -1,
-                                                indicating the element should be appended to the end
-                                                of the list.</div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to identify the list</dd>
-                                            <dd><code>element</code> - the element to append to the
-                                                list
-                                            </dd>
-                                            <dd><code>removeDuplicate</code> - whether to remove
-                                                duplicate elements before appending the new element
-                                            </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail"
-                                             id="appendToList(java.lang.String,java.lang.Object)">
-                                        <h3>appendToList</h3>
-                                        <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span
-                                                class="return-type">void</span>&nbsp;<span
-                                                class="element-name">appendToList</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
+                                                This convenience method uses a default <code>listSizeLimit</code>
+                                                of <a
                                                     class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
-    title="class or interface in java.lang">Object</a>&nbsp;element)</span>
-                                        </div>
-                                        <div class="block">Appends an element to a list associated
-                                            with the given key. The element is added at the end of
-                                            the list.
-                                            If the list does not exist, a new list will be created.
-                                            Duplicates are not removed by default.
-                                            <p>
-                                                This is a shorthand method that calls <a
-                                                    href="#appendToList(java.lang.String,java.lang.Object,boolean)"><code>appendToList(String,
-                                                Object, boolean)</code></a> with the index set to -1
-                                                and the `removeDuplicate` flag set to false, meaning
-                                                the element will be added to the end of the list
-                                                without
-                                                removing duplicates.</div>
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html#MAX_VALUE"
+                                                    title="class or interface in java.lang"><code>Integer.MAX_VALUE</code></a>,
+                                                a <code>maxBatchSize</code> of 25, and does not
+                                                remove any existing element.
+                                            </p></div>
                                         <dl class="notes">
+                                            <dt>Type Parameters:</dt>
+                                            <dd><code>E</code> - the type of elements in the list
+                                            </dd>
                                             <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to identify the list</dd>
-                                            <dd><code>element</code> - the element to append to the
-                                                list
+                                            <dd><code>key</code> - the unique key identifying the
+                                                stored paginated list
+                                            </dd>
+                                            <dd><code>element</code> - the element to append;
+                                                ignored if <code>null</code></dd>
+                                            <dd><code>eClass</code> - the class type of the list
+                                                elements (for deserialization)
+                                            </dd>
+                                            <dt>See Also:</dt>
+                                            <dd>
+                                                <ul class="see-list-long">
+                                                    <li>
+                                                        <a href="#appendToList(java.lang.String,E,java.lang.Class,int,int,java.util.function.Predicate)"><code>appendToList(String,
+                                                            Object, Class, int, int,
+                                                            Predicate)</code></a></li>
+                                                </ul>
                                             </dd>
                                         </dl>
                                     </section>
                                 </li>
                                 <li>
                                     <section class="detail"
-                                             id="removeFromList(java.lang.String,int)">
-                                        <h3>removeFromList</h3>
-                                        <div class="member-signature"><span
-                                                class="return-type">void</span>&nbsp;<span
-                                                class="element-name">removeFromList</span>
-                                            <wbr>
-                                            <span class="parameters">(<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a>&nbsp;key,
- int&nbsp;index)</span></div>
-                                        <div class="block">Removes an element from the list
-                                            associated with the given key at the specified index.
-                                            If the list does not contain an element at the given
-                                            index, no changes will be made.
-                                        </div>
-                                        <dl class="notes">
-                                            <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key to identify the list</dd>
-                                            <dd><code>index</code> - the position of the element to
-                                                remove from the list
-                                            </dd>
-                                        </dl>
-                                    </section>
-                                </li>
-                                <li>
-                                    <section class="detail"
-                                             id="fromJson(java.lang.String,java.lang.reflect.Type)">
+                                             id="fromJson(java.lang.String,java.lang.Class)">
                                         <h3>fromJson</h3>
                                         <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span
                                                 class="return-type">T</span>&nbsp;<span
                                                 class="element-name">fromJson</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">String</a>&nbsp;value,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-    title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfT)</span></div>
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+    title="class or interface in java.lang">Class</a>&lt;T&gt;&nbsp;tClass)</span></div>
                                         <div class="block">Converts a JSON string into an object of
                                             the specified type.
                                             This method deserializes the given JSON string into an
@@ -1736,7 +1795,7 @@ loadScripts(document, 'script');
                                             <dt>Parameters:</dt>
                                             <dd><code>value</code> - the JSON string to deserialize
                                             </dd>
-                                            <dd><code>typeOfT</code> - the Type of the object to
+                                            <dd><code>tClass</code> - the Type of the object to
                                                 convert the JSON string into
                                             </dd>
                                             <dt>Returns:</dt>
@@ -1753,8 +1812,8 @@ loadScripts(document, 'script');
                                                 class="element-name">fromReader</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Reader.html"
+                                                    class="external-link"
                                                     title="class or interface in java.io">Reader</a>&nbsp;json,
  <a class="external-link"
     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
@@ -1784,14 +1843,14 @@ loadScripts(document, 'script');
                                     <section class="detail" id="toJson(java.lang.Object)">
                                         <h3>toJson</h3>
                                         <div class="member-signature"><span class="return-type"><a
-                                                class="external-link"
                                                 href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                class="external-link"
                                                 title="class or interface in java.lang">String</a></span>&nbsp;<span
                                                 class="element-name">toJson</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">Object</a>&nbsp;object)</span>
                                         </div>
                                         <div class="block">Converts an object into its JSON string
@@ -1811,11 +1870,69 @@ loadScripts(document, 'script');
                                 </li>
                                 <li>
                                     <section class="detail"
+                                             id="toJson(java.lang.Object,java.lang.reflect.Type,java.lang.Appendable)">
+                                        <h3>toJson</h3>
+                                        <div class="member-signature"><span
+                                                class="return-type">void</span>&nbsp;<span
+                                                class="element-name">toJson</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
+                                                    title="class or interface in java.lang">Object</a>&nbsp;src,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfSrc,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang">Appendable</a>&nbsp;writer)</span>
+                                        </div>
+                                        <div class="block">Serializes the given object into JSON
+                                            using the specified type and writes it to the provided
+                                            <a class="external-link"
+                                               href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                               title="class or interface in java.lang"><code>Appendable</code></a>.
+                                            <p>
+                                                This is useful when the object type includes
+                                                generics or is not fully captured by its runtime
+                                                class.
+                                                The method allows streaming the JSON output directly
+                                                to a <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Writer.html"
+                                                    title="class or interface in java.io"><code>Writer</code></a>,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/StringBuilder.html"
+                                                   title="class or interface in java.lang"><code>StringBuilder</code></a>,
+                                                or any other <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                                    title="class or interface in java.lang"><code>Appendable</code></a>.
+                                            </p></div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>src</code> - the source object to serialize;
+                                                must not be <code>null</code></dd>
+                                            <dd><code>typeOfSrc</code> - the specific <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                    title="class or interface in java.lang.reflect"><code>Type</code></a> of
+                                                the object to serialize
+                                            </dd>
+                                            <dd><code>writer</code> - the destination <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                                    title="class or interface in java.lang"><code>Appendable</code></a>
+                                                to write the JSON output to
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail"
                                              id="getParameterized(java.lang.reflect.Type,java.lang.reflect.Type...)">
                                         <h3>getParameterized</h3>
                                         <div class="member-signature"><span class="return-type"><a
-                                                class="external-link"
                                                 href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                class="external-link"
                                                 title="class or interface in java.lang.reflect">Type</a></span>&nbsp;<span
                                                 class="element-name">getParameterized</span>
                                             <wbr>
@@ -1824,19 +1941,17 @@ loadScripts(document, 'script');
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
                                                     title="class or interface in java.lang.reflect">Type</a>&nbsp;rawType,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-    title="class or interface in java.lang.reflect">Type</a>...&nbsp;typeArguments)</span>
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect">Type</a>...&nbsp;typeArguments)</span>
                                         </div>
                                         <div class="block">Creates a parameterized <a
-                                                class="external-link"
                                                 href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-                                                title="class or interface in java.lang.reflect"><code>Type</code></a>
-                                            using
+                                                class="external-link"
+                                                title="class or interface in java.lang.reflect"><code>Type</code></a> using
                                             the specified raw type and type arguments.
                                             This method is useful when dealing with generic types
                                             and allows the creation of a <a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang.reflect"><code>Type</code></a>
                                             that can represent a generic type with its actual type
                                             parameters.
@@ -1845,14 +1960,14 @@ loadScripts(document, 'script');
                                             <dt>Parameters:</dt>
                                             <dd><code>rawType</code> - the raw type of the generic
                                                 type (e.g., <a
-                                                        class="external-link"
                                                         href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html"
+                                                        class="external-link"
                                                         title="class or interface in java.util"><code>List</code></a>)
                                             </dd>
                                             <dd><code>typeArguments</code> - the type arguments that
                                                 the generic type should use (e.g., <a
-                                                        class="external-link"
                                                         href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                        class="external-link"
                                                         title="class or interface in java.lang"><code>String</code></a>)
                                             </dd>
                                             <dt>Returns:</dt>
@@ -1870,18 +1985,39 @@ loadScripts(document, 'script');
                                                 class="element-name">remove</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">String</a>&nbsp;key)</span>
                                         </div>
-                                        <div class="block">Removes the entry associated with the
-                                            given key.
-                                            If the key does not exist, no changes will be made.
+                                        <div class="block">Removes all data associated with the
+                                            specified key, including all paginated files
+                                            and the metadata file. After removal, notifies the
+                                            registered data observer (if any)
+                                            about the change.
+                                            <p>
+                                                The method works as follows:
+                                            <ol>
+                                                <li>Iterates through all paginated files with keys
+                                                    in the format <code>key.1, key.2, ...</code> and
+                                                    deletes them.
+                                                </li>
+                                                <li>Deletes the metadata file stored under <code>key.meta</code>.
+                                                </li>
+                                                <li>Deletes the base file associated with
+                                                    <code>key</code>.
+                                                </li>
+                                                <li>If a <a href="DataManager.DataObserver.html"
+                                                            title="interface in com.jummania"><code>DataManager.DataObserver</code></a>
+                                                    is registered, calls
+                                                    <code>onDataChange(key)</code> to notify about
+                                                    the deletion.
+                                                </li>
+                                            </ol>
                                         </div>
                                         <dl class="notes">
                                             <dt>Parameters:</dt>
-                                            <dd><code>key</code> - the key identifying the entry to
-                                                remove
+                                            <dd><code>key</code> - the base key of the data to be
+                                                removed
                                             </dd>
                                         </dl>
                                     </section>
@@ -1907,8 +2043,8 @@ loadScripts(document, 'script');
                                                 class="element-name">contains</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">String</a>&nbsp;key)</span>
                                         </div>
                                         <div class="block">Checks if the data structure contains an

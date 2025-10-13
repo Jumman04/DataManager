@@ -91,6 +91,13 @@ loadScripts(document, 'script');
                 <div class="type-signature"><span
                         class="modifiers">public static interface </span><span
                         class="element-name type-name-label">DataManager.Converter</span></div>
+                <div class="block">Interface for converting between Java objects and JSON
+                    representations.
+                    <p>
+                        Implementations are responsible for serializing Java objects to JSON strings
+                        or streams,
+                        and deserializing JSON strings or streams back to Java objects.
+                    </p></div>
             </section>
             <section class="summary">
                 <ul class="summary-list">
@@ -101,36 +108,29 @@ loadScripts(document, 'script');
                             <div id="method-summary-table">
                                 <div aria-orientation="horizontal" class="table-tabs"
                                      role="tablist">
-                                    <button aria-controls="method-summary-table.tabpanel"
+                                    <button aria-controls="method-summary-table.tabpanel" class="active-table-tab"
                                             aria-selected="true"
-                                            class="active-table-tab"
                                             id="method-summary-table-tab0"
+                                            onkeydown="switchTab(event)" role="tab"
                                             onclick="show('method-summary-table', 'method-summary-table', 3)"
-                                            onkeydown="switchTab(event)"
-                                            role="tab"
                                             tabindex="0">All Methods
                                     </button>
-                                    <button aria-controls="method-summary-table.tabpanel"
+                                    <button aria-controls="method-summary-table.tabpanel" class="table-tab"
                                             aria-selected="false"
-                                            class="table-tab"
                                             id="method-summary-table-tab2"
+                                            onkeydown="switchTab(event)" role="tab"
                                             onclick="show('method-summary-table', 'method-summary-table-tab2', 3)"
-                                            onkeydown="switchTab(event)"
-                                            role="tab"
                                             tabindex="-1">Instance Methods
                                     </button>
-                                    <button aria-controls="method-summary-table.tabpanel"
+                                    <button aria-controls="method-summary-table.tabpanel" class="table-tab"
                                             aria-selected="false"
-                                            class="table-tab"
                                             id="method-summary-table-tab3"
+                                            onkeydown="switchTab(event)" role="tab"
                                             onclick="show('method-summary-table', 'method-summary-table-tab3', 3)"
-                                            onkeydown="switchTab(event)"
-                                            role="tab"
                                             tabindex="-1">Abstract Methods
                                     </button>
                                 </div>
-                                <div aria-labelledby="method-summary-table-tab0"
-                                     id="method-summary-table.tabpanel"
+                                <div aria-labelledby="method-summary-table-tab0" id="method-summary-table.tabpanel"
                                      role="tabpanel">
                                     <div class="summary-table three-column-summary">
                                         <div class="table-header col-first">Modifier and Type</div>
@@ -141,14 +141,14 @@ loadScripts(document, 'script');
                                         <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a
                                                     class="member-name-link"
-                                                    href="#fromJson(java.lang.String,java.lang.reflect.Type)">fromJson</a>
+                                                    href="#fromJson(java.lang.String,java.lang.Class)">fromJson</a>
                                                 <wbr>
                                                 (<a class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
                                                     title="class or interface in java.lang">String</a>&nbsp;json,
                                                 <a class="external-link"
-                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-                                                   title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfT)</code>
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+                                                   title="class or interface in java.lang">Class</a>&lt;T&gt;&nbsp;tClass)</code>
                                         </div>
                                         <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <div class="block">Converts a JSON string into a Java
@@ -170,23 +170,51 @@ loadScripts(document, 'script');
                                                    title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfT)</code>
                                         </div>
                                         <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <div class="block">Converts a JSON stream from a Reader
+                                            <div class="block">Converts a JSON stream from a <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Reader.html"
+                                                    title="class or interface in java.io"><code>Reader</code></a>
                                                 into a Java object of the specified type.
                                             </div>
                                         </div>
                                         <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-                                            <code>&lt;T&gt;&nbsp;<a
-                                                    class="external-link"
-                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
-                                                    title="class or interface in java.lang">String</a></code>
-                                        </div>
+                                            <code>void</code></div>
                                         <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <code><a
+                                                    class="member-name-link"
+                                                    href="#toJson(java.lang.Object,java.lang.reflect.Type,java.lang.Appendable)">toJson</a>
+                                                <wbr>
+                                                (<a class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
+                                                    title="class or interface in java.lang">Object</a>&nbsp;src,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                   title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfSrc,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                                   title="class or interface in java.lang">Appendable</a>&nbsp;writer)</code>
+                                        </div>
+                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <div class="block">Serializes the given object into JSON
+                                                using the specified type and writes it to the
+                                                provided <a
+                                                        class="external-link"
+                                                        href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                                        title="class or interface in java.lang"><code>Appendable</code></a>.
+                                            </div>
+                                        </div>
+                                        <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                            <code>&lt;T&gt;&nbsp;<a
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
+                                                    title="class or interface in java.lang">String</a></code></div>
+                                        <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <code><a class="member-name-link" href="#toJson(T)">toJson</a>
                                                 <wbr>
                                                 (T&nbsp;data)</code></div>
-                                        <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+                                        <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
                                             <div class="block">Converts a Java object to its JSON
-                                                representation.
+                                                string representation.
                                             </div>
                                         </div>
                                     </div>
@@ -208,13 +236,13 @@ loadScripts(document, 'script');
                                         <h3 id="toJson(java.lang.Object)">toJson</h3>
                                         <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span
                                                 class="return-type"><a
-                                                class="external-link"
                                                 href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                class="external-link"
                                                 title="class or interface in java.lang">String</a></span>&nbsp;<span
                                                 class="element-name">toJson</span>
                                             <wbr>
                                             <span class="parameters">(T&nbsp;data)</span></div>
-                                        <div class="block">Converts a Java object to its JSON
+                                        <div class="block">Converts a Java object to its JSON string
                                             representation.
                                         </div>
                                         <dl class="notes">
@@ -231,19 +259,77 @@ loadScripts(document, 'script');
                                 </li>
                                 <li>
                                     <section class="detail"
-                                             id="fromJson(java.lang.String,java.lang.reflect.Type)">
+                                             id="toJson(java.lang.Object,java.lang.reflect.Type,java.lang.Appendable)">
+                                        <h3>toJson</h3>
+                                        <div class="member-signature"><span
+                                                class="return-type">void</span>&nbsp;<span
+                                                class="element-name">toJson</span>
+                                            <wbr>
+                                            <span class="parameters">(<a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html"
+                                                    title="class or interface in java.lang">Object</a>&nbsp;src,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfSrc,
+ <a class="external-link"
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang">Appendable</a>&nbsp;writer)</span>
+                                        </div>
+                                        <div class="block">Serializes the given object into JSON
+                                            using the specified type and writes it to the provided
+                                            <a class="external-link"
+                                               href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                               title="class or interface in java.lang"><code>Appendable</code></a>.
+                                            <p>
+                                                This is useful when the object type includes
+                                                generics or is not fully captured by its runtime
+                                                class.
+                                                The method allows streaming the JSON output directly
+                                                to a <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Writer.html"
+                                                    title="class or interface in java.io"><code>Writer</code></a>,
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/StringBuilder.html"
+                                                   title="class or interface in java.lang"><code>StringBuilder</code></a>,
+                                                or any other <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                                    title="class or interface in java.lang"><code>Appendable</code></a>.
+                                            </p></div>
+                                        <dl class="notes">
+                                            <dt>Parameters:</dt>
+                                            <dd><code>src</code> - the source object to serialize;
+                                                must not be <code>null</code></dd>
+                                            <dd><code>typeOfSrc</code> - the specific <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
+                                                    title="class or interface in java.lang.reflect"><code>Type</code></a> of
+                                                the object to serialize
+                                            </dd>
+                                            <dd><code>writer</code> - the destination <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html"
+                                                    title="class or interface in java.lang"><code>Appendable</code></a>
+                                                to write the JSON output to
+                                            </dd>
+                                        </dl>
+                                    </section>
+                                </li>
+                                <li>
+                                    <section class="detail"
+                                             id="fromJson(java.lang.String,java.lang.Class)">
                                         <h3>fromJson</h3>
                                         <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span
                                                 class="return-type">T</span>&nbsp;<span
                                                 class="element-name">fromJson</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html"
+                                                    class="external-link"
                                                     title="class or interface in java.lang">String</a>&nbsp;json,
  <a class="external-link"
-    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-    title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfT)</span></div>
+    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html"
+    title="class or interface in java.lang">Class</a>&lt;T&gt;&nbsp;tClass)</span></div>
                                         <div class="block">Converts a JSON string into a Java object
                                             of the specified type.
                                         </div>
@@ -253,8 +339,8 @@ loadScripts(document, 'script');
                                             <dt>Parameters:</dt>
                                             <dd><code>json</code> - the JSON string to be converted
                                             </dd>
-                                            <dd><code>typeOfT</code> - the type of the object to be
-                                                returned
+                                            <dd><code>tClass</code> - the class type of the object
+                                                to return
                                             </dd>
                                             <dt>Returns:</dt>
                                             <dd>the Java object represented by the JSON string</dd>
@@ -270,28 +356,37 @@ loadScripts(document, 'script');
                                                 class="element-name">fromReader</span>
                                             <wbr>
                                             <span class="parameters">(<a
-                                                    class="external-link"
                                                     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Reader.html"
+                                                    class="external-link"
                                                     title="class or interface in java.io">Reader</a>&nbsp;json,
  <a class="external-link"
     href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
     title="class or interface in java.lang.reflect">Type</a>&nbsp;typeOfT)</span></div>
-                                        <div class="block">Converts a JSON stream from a Reader into
-                                            a Java object of the specified type.
+                                        <div class="block">Converts a JSON stream from a <a
+                                                class="external-link"
+                                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Reader.html"
+                                                title="class or interface in java.io"><code>Reader</code></a> into a
+                                            Java object of the specified type.
                                         </div>
                                         <dl class="notes">
                                             <dt>Type Parameters:</dt>
                                             <dd><code>T</code> - the type of the object</dd>
                                             <dt>Parameters:</dt>
-                                            <dd><code>json</code> - the Reader containing the JSON
-                                                data to be converted
+                                            <dd><code>json</code> - the <a
+                                                    class="external-link"
+                                                    href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Reader.html"
+                                                    title="class or interface in java.io"><code>Reader</code></a>
+                                                containing the JSON data
                                             </dd>
                                             <dd><code>typeOfT</code> - the type of the object to be
                                                 returned
                                             </dd>
                                             <dt>Returns:</dt>
                                             <dd>the Java object represented by the JSON data from
-                                                the Reader
+                                                the
+                                                <a class="external-link"
+                                                   href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Reader.html"
+                                                   title="class or interface in java.io"><code>Reader</code></a>
                                             </dd>
                                         </dl>
                                     </section>

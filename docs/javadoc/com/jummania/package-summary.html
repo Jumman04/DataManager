@@ -89,28 +89,22 @@ loadScripts(document, 'script');
                     <li>
                         <div id="class-summary">
                             <div aria-orientation="horizontal" class="table-tabs" role="tablist">
-                                <button aria-controls="class-summary.tabpanel" aria-selected="true"
-                                        class="active-table-tab"
-                                        id="class-summary-tab0"
-                                        onclick="show('class-summary', 'class-summary', 2)"
+                                <button aria-controls="class-summary.tabpanel" aria-selected="true" class="active-table-tab"
+                                        id="class-summary-tab0" onclick="show('class-summary', 'class-summary', 2)"
                                         onkeydown="switchTab(event)"
                                         role="tab"
                                         tabindex="0">All Classes and Interfaces
                                 </button>
-                                <button aria-controls="class-summary.tabpanel" aria-selected="false"
-                                        class="table-tab"
-                                        id="class-summary-tab1"
-                                        onclick="show('class-summary', 'class-summary-tab1', 2)"
-                                        onkeydown="switchTab(event)"
+                                <button aria-controls="class-summary.tabpanel" aria-selected="false" class="table-tab"
+                                        id="class-summary-tab1" onkeydown="switchTab(event)"
                                         role="tab"
+                                        onclick="show('class-summary', 'class-summary-tab1', 2)"
                                         tabindex="-1">Interfaces
                                 </button>
-                                <button aria-controls="class-summary.tabpanel" aria-selected="false"
-                                        class="table-tab"
-                                        id="class-summary-tab2"
-                                        onclick="show('class-summary', 'class-summary-tab2', 2)"
+                                <button aria-controls="class-summary.tabpanel" aria-selected="false" class="table-tab"
+                                        id="class-summary-tab2" role="tab"
                                         onkeydown="switchTab(event)"
-                                        role="tab"
+                                        onclick="show('class-summary', 'class-summary-tab2', 2)"
                                         tabindex="-1">Classes
                                 </button>
                             </div>
@@ -134,7 +128,9 @@ loadScripts(document, 'script');
                                            title="interface in com.jummania">DataManager.Converter</a>
                                     </div>
                                     <div class="col-last odd-row-color class-summary class-summary-tab1">
-                                        &nbsp;
+                                        <div class="block">Interface for converting between Java
+                                            objects and JSON representations.
+                                        </div>
                                     </div>
                                     <div class="col-first even-row-color class-summary class-summary-tab1">
                                         <a href="DataManager.DataObserver.html"

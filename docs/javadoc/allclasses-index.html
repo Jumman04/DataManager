@@ -57,28 +57,22 @@ loadScripts(document, 'script');
             </div>
             <div id="all-classes-table">
                 <div aria-orientation="horizontal" class="table-tabs" role="tablist">
-                    <button aria-controls="all-classes-table.tabpanel" aria-selected="true"
-                            class="active-table-tab"
-                            id="all-classes-table-tab0"
-                            onclick="show('all-classes-table', 'all-classes-table', 2)"
-                            onkeydown="switchTab(event)"
+                    <button aria-controls="all-classes-table.tabpanel" aria-selected="true" class="active-table-tab"
+                            id="all-classes-table-tab0" onkeydown="switchTab(event)"
                             role="tab"
+                            onclick="show('all-classes-table', 'all-classes-table', 2)"
                             tabindex="0">All Classes and Interfaces
                     </button>
-                    <button aria-controls="all-classes-table.tabpanel" aria-selected="false"
-                            class="table-tab"
-                            id="all-classes-table-tab1"
-                            onclick="show('all-classes-table', 'all-classes-table-tab1', 2)"
+                    <button aria-controls="all-classes-table.tabpanel" aria-selected="false" class="table-tab"
+                            id="all-classes-table-tab1" onclick="show('all-classes-table', 'all-classes-table-tab1', 2)"
                             onkeydown="switchTab(event)"
                             role="tab"
                             tabindex="-1">Interfaces
                     </button>
-                    <button aria-controls="all-classes-table.tabpanel" aria-selected="false"
-                            class="table-tab"
-                            id="all-classes-table-tab2"
-                            onclick="show('all-classes-table', 'all-classes-table-tab2', 2)"
+                    <button aria-controls="all-classes-table.tabpanel" aria-selected="false" class="table-tab"
+                            id="all-classes-table-tab2" role="tab"
                             onkeydown="switchTab(event)"
-                            role="tab"
+                            onclick="show('all-classes-table', 'all-classes-table-tab2', 2)"
                             tabindex="-1">Classes
                     </button>
                 </div>
@@ -101,7 +95,9 @@ loadScripts(document, 'script');
                             <a href="com/jummania/DataManager.Converter.html"
                                title="interface in com.jummania">DataManager.Converter</a></div>
                         <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
-                            &nbsp;
+                            <div class="block">Interface for converting between Java objects and
+                                JSON representations.
+                            </div>
                         </div>
                         <div class="col-first even-row-color all-classes-table all-classes-table-tab1">
                             <a href="com/jummania/DataManager.DataObserver.html"
@@ -128,19 +124,25 @@ loadScripts(document, 'script');
                             </div>
                         </div>
                         <div class="col-first odd-row-color all-classes-table all-classes-table-tab2">
+                            <a href="com/jummania/model/MetaData.html"
+                               title="class in com.jummania.model">MetaData</a></div>
+                        <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+                            <div class="block">Represents metadata for a paginated list.</div>
+                        </div>
+                        <div class="col-first even-row-color all-classes-table all-classes-table-tab2">
                             <a href="com/jummania/model/PaginatedData.html"
                                title="class in com.jummania.model">PaginatedData</a>&lt;<a
                                 href="com/jummania/model/PaginatedData.html"
-                                title="type parameter in PaginatedData">T</a>&gt;
+                                title="type parameter in PaginatedData">E</a>&gt;
                         </div>
-                        <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+                        <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
                             <div class="block">A generic class representing a paginated data set.
                             </div>
                         </div>
-                        <div class="col-first even-row-color all-classes-table all-classes-table-tab2">
+                        <div class="col-first odd-row-color all-classes-table all-classes-table-tab2">
                             <a href="com/jummania/model/Pagination.html"
                                title="class in com.jummania.model">Pagination</a></div>
-                        <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+                        <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
                             <div class="block">A class representing pagination information.</div>
                         </div>
                     </div>

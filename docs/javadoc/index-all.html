@@ -52,17 +52,16 @@ loadScripts(document, 'script');
                 <h1>Index</h1>
             </div>
             <a href="#I:A">A</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a
-                href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a
-                href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a
-                href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<br><a
+                href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a
+                href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a
+                href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<br><a
                 href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span
                 class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
             <h2 class="title" id="I:A">A</h2>
             <dl class="index">
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#addDataObserver(com.jummania.DataManager.DataObserver)">addDataObserver(DataManager.DataObserver)</a>
-                    -
+                       href="com/jummania/DataManager.html#addDataObserver(com.jummania.DataManager.DataObserver)">addDataObserver(DataManager.DataObserver)</a> -
                     Method in interface com.jummania.<a href="com/jummania/DataManager.html"
                                                         title="interface in com.jummania">DataManager</a>
                 </dt>
@@ -75,55 +74,32 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#appendToList(java.lang.String,int,java.lang.Object)">appendToList(String,
-                        int, Object)</a> - Method in
-                    interface com.jummania.<a href="com/jummania/DataManager.html"
-                                              title="interface in com.jummania">DataManager</a></dt>
-                <dd>
-                    <div class="block">Appends an element to a list associated with the given key at
-                        the specified index.
-                    </div>
-                </dd>
-                <dt>
-                    <a class="member-name-link"
-                       href="com/jummania/DataManager.html#appendToList(java.lang.String,int,java.lang.Object,boolean)">appendToList(String,
-                        int, Object, boolean)</a> -
-                    Method in interface com.jummania.<a href="com/jummania/DataManager.html"
-                                                        title="interface in com.jummania">DataManager</a>
-                </dt>
-                <dd>
-                    <div class="block">Appends an element to a list associated with the given key at
-                        the specified index.
-                    </div>
-                </dd>
-                <dt>
-                    <a class="member-name-link"
-                       href="com/jummania/DataManager.html#appendToList(java.lang.String,java.lang.Object)">appendToList(String,
-                        Object)</a> - Method in
-                    interface com.jummania.<a href="com/jummania/DataManager.html"
-                                              title="interface in com.jummania">DataManager</a></dt>
-                <dd>
-                    <div class="block">Appends an element to a list associated with the given key.
-                    </div>
-                </dd>
-                <dt>
-                    <a class="member-name-link"
-                       href="com/jummania/DataManager.html#appendToList(java.lang.String,java.lang.Object,boolean)">appendToList(String,
-                        Object, boolean)</a> - Method
+                       href="com/jummania/DataManager.html#appendToList(java.lang.String,E,java.lang.Class)">appendToList(String, E, Class&lt;E&gt;)</a> - Method
                     in interface com.jummania.<a href="com/jummania/DataManager.html"
                                                  title="interface in com.jummania">DataManager</a>
                 </dt>
                 <dd>
-                    <div class="block">Appends an element to a list associated with the given key.
+                    <div class="block">Appends a single element to a paginated list with default
+                        limits.
+                    </div>
+                </dd>
+                <dt>
+                    <a class="member-name-link"
+                       href="com/jummania/DataManager.html#appendToList(java.lang.String,E,java.lang.Class,int,int,java.util.function.Predicate)">appendToList(String, E, Class&lt;E&gt;, int, int,
+                        Predicate&lt;? super E&gt;)</a> - Method in interface com.jummania.<a
+                        href="com/jummania/DataManager.html" title="interface in com.jummania">DataManager</a>
+                </dt>
+                <dd>
+                    <div class="block">Appends a single element to a paginated list stored under the
+                        given key.
                     </div>
                 </dd>
             </dl>
             <h2 class="title" id="I:C">C</h2>
             <dl class="index">
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#clear()">clear()</a> - Method in
-                    interface com.jummania.<a
-                            href="com/jummania/DataManager.html" title="interface in com.jummania">DataManager</a>
+                       href="com/jummania/DataManager.html#clear()">clear()</a> - Method in interface com.jummania.<a
+                        href="com/jummania/DataManager.html" title="interface in com.jummania">DataManager</a>
                 </dt>
                 <dd>
                     <div class="block">Clears all entries from the data structure.</div>
@@ -141,8 +117,7 @@ loadScripts(document, 'script');
                 </dt>
                 <dd>&nbsp;</dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#contains(java.lang.String)">contains(String)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#contains(java.lang.String)">contains(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -151,8 +126,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManagerFactory.html#create(java.io.File)">create(File)</a>
-                    - Static method in class
+                       href="com/jummania/DataManagerFactory.html#create(java.io.File)">create(File)</a> - Static method in class
                     com.jummania.<a href="com/jummania/DataManagerFactory.html"
                                     title="class in com.jummania">DataManagerFactory</a></dt>
                 <dd>
@@ -161,8 +135,7 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManagerFactory.html#create(java.io.File,com.jummania.DataManager.Converter)">create(File,
-                        DataManager.Converter)</a> - Static
+                       href="com/jummania/DataManagerFactory.html#create(java.io.File,com.jummania.DataManager.Converter)">create(File, DataManager.Converter)</a> - Static
                     method in class com.jummania.<a href="com/jummania/DataManagerFactory.html"
                                                     title="class in com.jummania">DataManagerFactory</a>
                 </dt>
@@ -172,8 +145,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/model/Pagination.html#currentPage">currentPage</a> -
-                    Variable in class
+                       href="com/jummania/model/Pagination.html#currentPage">currentPage</a> - Variable in class
                     com.jummania.model.<a href="com/jummania/model/Pagination.html"
                                           title="class in com.jummania.model">Pagination</a></dt>
                 <dd>&nbsp;</dd>
@@ -197,7 +169,11 @@ loadScripts(document, 'script');
                 <dt><a class="type-name-link" href="com/jummania/DataManager.Converter.html"
                        title="interface in com.jummania">DataManager.Converter</a> - Interface in <a
                         href="com/jummania/package-summary.html">com.jummania</a></dt>
-                <dd>&nbsp;</dd>
+                <dd>
+                    <div class="block">Interface for converting between Java objects and JSON
+                        representations.
+                    </div>
+                </dd>
                 <dt><a class="type-name-link" href="com/jummania/DataManager.DataObserver.html"
                        title="interface in com.jummania">DataManager.DataObserver</a> - Interface in
                     <a href="com/jummania/package-summary.html">com.jummania</a></dt>
@@ -215,10 +191,16 @@ loadScripts(document, 'script');
             <dl class="index">
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/converter/GsonConverter.html#fromJson(java.lang.String,java.lang.reflect.Type)">fromJson(String,
-                        Type)</a> - Method in class
-                    com.jummania.converter.<a href="com/jummania/converter/GsonConverter.html"
-                                              title="class in com.jummania.converter">GsonConverter</a>
+                       href="com/jummania/converter/GsonConverter.html#fromJson(java.lang.String,java.lang.Class)">fromJson(String, Class&lt;T&gt;)</a> - Method in
+                    class com.jummania.converter.<a href="com/jummania/converter/GsonConverter.html"
+                                                    title="class in com.jummania.converter">GsonConverter</a>
+                </dt>
+                <dd>&nbsp;</dd>
+                <dt>
+                    <a class="member-name-link"
+                       href="com/jummania/DataManager.Converter.html#fromJson(java.lang.String,java.lang.Class)">fromJson(String, Class&lt;T&gt;)</a> - Method in
+                    interface com.jummania.<a href="com/jummania/DataManager.Converter.html"
+                                              title="interface in com.jummania">DataManager.Converter</a>
                 </dt>
                 <dd>
                     <div class="block">Converts a JSON string into a Java object of the specified
@@ -227,21 +209,9 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.Converter.html#fromJson(java.lang.String,java.lang.reflect.Type)">fromJson(String,
-                        Type)</a> - Method in interface
-                    com.jummania.<a href="com/jummania/DataManager.Converter.html"
-                                    title="interface in com.jummania">DataManager.Converter</a></dt>
-                <dd>
-                    <div class="block">Converts a JSON string into a Java object of the specified
-                        type.
-                    </div>
-                </dd>
-                <dt>
-                    <a class="member-name-link"
-                       href="com/jummania/DataManager.html#fromJson(java.lang.String,java.lang.reflect.Type)">fromJson(String,
-                        Type)</a> - Method in interface
-                    com.jummania.<a href="com/jummania/DataManager.html"
-                                    title="interface in com.jummania">DataManager</a></dt>
+                       href="com/jummania/DataManager.html#fromJson(java.lang.String,java.lang.Class)">fromJson(String, Class&lt;T&gt;)</a> - Method in
+                    interface com.jummania.<a href="com/jummania/DataManager.html"
+                                              title="interface in com.jummania">DataManager</a></dt>
                 <dd>
                     <div class="block">Converts a JSON string into an object of the specified
                         type.
@@ -249,31 +219,27 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/converter/GsonConverter.html#fromReader(java.io.Reader,java.lang.reflect.Type)">fromReader(Reader,
-                        Type)</a> - Method in class
+                       href="com/jummania/converter/GsonConverter.html#fromReader(java.io.Reader,java.lang.reflect.Type)">fromReader(Reader, Type)</a> - Method in class
                     com.jummania.converter.<a href="com/jummania/converter/GsonConverter.html"
                                               title="class in com.jummania.converter">GsonConverter</a>
                 </dt>
-                <dd>
-                    <div class="block">Converts a JSON stream from a Reader into a Java object of
-                        the specified type.
-                    </div>
-                </dd>
+                <dd>&nbsp;</dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.Converter.html#fromReader(java.io.Reader,java.lang.reflect.Type)">fromReader(Reader,
-                        Type)</a> - Method in interface
+                       href="com/jummania/DataManager.Converter.html#fromReader(java.io.Reader,java.lang.reflect.Type)">fromReader(Reader, Type)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.Converter.html"
                                     title="interface in com.jummania">DataManager.Converter</a></dt>
                 <dd>
-                    <div class="block">Converts a JSON stream from a Reader into a Java object of
-                        the specified type.
+                    <div class="block">Converts a JSON stream from a <a
+                            class="external-link"
+                            href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Reader.html"
+                            title="class or interface in java.io"><code>Reader</code></a> into a Java object of the
+                        specified type.
                     </div>
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#fromReader(java.io.Reader,java.lang.reflect.Type)">fromReader(Reader,
-                        Type)</a> - Method in interface
+                       href="com/jummania/DataManager.html#fromReader(java.io.Reader,java.lang.reflect.Type)">fromReader(Reader, Type)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -285,8 +251,7 @@ loadScripts(document, 'script');
             <h2 class="title" id="I:G">G</h2>
             <dl class="index">
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getBoolean(java.lang.String)">getBoolean(String)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#getBoolean(java.lang.String)">getBoolean(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -294,8 +259,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getBoolean(java.lang.String,boolean)">getBoolean(String,
-                    boolean)</a> - Method in
+                       href="com/jummania/DataManager.html#getBoolean(java.lang.String,boolean)">getBoolean(String, boolean)</a> - Method in
                     interface com.jummania.<a href="com/jummania/DataManager.html"
                                               title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -303,24 +267,21 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManagerFactory.html#getDataManager()">getDataManager()</a>
-                    - Static method in class
+                       href="com/jummania/DataManagerFactory.html#getDataManager()">getDataManager()</a> - Static method in class
                     com.jummania.<a href="com/jummania/DataManagerFactory.html"
                                     title="class in com.jummania">DataManagerFactory</a></dt>
                 <dd>
                     <div class="block">Retrieves the singleton instance of DataManager.</div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getFloat(java.lang.String)">getFloat(String)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#getFloat(java.lang.String)">getFloat(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
                     <div class="block">Retrieves a float value associated with the given key.</div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getFloat(java.lang.String,float)">getFloat(String,
-                    float)</a> - Method in interface
+                       href="com/jummania/DataManager.html#getFloat(java.lang.String,float)">getFloat(String, float)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -328,18 +289,16 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#getFullList(java.lang.String,java.lang.reflect.Type)">getFullList(String,
-                        Type)</a> - Method in interface
-                    com.jummania.<a href="com/jummania/DataManager.html"
-                                    title="interface in com.jummania">DataManager</a></dt>
+                       href="com/jummania/DataManager.html#getFullList(java.lang.String,java.lang.Class)">getFullList(String, Class&lt;E&gt;)</a> - Method in
+                    interface com.jummania.<a href="com/jummania/DataManager.html"
+                                              title="interface in com.jummania">DataManager</a></dt>
                 <dd>
                     <div class="block">Retrieves a list of objects of the specified type associated
                         with the given key.
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getInt(java.lang.String)">getInt(String)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#getInt(java.lang.String)">getInt(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -347,8 +306,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getInt(java.lang.String,int)">getInt(String,
-                    int)</a> - Method in interface
+                       href="com/jummania/DataManager.html#getInt(java.lang.String,int)">getInt(String, int)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -356,25 +314,36 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getLong(java.lang.String)">getLong(String)</a>
-                    - Method in interface
+                       href="com/jummania/model/MetaData.html#getItemCount()">getItemCount()</a> - Method in class
+                    com.jummania.model.<a href="com/jummania/model/MetaData.html"
+                                          title="class in com.jummania.model">MetaData</a></dt>
+                <dd>
+                    <div class="block">Returns the total number of items across all pages.</div>
+                </dd>
+                <dt><a class="member-name-link"
+                       href="com/jummania/DataManager.html#getLong(java.lang.String)">getLong(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
                     <div class="block">Retrieves a long value associated with the given key.</div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getLong(java.lang.String,long)">getLong(String,
-                    long)</a> - Method in interface
+                       href="com/jummania/DataManager.html#getLong(java.lang.String,long)">getLong(String, long)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
                     <div class="block">Retrieves a long value associated with the given key.</div>
+                </dd>
+                <dt><a class="member-name-link"
+                       href="com/jummania/model/MetaData.html#getMaxBatchSize()">getMaxBatchSize()</a> - Method in class
+                    com.jummania.model.<a href="com/jummania/model/MetaData.html"
+                                          title="class in com.jummania.model">MetaData</a></dt>
+                <dd>
+                    <div class="block">Returns the maximum number of items allowed per page.</div>
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#getObject(java.lang.String,java.lang.reflect.Type)">getObject(String,
-                        Type)</a> - Method in interface
+                       href="com/jummania/DataManager.html#getObject(java.lang.String,java.lang.reflect.Type)">getObject(String, Type)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -384,43 +353,50 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#getPagedList(java.lang.String,java.lang.reflect.Type,int)">getPagedList(String,
-                        Type, int)</a> - Method in
-                    interface com.jummania.<a href="com/jummania/DataManager.html"
-                                              title="interface in com.jummania">DataManager</a></dt>
+                       href="com/jummania/DataManager.html#getPagedList(java.lang.String,java.lang.Class,int)">getPagedList(String, Class&lt;E&gt;, int)</a> -
+                    Method in interface com.jummania.<a href="com/jummania/DataManager.html"
+                                                        title="interface in com.jummania">DataManager</a>
+                </dt>
                 <dd>
-                    <div class="block">Retrieves a paginated list of objects of the specified type
-                        associated with the given key.
+                    <div class="block">Retrieves a paginated list of elements associated with the
+                        specified key.
                     </div>
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#getParameterized(java.lang.reflect.Type,java.lang.reflect.Type...)">getParameterized(Type,
-                        Type...)</a> - Method in
+                       href="com/jummania/DataManager.html#getPagedList(java.lang.String,java.lang.Class,int,boolean)">getPagedList(String, Class&lt;E&gt;, int,
+                        boolean)</a> - Method in interface com.jummania.<a
+                        href="com/jummania/DataManager.html" title="interface in com.jummania">DataManager</a>
+                </dt>
+                <dd>
+                    <div class="block">Retrieves a paginated list of elements associated with the
+                        specified key.
+                    </div>
+                </dd>
+                <dt>
+                    <a class="member-name-link"
+                       href="com/jummania/DataManager.html#getParameterized(java.lang.reflect.Type,java.lang.reflect.Type...)">getParameterized(Type, Type...)</a> - Method in
                     interface com.jummania.<a href="com/jummania/DataManager.html"
                                               title="interface in com.jummania">DataManager</a></dt>
                 <dd>
                     <div class="block">Creates a parameterized <a
-                            class="external-link"
                             href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html"
-                            title="class or interface in java.lang.reflect"><code>Type</code></a>
-                        using the specified raw type
+                            class="external-link"
+                            title="class or interface in java.lang.reflect"><code>Type</code></a> using the specified raw type
                         and type arguments.
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getRawString(java.lang.String)">getRawString(String)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#getRawString(java.lang.String)">getRawString(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
-                    <div class="block">Retrieves the raw string value associated with the given
+                    <div class="block">Retrieves the raw String value associated with the given
                         key.
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#getString(java.lang.String)">getString(String)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#getString(java.lang.String)">getString(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -428,12 +404,18 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#getString(java.lang.String,java.lang.String)">getString(String,
-                        String)</a> - Method in interface
+                       href="com/jummania/DataManager.html#getString(java.lang.String,java.lang.String)">getString(String, String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
                     <div class="block">Retrieves a string value associated with the given key.</div>
+                </dd>
+                <dt><a class="member-name-link"
+                       href="com/jummania/model/MetaData.html#getTotalPages()">getTotalPages()</a> - Method in class
+                    com.jummania.model.<a href="com/jummania/model/MetaData.html"
+                                          title="class in com.jummania.model">MetaData</a></dt>
+                <dd>
+                    <div class="block">Returns the total number of pages.</div>
                 </dd>
                 <dt><a class="type-name-link" href="com/jummania/converter/GsonConverter.html"
                        title="class in com.jummania.converter">GsonConverter</a> - Class in <a
@@ -446,8 +428,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/converter/GsonConverter.html#%3Cinit%3E()">GsonConverter()</a>
-                    - Constructor for class
+                       href="com/jummania/converter/GsonConverter.html#%3Cinit%3E()">GsonConverter()</a> - Constructor for class
                     com.jummania.converter.<a href="com/jummania/converter/GsonConverter.html"
                                               title="class in com.jummania.converter">GsonConverter</a>
                 </dt>
@@ -456,13 +437,28 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/converter/GsonConverter.html#%3Cinit%3E(com.google.gson.Gson)">GsonConverter(Gson)</a>
-                    - Constructor for class
+                       href="com/jummania/converter/GsonConverter.html#%3Cinit%3E(com.google.gson.Gson)">GsonConverter(Gson)</a> - Constructor for class
                     com.jummania.converter.<a href="com/jummania/converter/GsonConverter.html"
                                               title="class in com.jummania.converter">GsonConverter</a>
                 </dt>
                 <dd>
                     <div class="block">Constructor that accepts a custom Gson instance.</div>
+                </dd>
+            </dl>
+            <h2 class="title" id="I:M">M</h2>
+            <dl class="index">
+                <dt><a class="type-name-link" href="com/jummania/model/MetaData.html"
+                       title="class in com.jummania.model">MetaData</a> - Class in <a
+                        href="com/jummania/model/package-summary.html">com.jummania.model</a></dt>
+                <dd>
+                    <div class="block">Represents metadata for a paginated list.</div>
+                </dd>
+                <dt><a class="member-name-link"
+                       href="com/jummania/model/MetaData.html#%3Cinit%3E(int,int,int)">MetaData(int, int, int)</a> - Constructor for class
+                    com.jummania.model.<a href="com/jummania/model/MetaData.html"
+                                          title="class in com.jummania.model">MetaData</a></dt>
+                <dd>
+                    <div class="block">Constructs a new MetaData object.</div>
                 </dd>
             </dl>
             <h2 class="title" id="I:N">N</h2>
@@ -477,8 +473,7 @@ loadScripts(document, 'script');
             <dl class="index">
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.DataObserver.html#onDataChange(java.lang.String)">onDataChange(String)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.DataObserver.html#onDataChange(java.lang.String)">onDataChange(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.DataObserver.html"
                                     title="interface in com.jummania">DataManager.DataObserver</a>
                 </dt>
@@ -489,8 +484,7 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.DataObserver.html#onError(java.lang.Throwable)">onError(Throwable)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.DataObserver.html#onError(java.lang.Throwable)">onError(Throwable)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.DataObserver.html"
                                     title="interface in com.jummania">DataManager.DataObserver</a>
                 </dt>
@@ -503,15 +497,14 @@ loadScripts(document, 'script');
                 <dt><a class="type-name-link" href="com/jummania/model/PaginatedData.html"
                        title="class in com.jummania.model">PaginatedData</a>&lt;<a
                         href="com/jummania/model/PaginatedData.html"
-                        title="type parameter in PaginatedData">T</a>&gt; - Class in <a
+                        title="type parameter in PaginatedData">E</a>&gt; - Class in <a
                         href="com/jummania/model/package-summary.html">com.jummania.model</a></dt>
                 <dd>
                     <div class="block">A generic class representing a paginated data set.</div>
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/model/PaginatedData.html#%3Cinit%3E(java.util.List,com.jummania.model.Pagination)">PaginatedData(List&lt;T&gt;,
-                        Pagination)</a> -
+                       href="com/jummania/model/PaginatedData.html#%3Cinit%3E(java.util.List,com.jummania.model.Pagination)">PaginatedData(List&lt;E&gt;, Pagination)</a> -
                     Constructor for class com.jummania.model.<a
                         href="com/jummania/model/PaginatedData.html"
                         title="class in com.jummania.model">PaginatedData</a></dt>
@@ -521,8 +514,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/model/PaginatedData.html#pagination">pagination</a> -
-                    Variable in class
+                       href="com/jummania/model/PaginatedData.html#pagination">pagination</a> - Variable in class
                     com.jummania.model.<a href="com/jummania/model/PaginatedData.html"
                                           title="class in com.jummania.model">PaginatedData</a></dt>
                 <dd>&nbsp;</dd>
@@ -534,8 +526,7 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/model/Pagination.html#%3Cinit%3E(java.lang.Integer,int,java.lang.Integer,int)">Pagination(Integer,
-                        int, Integer, int)</a> -
+                       href="com/jummania/model/Pagination.html#%3Cinit%3E(java.lang.Integer,int,java.lang.Integer,int)">Pagination(Integer, int, Integer, int)</a> -
                     Constructor for class com.jummania.model.<a
                         href="com/jummania/model/Pagination.html"
                         title="class in com.jummania.model">Pagination</a></dt>
@@ -545,8 +536,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/model/Pagination.html#previousPage">previousPage</a> -
-                    Variable in class
+                       href="com/jummania/model/Pagination.html#previousPage">previousPage</a> - Variable in class
                     com.jummania.model.<a href="com/jummania/model/Pagination.html"
                                           title="class in com.jummania.model">Pagination</a></dt>
                 <dd>&nbsp;</dd>
@@ -554,16 +544,17 @@ loadScripts(document, 'script');
             <h2 class="title" id="I:R">R</h2>
             <dl class="index">
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#remove(java.lang.String)">remove(String)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#remove(java.lang.String)">remove(String)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
-                    <div class="block">Removes the entry associated with the given key.</div>
+                    <div class="block">Removes all data associated with the specified key, including
+                        all paginated files
+                        and the metadata file.
+                    </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#removeDataObserver()">removeDataObserver()</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#removeDataObserver()">removeDataObserver()</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -572,22 +563,11 @@ loadScripts(document, 'script');
                             title="interface in com.jummania"><code>DataManager.DataObserver</code></a>.
                     </div>
                 </dd>
-                <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#removeFromList(java.lang.String,int)">removeFromList(String,
-                    int)</a> - Method in
-                    interface com.jummania.<a href="com/jummania/DataManager.html"
-                                              title="interface in com.jummania">DataManager</a></dt>
-                <dd>
-                    <div class="block">Removes an element from the list associated with the given
-                        key at the specified index.
-                    </div>
-                </dd>
             </dl>
             <h2 class="title" id="I:S">S</h2>
             <dl class="index">
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#saveBoolean(java.lang.String,boolean)">saveBoolean(String,
-                    boolean)</a> - Method in
+                       href="com/jummania/DataManager.html#saveBoolean(java.lang.String,boolean)">saveBoolean(String, boolean)</a> - Method in
                     interface com.jummania.<a href="com/jummania/DataManager.html"
                                               title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -596,8 +576,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#saveFloat(java.lang.String,float)">saveFloat(String,
-                    float)</a> - Method in interface
+                       href="com/jummania/DataManager.html#saveFloat(java.lang.String,float)">saveFloat(String, float)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -606,8 +585,7 @@ loadScripts(document, 'script');
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#saveInt(java.lang.String,int)">saveInt(String,
-                    int)</a> - Method in interface
+                       href="com/jummania/DataManager.html#saveInt(java.lang.String,int)">saveInt(String, int)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -617,8 +595,7 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#saveList(java.lang.String,java.util.List)">saveList(String,
-                        List&lt;E&gt;)</a> - Method in
+                       href="com/jummania/DataManager.html#saveList(java.lang.String,java.util.List)">saveList(String, List&lt;E&gt;)</a> - Method in
                     interface com.jummania.<a href="com/jummania/DataManager.html"
                                               title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -628,18 +605,17 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#saveList(java.lang.String,java.util.List,int)">saveList(String,
-                        List&lt;E&gt;, int)</a> - Method in
-                    interface com.jummania.<a href="com/jummania/DataManager.html"
-                                              title="interface in com.jummania">DataManager</a></dt>
+                       href="com/jummania/DataManager.html#saveList(java.lang.String,java.util.List,int,int)">saveList(String, List&lt;E&gt;, int, int)</a> -
+                    Method in interface com.jummania.<a href="com/jummania/DataManager.html"
+                                                        title="interface in com.jummania">DataManager</a>
+                </dt>
                 <dd>
-                    <div class="block">Saves a list of objects associated with the given key by
-                        converting the list to a JSON string.
+                    <div class="block">Saves a list of elements to storage, splitting it into
+                        batches if necessary.
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#saveLong(java.lang.String,long)">saveLong(String,
-                    long)</a> - Method in interface
+                       href="com/jummania/DataManager.html#saveLong(java.lang.String,long)">saveLong(String, long)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
@@ -649,82 +625,114 @@ loadScripts(document, 'script');
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#saveObject(java.lang.String,java.lang.Object)">saveObject(String,
-                        Object)</a> - Method in interface
+                       href="com/jummania/DataManager.html#saveObject(java.lang.String,java.lang.Object)">saveObject(String, Object)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
-                    <div class="block">Saves an object associated with the given key by converting
-                        the object to a JSON string.
+                    <div class="block">Saves an object to the storage system associated with the
+                        given key.
                     </div>
                 </dd>
                 <dt>
                     <a class="member-name-link"
-                       href="com/jummania/DataManager.html#saveString(java.lang.String,java.lang.String)">saveString(String,
-                        String)</a> - Method in interface
-                    com.jummania.<a href="com/jummania/DataManager.html"
-                                    title="interface in com.jummania">DataManager</a></dt>
+                       href="com/jummania/DataManager.html#saveObject(java.lang.String,java.lang.Object,java.lang.reflect.Type)">saveObject(String, Object, Type)</a> - Method in
+                    interface com.jummania.<a href="com/jummania/DataManager.html"
+                                              title="interface in com.jummania">DataManager</a></dt>
                 <dd>
-                    <div class="block">Saves a string value associated with the given key.</div>
+                    <div class="block">Saves an object to the storage system associated with the
+                        given key, using the specified type.
+                    </div>
                 </dd>
             </dl>
             <h2 class="title" id="I:T">T</h2>
             <dl class="index">
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.html#toJson(java.lang.Object)">toJson(Object)</a>
-                    - Method in interface
+                       href="com/jummania/DataManager.html#toJson(java.lang.Object)">toJson(Object)</a> - Method in interface
                     com.jummania.<a href="com/jummania/DataManager.html"
                                     title="interface in com.jummania">DataManager</a></dt>
                 <dd>
                     <div class="block">Converts an object into its JSON string representation.</div>
                 </dd>
+                <dt>
+                    <a class="member-name-link"
+                       href="com/jummania/converter/GsonConverter.html#toJson(java.lang.Object,java.lang.reflect.Type,java.lang.Appendable)">toJson(Object, Type, Appendable)</a> - Method in
+                    class com.jummania.converter.<a href="com/jummania/converter/GsonConverter.html"
+                                                    title="class in com.jummania.converter">GsonConverter</a>
+                </dt>
+                <dd>&nbsp;</dd>
+                <dt>
+                    <a class="member-name-link"
+                       href="com/jummania/DataManager.Converter.html#toJson(java.lang.Object,java.lang.reflect.Type,java.lang.Appendable)">toJson(Object, Type, Appendable)</a> - Method in
+                    interface com.jummania.<a href="com/jummania/DataManager.Converter.html"
+                                              title="interface in com.jummania">DataManager.Converter</a>
+                </dt>
+                <dd>
+                    <div class="block">Serializes the given object into JSON using the specified
+                        type and writes it to the provided <a
+                                class="external-link"
+                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang"><code>Appendable</code></a>.
+                    </div>
+                </dd>
+                <dt>
+                    <a class="member-name-link"
+                       href="com/jummania/DataManager.html#toJson(java.lang.Object,java.lang.reflect.Type,java.lang.Appendable)">toJson(Object, Type, Appendable)</a> - Method in
+                    interface com.jummania.<a href="com/jummania/DataManager.html"
+                                              title="interface in com.jummania">DataManager</a></dt>
+                <dd>
+                    <div class="block">Serializes the given object into JSON using the specified
+                        type and writes it to the provided <a
+                                class="external-link"
+                                href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html" title="class or interface in java.lang"><code>Appendable</code></a>.
+                    </div>
+                </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/converter/GsonConverter.html#toJson(T)">toJson(T)</a> -
-                    Method in class
+                       href="com/jummania/converter/GsonConverter.html#toJson(T)">toJson(T)</a> - Method in class
                     com.jummania.converter.<a href="com/jummania/converter/GsonConverter.html"
                                               title="class in com.jummania.converter">GsonConverter</a>
                 </dt>
+                <dd>&nbsp;</dd>
+                <dt><a class="member-name-link"
+                       href="com/jummania/DataManager.Converter.html#toJson(T)">toJson(T)</a> - Method in interface com.jummania.<a
+                        href="com/jummania/DataManager.Converter.html"
+                        title="interface in com.jummania">DataManager.Converter</a></dt>
                 <dd>
-                    <div class="block">Converts a Java object to its JSON representation.</div>
+                    <div class="block">Converts a Java object to its JSON string representation.
+                    </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/DataManager.Converter.html#toJson(T)">toJson(T)</a> -
-                    Method in interface com.jummania.<a
-                            href="com/jummania/DataManager.Converter.html"
-                            title="interface in com.jummania">DataManager.Converter</a></dt>
+                       href="com/jummania/model/MetaData.html#toMeta(int,int,int)">toMeta(int, int, int)</a> - Static method in class
+                    com.jummania.model.<a href="com/jummania/model/MetaData.html"
+                                          title="class in com.jummania.model">MetaData</a></dt>
                 <dd>
-                    <div class="block">Converts a Java object to its JSON representation.</div>
+                    <div class="block">Generates a JSON string representing the metadata.</div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/model/PaginatedData.html#toString()">toString()</a> -
-                    Method in class com.jummania.model.<a
-                            href="com/jummania/model/PaginatedData.html"
-                            title="class in com.jummania.model">PaginatedData</a></dt>
+                       href="com/jummania/model/PaginatedData.html#toString()">toString()</a> - Method in class com.jummania.model.<a
+                        href="com/jummania/model/PaginatedData.html"
+                        title="class in com.jummania.model">PaginatedData</a></dt>
                 <dd>
                     <div class="block">Returns a string representation of the PaginatedData
                         object.
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/model/Pagination.html#toString()">toString()</a> - Method
-                    in class com.jummania.model.<a
-                            href="com/jummania/model/Pagination.html"
-                            title="class in com.jummania.model">Pagination</a></dt>
+                       href="com/jummania/model/Pagination.html#toString()">toString()</a> - Method in class com.jummania.model.<a
+                        href="com/jummania/model/Pagination.html"
+                        title="class in com.jummania.model">Pagination</a></dt>
                 <dd>
                     <div class="block">Returns a string representation of the Pagination object.
                     </div>
                 </dd>
                 <dt><a class="member-name-link"
-                       href="com/jummania/model/Pagination.html#totalPages">totalPages</a> -
-                    Variable in class
+                       href="com/jummania/model/Pagination.html#totalPages">totalPages</a> - Variable in class
                     com.jummania.model.<a href="com/jummania/model/Pagination.html"
                                           title="class in com.jummania.model">Pagination</a></dt>
                 <dd>&nbsp;</dd>
             </dl>
             <a href="#I:A">A</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a
-                href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a
-                href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a
-                href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<br><a
+                href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a
+                href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a
+                href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<br><a
                 href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span
                 class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
         </main>
