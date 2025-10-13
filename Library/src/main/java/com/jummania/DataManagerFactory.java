@@ -67,7 +67,7 @@ public class DataManagerFactory {
      * @return The singleton instance of DataManager.
      * @throws IllegalStateException If the DataManager instance is not yet created.
      */
-    public static DataManager getDataManager() {
+    public static DataManager getInstance() {
         // Check if DataManager is initialized; if not, throw an exception
         if (dataManager == null) {
             throw new IllegalStateException("DataManagerFactory is not created. Call create(getFilesDir()) first.");
