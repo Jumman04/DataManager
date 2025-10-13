@@ -161,18 +161,20 @@ class DataManagerImpl implements DataManager {
 
         MetaData metaData = getMetaData(key);
 
+        List<E> dataList = new ArrayList<>();
+
         // If metadata not found, return empty list early
         if (metaData == null) {
-            return Collections.emptyList();
+            return dataList;
         }
 
         final int totalPages = metaData.getTotalPages();
         if (totalPages <= 0) {
-            return Collections.emptyList();
+            return dataList;
         }
 
         // Prepare result list and the List<E> type token
-        List<E> dataList = new ArrayList<>(Math.max(0, metaData.getItemCount()));
+        dataList = new ArrayList<>(Math.max(0, metaData.getItemCount()));
 
         // Ensure consistent key formatting
         key += ".";
@@ -388,15 +390,8 @@ class DataManagerImpl implements DataManager {
 
 
     public void remove(String key) {
-        int position = 0;
 
-        String baseKey = key + ".";
-
-        while (remove(getFile(baseKey + ++position))) {
-            // keep deleting until no more files exist
-        }
-
-        remove(getFile(baseKey + "meta"));
+        remove(getFile(key + "." + "meta"));
 
         // Remove the base file
         remove(getFile(key));
