@@ -272,15 +272,48 @@ public interface DataManager {
 
 
     /**
-     * Retrieves a list of objects of the specified type associated with the given key.
-     * The list is deserialized from the underlying data source to match the specified type.
+     * Retrieves the complete list of elements stored under the specified key by
+     * combining all paginated data segments into a single {@link List}.
+     * <p>
+     * The list data is divided into pages (e.g., {@code key.1}, {@code key.2}, etc.),
+     * and this method reconstructs the full list by reading and concatenating
+     * all pages. If {@code reverse} is {@code true}, pages are read in reverse
+     * order (from last to first).
+     * </p>
      *
-     * @param key    the key to look up the list of objects
-     * @param eClass the type of the objects in the list
-     * @param <E>    the type of the objects in the list
-     * @return the list of objects of the specified type associated with the key, or an empty list if not found
+     * <p>
+     * If the key has no metadata or no valid pages, an empty list is returned.
+     * </p>
+     *
+     * @param <E>     the type of elements in the list
+     * @param key     the base key used to identify the stored paginated list
+     * @param eClass  the class type of the list elements (used for deserialization)
+     * @param reverse {@code true} to load pages in reverse order (from last to first);
+     *                {@code false} to load them in natural order
+     * @return a {@link List} containing all elements across all stored pages,
+     * or an empty list if no data is found
      */
-    <E> List<E> getFullList(String key, Class<E> eClass);
+    <E> List<E> getFullList(String key, Class<E> eClass, boolean reverse);
+
+
+    /**
+     * Retrieves the complete list of elements stored under the specified key
+     * in natural (forward) order.
+     * <p>
+     * This is a convenience overload of {@link #getFullList(String, Class, boolean)}
+     * with {@code reverse} set to {@code false}.
+     * </p>
+     *
+     * @param <E>    the type of elements in the list
+     * @param key    the base key used to identify the stored paginated list
+     * @param eClass the class type of the list elements (used for deserialization)
+     * @return a {@link List} containing all elements across all stored pages,
+     * or an empty list if no data is found
+     * @see #getFullList(String, Class, boolean)
+     */
+    default <E> List<E> getFullList(String key, Class<E> eClass) {
+        return getFullList(key, eClass, false);
+    }
 
 
     /**

@@ -157,22 +157,37 @@ class DataManagerImpl implements DataManager {
 
 
     @Override
-    public <E> List<E> getFullList(String key, Class<E> eClass) {
-        // Initialize the list that will hold the retrieved objects
-        List<E> dataList = new ArrayList<>();
+    public <E> List<E> getFullList(String key, Class<E> eClass, boolean reverse) {
 
-        // Determine the full Type for the parameterized List
-        Type listType = getParameterized(List.class, eClass);
+        MetaData metaData = getMetaData(key);
 
-        int position = 0;
+        // If metadata not found, return empty list early
+        if (metaData == null) {
+            return Collections.emptyList();
+        }
 
+        final int totalPages = metaData.getTotalPages();
+        if (totalPages <= 0) {
+            return Collections.emptyList();
+        }
+
+        // Prepare result list and the List<E> type token
+        List<E> dataList = new ArrayList<>(Math.max(0, metaData.getItemCount()));
+
+        // Ensure consistent key formatting
         key += ".";
 
-        while (true) {
-            List<E> batchData = getObject(key + ++position, listType);
-            if (batchData == null) return dataList;
-            dataList.addAll(batchData);
+        int start = reverse ? totalPages : 1, end = reverse ? 1 : totalPages, step = reverse ? -1 : 1;
+        List<E> batch;
+        Type listType = getParameterized(List.class, eClass);
+
+        for (int i = start; reverse ? i >= end : i <= end; i += step) {
+            batch = getObject(key + i, listType);
+            if (batch == null) break;
+            dataList.addAll(batch);
         }
+
+        return dataList;
     }
 
 
@@ -222,17 +237,16 @@ class DataManagerImpl implements DataManager {
 
             key += ".";
 
+            Class<?> listClass = list.getClass();
+
             // Split the list into smaller batches and store each one
             for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
                 List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
-                saveObject(key + ++pos, batch);  // Store each batch with a unique key
+                saveObject(key + ++pos, batch, listClass);  // Store each batch with a unique key
             }
 
             // Save metadata about the paginated list
             saveObject(key + "meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize));
-
-            // Remove any old batch file beyond the new total
-            remove(getFile(key + ++pos));
 
         } else {
             remove(key);
@@ -309,7 +323,6 @@ class DataManagerImpl implements DataManager {
         lastPage.add(element);
         saveObject(key + totalPage, lastPage, listType);
         saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize));
-        remove(getFile(key + ++totalPage));
     }
 
     @Override
