@@ -370,17 +370,17 @@ public interface DataManager {
      * be removed before adding the new element using the {@code itemToRemove} predicate.
      * </p>
      *
-     * @param <E>           the type of elements in the list
-     * @param key           the unique key identifying the stored paginated list
-     * @param element       the element to append; ignored if {@code null}
-     * @param eClass        the class type of the list elements (for deserialization)
-     * @param listSizeLimit the maximum total number of elements allowed in storage
-     * @param maxBatchSize  the maximum number of elements per batch
-     * @param itemToRemove  a predicate to identify and remove an existing element; may be {@code null}
+     * @param <E>                the type of elements in the list
+     * @param key                the unique key identifying the stored paginated list
+     * @param element            the element to append; ignored if {@code null}
+     * @param eClass             the class type of the list elements (for deserialization)
+     * @param listSizeLimit      the maximum total number of elements allowed in storage
+     * @param maxBatchSize       the maximum number of elements per batch
+     * @param preventDuplication a predicate to identify and remove an existing element; may be {@code null}
      * @see #saveList(String, List, int, int)
      * @see #saveObject(String, Object, Type)
      */
-    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> itemToRemove);
+    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> preventDuplication);
 
 
     /**
@@ -399,6 +399,30 @@ public interface DataManager {
     default <E> void appendToList(String key, E element, Class<E> eClass) {
         appendToList(key, element, eClass, Integer.MAX_VALUE, 25, null);
     }
+
+
+    /**
+     * Removes the first element from a paginated list stored under the given key
+     * that matches the provided predicate.
+     * <p>
+     * The method searches through the list pages in reverse order (from last page
+     * to first page). If an element matching {@code itemToRemove} is found, it is
+     * removed, and the updated page and metadata are saved.
+     * </p>
+     * <p>
+     * If no matching element is found or the predicate is {@code null}, the method
+     * returns {@code false}.
+     * </p>
+     *
+     * @param <E>          the type of elements in the list
+     * @param key          the unique key identifying the paginated list
+     * @param eClass       the class type of the list elements (for deserialization)
+     * @param itemToRemove the predicate used to identify the element to remove; must not be {@code null}
+     * @return {@code true} if an element was found and removed; {@code false} otherwise
+     *
+     */
+
+    <E> boolean removeFromList(String key, Class<E> eClass, Predicate<? super E> itemToRemove);
 
 
     /**

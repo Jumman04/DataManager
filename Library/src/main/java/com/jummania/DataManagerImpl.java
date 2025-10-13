@@ -241,7 +241,7 @@ class DataManagerImpl implements DataManager {
 
 
     @Override
-    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> itemToRemove) {
+    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, Predicate<? super E> preventDuplication) {
 
         if (element == null) return;
 
@@ -281,15 +281,15 @@ class DataManagerImpl implements DataManager {
         if (lastPage == null) lastPage = new ArrayList<>(1);
 
         // Remove an existing matching item if predicate is provided
-        if (itemToRemove != null) {
-            boolean removed = removeFirstMatch(lastPage, itemToRemove);
+        if (preventDuplication != null) {
+            boolean removed = removeFirstMatch(lastPage, preventDuplication);
             if (!removed) {
                 List<E> removedList;
                 for (int i = totalPage - 1; i > 0; --i) {
                     fileKey = key + i;
                     removedList = getObject(fileKey, listType);
                     if (removedList == null) break;
-                    removed = removeFirstMatch(removedList, itemToRemove);
+                    removed = removeFirstMatch(removedList, preventDuplication);
                     if (removed) {
                         saveObject(fileKey, removedList, listType);
                         break;
@@ -310,6 +310,36 @@ class DataManagerImpl implements DataManager {
         saveObject(key + totalPage, lastPage, listType);
         saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize));
         remove(getFile(key + ++totalPage));
+    }
+
+    @Override
+    public <E> boolean removeFromList(String key, Class<E> eClass, Predicate<? super E> itemToRemove) {
+        if (itemToRemove == null) return false;
+
+        MetaData metaData = getMetaData(key);
+        if (metaData == null) return false;
+
+        int totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), maxBatchSize = metaData.getMaxBatchSize();
+
+        Type listType = getParameterized(List.class, eClass);
+
+        key += ".";
+
+        boolean removed;
+        List<E> removedList;
+        for (int i = totalPage; i > 0; --i) {
+            key = key + i;
+            removedList = getObject(key, listType);
+            if (removedList == null) return false;
+            removed = removeFirstMatch(removedList, itemToRemove);
+            if (removed) {
+                saveObject(key, removedList, listType);
+                saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount - 1, maxBatchSize));
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
