@@ -113,7 +113,7 @@ class DataManagerImpl implements DataManager {
                 dataObserver.onDataChange(key);
             }
 
-        } catch (IOException | JsonIOException e) {
+        } catch (Exception e) {
             notifyError(new IOException("Error saving data for key: '" + key + "'. Error: " + e.getMessage(), e));
         }
     }
