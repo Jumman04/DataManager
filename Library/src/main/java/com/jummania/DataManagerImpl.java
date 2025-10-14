@@ -26,6 +26,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
 
 /**
@@ -51,6 +54,8 @@ class DataManagerImpl implements DataManager {
     // Directory where the data will be stored
     private final File filesDir;
     private final int defaultCharBufferSize = 16 * 1024;
+    private final ConcurrentHashMap<String, ReadWriteLock> lockMap = new ConcurrentHashMap<>();
+
     // Listener to notify data changes
     private DataObserver dataObserver;
 
@@ -159,99 +164,122 @@ class DataManagerImpl implements DataManager {
     @Override
     public <E> List<E> getFullList(String key, Class<E> eClass, boolean reverse) {
 
-        MetaData metaData = getMetaData(key);
+        ReadWriteLock lock = getLock(key);
+        lock.readLock().lock();
 
-        List<E> dataList = new ArrayList<>();
+        try {
+            MetaData metaData = getMetaData(key);
 
-        // If metadata not found, return empty list early
-        if (metaData == null) {
+            List<E> dataList = new ArrayList<>();
+
+            // If metadata not found, return empty list early
+            if (metaData == null) {
+                return dataList;
+            }
+
+            final int totalPages = metaData.getTotalPages();
+            if (totalPages <= 0) {
+                return dataList;
+            }
+
+            // Prepare result list and the List<E> type token
+            dataList = new ArrayList<>(Math.max(0, metaData.getItemCount()));
+
+            // Ensure consistent key formatting
+            key += ".";
+
+            int start = reverse ? totalPages : 1, end = reverse ? 1 : totalPages, step = reverse ? -1 : 1;
+            List<E> batch;
+            Type listType = getParameterized(List.class, eClass);
+
+            for (int i = start; reverse ? i >= end : i <= end; i += step) {
+                batch = getObject(key + i, listType);
+                if (batch == null) break;
+                dataList.addAll(batch);
+            }
+
             return dataList;
+        } finally {
+            lock.readLock().unlock();
         }
-
-        final int totalPages = metaData.getTotalPages();
-        if (totalPages <= 0) {
-            return dataList;
-        }
-
-        // Prepare result list and the List<E> type token
-        dataList = new ArrayList<>(Math.max(0, metaData.getItemCount()));
-
-        // Ensure consistent key formatting
-        key += ".";
-
-        int start = reverse ? totalPages : 1, end = reverse ? 1 : totalPages, step = reverse ? -1 : 1;
-        List<E> batch;
-        Type listType = getParameterized(List.class, eClass);
-
-        for (int i = start; reverse ? i >= end : i <= end; i += step) {
-            batch = getObject(key + i, listType);
-            if (batch == null) break;
-            dataList.addAll(batch);
-        }
-
-        return dataList;
     }
 
 
     @Override
     public <E> PaginatedData<E> getPagedList(String key, Class<E> eClass, int page, boolean reverse) {
-        MetaData metaData = getMetaData(key);
-        if (metaData == null) {
-            return getEmptyPaginateData(page, 0);
+
+        ReadWriteLock lock = getLock(key);
+        lock.readLock().lock();
+
+        try {
+            MetaData metaData = getMetaData(key);
+            if (metaData == null) {
+                return getEmptyPaginateData(page, 0);
+            }
+
+            int totalPages = metaData.getTotalPages();
+
+            // If reverse: flip the page index (1 => N, 2 => N-1, etc.)
+            int targetPage = reverse ? (totalPages - page + 1) : page;
+            if (targetPage < 1 || targetPage > totalPages) {
+                return getEmptyPaginateData(page, totalPages);
+            }
+
+            Type listType = getParameterized(List.class, eClass);
+            List<E> pageData = getObject(key + "." + targetPage, listType);
+            if (pageData == null) pageData = Collections.emptyList();
+
+            // Previous/Next still follow the user's requested page (not the flipped index)
+            Integer previousPage = (page > 1) ? page - 1 : null;
+            Integer nextPage = (page < totalPages) ? page + 1 : null;
+
+            Pagination pagination = new Pagination(previousPage, page, nextPage, totalPages);
+            return new PaginatedData<>(pageData, pagination);
+        } finally {
+            lock.readLock().unlock();
         }
-
-        int totalPages = metaData.getTotalPages();
-
-        // If reverse: flip the page index (1 => N, 2 => N-1, etc.)
-        int targetPage = reverse ? (totalPages - page + 1) : page;
-        if (targetPage < 1 || targetPage > totalPages) {
-            return getEmptyPaginateData(page, totalPages);
-        }
-
-        Type listType = getParameterized(List.class, eClass);
-        List<E> pageData = getObject(key + "." + targetPage, listType);
-        if (pageData == null) pageData = Collections.emptyList();
-
-        // Previous/Next still follow the user's requested page (not the flipped index)
-        Integer previousPage = (page > 1) ? page - 1 : null;
-        Integer nextPage = (page < totalPages) ? page + 1 : null;
-
-        Pagination pagination = new Pagination(previousPage, page, nextPage, totalPages);
-        return new PaginatedData<>(pageData, pagination);
     }
 
 
     @Override
     public <E> void saveList(String key, List<E> list, int listSizeLimit, int maxBatchSize) {
-        // If the list becomes empty after removal, delete the key from storage
-        if (list != null) {
 
-            listSizeLimit = Math.min(list.size(), listSizeLimit);
+        ReadWriteLock lock = getLock(key);
+        lock.writeLock().lock();
 
-            if (listSizeLimit == 0) {
+        try {
+            // If the list becomes empty after removal, delete the key from storage
+            if (list != null) {
+
+                listSizeLimit = Math.min(list.size(), listSizeLimit);
+
+                if (listSizeLimit == 0) {
+                    remove(key);
+                    return;
+                }
+
+                // Ensure the batch size is at least 1
+                int batchSizeLimit = Math.max(Math.min(listSizeLimit, maxBatchSize), 1);
+                int pos = 0;
+
+                key += ".";
+
+                Class<?> listClass = list.getClass();
+
+                // Split the list into smaller batches and store each one
+                for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
+                    List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
+                    saveObject(key + ++pos, batch, listClass);  // Store each batch with a unique key
+                }
+
+                // Save metadata about the paginated list
+                saveObject(key + "meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize));
+
+            } else {
                 remove(key);
-                return;
             }
-
-            // Ensure the batch size is at least 1
-            int batchSizeLimit = Math.max(Math.min(listSizeLimit, maxBatchSize), 1);
-            int pos = 0;
-
-            key += ".";
-
-            Class<?> listClass = list.getClass();
-
-            // Split the list into smaller batches and store each one
-            for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
-                List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
-                saveObject(key + ++pos, batch, listClass);  // Store each batch with a unique key
-            }
-
-            // Save metadata about the paginated list
-            saveObject(key + "meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize));
-
-        } else {
-            remove(key);
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -259,104 +287,119 @@ class DataManagerImpl implements DataManager {
     @Override
     public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Predicate<? super E> preventDuplication) {
 
-        if (element == null) return;
+        ReadWriteLock lock = getLock(key);
+        lock.writeLock().lock();
 
-        MetaData metaData = getMetaData(key);
-        if (metaData == null) {
-            // Create a new list if none exists
-            saveList(key, Collections.singletonList(element), listSizeLimit, maxBatchSize);
-            return;
-        }
+        try {
+            if (element == null) return;
 
-        int totalPage = metaData.getTotalPages();
-        int itemCount = metaData.getItemCount();
-        maxBatchSize = metaData.getMaxBatchSize();
-
-        key += ".";
-
-        // If list exceeds the size limit, shift files to remove the oldest batch
-        if (itemCount >= listSizeLimit) {
-            Path rootPath = filesDir.toPath();
-            for (int i = 2; i <= totalPage; i++) {
-                Path oldPath = rootPath.resolve(key + i);
-                Path newPath = rootPath.resolve(key + (i - 1));
-                try {
-                    Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    break;
-                }
+            MetaData metaData = getMetaData(key);
+            if (metaData == null) {
+                // Create a new list if none exists
+                saveList(key, Collections.singletonList(element), listSizeLimit, maxBatchSize);
+                return;
             }
-            --totalPage;
-            itemCount -= maxBatchSize; // Approximation (actual size may vary)
-        }
 
-        // Load the last batch
-        String fileKey = key + totalPage;
-        Type listType = getParameterized(List.class, eClass);
-        List<E> lastPage = getObject(fileKey, listType);
-        if (lastPage == null) lastPage = new ArrayList<>(1);
+            int totalPage = metaData.getTotalPages();
+            int itemCount = metaData.getItemCount();
+            maxBatchSize = metaData.getMaxBatchSize();
 
-        // Remove an existing matching item if predicate is provided
-        if (preventDuplication != null) {
-            boolean removed = removeFirstMatch(lastPage, preventDuplication);
-            if (!removed) {
-                List<E> removedList;
-                for (int i = totalPage - 1; i > 0; --i) {
-                    fileKey = key + i;
-                    removedList = getObject(fileKey, listType);
-                    if (removedList == null) break;
-                    removed = removeFirstMatch(removedList, preventDuplication);
-                    if (removed) {
-                        saveObject(fileKey, removedList, listType);
+            key += ".";
+
+            // If list exceeds the size limit, shift files to remove the oldest batch
+            if (itemCount >= listSizeLimit) {
+                Path rootPath = filesDir.toPath();
+                for (int i = 2; i <= totalPage; i++) {
+                    Path oldPath = rootPath.resolve(key + i);
+                    Path newPath = rootPath.resolve(key + (i - 1));
+                    try {
+                        Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
                         break;
                     }
                 }
+                --totalPage;
+                itemCount -= maxBatchSize; // Approximation (actual size may vary)
             }
-            if (removed) --itemCount;
+
+            // Load the last batch
+            String fileKey = key + totalPage;
+            Type listType = getParameterized(List.class, eClass);
+            List<E> lastPage = getObject(fileKey, listType);
+            if (lastPage == null) lastPage = new ArrayList<>(1);
+
+            // Remove an existing matching item if predicate is provided
+            if (preventDuplication != null) {
+                boolean removed = removeFirstMatch(lastPage, preventDuplication);
+                if (!removed) {
+                    List<E> removedList;
+                    for (int i = totalPage - 1; i > 0; --i) {
+                        fileKey = key + i;
+                        removedList = getObject(fileKey, listType);
+                        if (removedList == null) break;
+                        removed = removeFirstMatch(removedList, preventDuplication);
+                        if (removed) {
+                            saveObject(fileKey, removedList, listType);
+                            break;
+                        }
+                    }
+                }
+                if (removed) --itemCount;
+            }
+
+            // If the last batch is full, create a new page
+            if (lastPage.size() >= maxBatchSize) {
+                ++totalPage;
+                lastPage = new ArrayList<>(1);
+            }
+
+            // Add the new element to the current batch and update metadata
+            if (addFirst) lastPage.add(0, element);
+            else lastPage.add(element);
+
+            saveObject(key + totalPage, lastPage, listType);
+            saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize));
+        } finally {
+            lock.writeLock().unlock();
         }
-
-        // If the last batch is full, create a new page
-        if (lastPage.size() >= maxBatchSize) {
-            ++totalPage;
-            lastPage = new ArrayList<>(1);
-        }
-
-        // Add the new element to the current batch and update metadata
-        if (addFirst) lastPage.add(0, element);
-        else lastPage.add(element);
-
-        saveObject(key + totalPage, lastPage, listType);
-        saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize));
     }
 
     @Override
     public <E> boolean removeFromList(String key, Class<E> eClass, Predicate<? super E> itemToRemove) {
-        if (itemToRemove == null) return false;
 
-        MetaData metaData = getMetaData(key);
-        if (metaData == null) return false;
+        ReadWriteLock lock = getLock(key);
+        lock.writeLock().lock();
 
-        int totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), maxBatchSize = metaData.getMaxBatchSize();
+        try {
+            if (itemToRemove == null) return false;
 
-        Type listType = getParameterized(List.class, eClass);
+            MetaData metaData = getMetaData(key);
+            if (metaData == null) return false;
 
-        key += ".";
+            int totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), maxBatchSize = metaData.getMaxBatchSize();
 
-        boolean removed;
-        List<E> removedList;
-        for (int i = totalPage; i > 0; --i) {
-            key = key + i;
-            removedList = getObject(key, listType);
-            if (removedList == null) return false;
-            removed = removeFirstMatch(removedList, itemToRemove);
-            if (removed) {
-                saveObject(key, removedList, listType);
-                saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount - 1, maxBatchSize));
-                return true;
+            Type listType = getParameterized(List.class, eClass);
+
+            key += ".";
+
+            boolean removed;
+            List<E> removedList;
+            for (int i = totalPage; i > 0; --i) {
+                key = key + i;
+                removedList = getObject(key, listType);
+                if (removedList == null) return false;
+                removed = removeFirstMatch(removedList, itemToRemove);
+                if (removed) {
+                    saveObject(key, removedList, listType);
+                    saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount - 1, maxBatchSize));
+                    return true;
+                }
             }
-        }
 
-        return false;
+            return false;
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
 
@@ -489,6 +532,10 @@ class DataManagerImpl implements DataManager {
             }
         }
         return false; // nothing removed
+    }
+
+    private ReadWriteLock getLock(String key) {
+        return lockMap.computeIfAbsent(key, k -> new ReentrantReadWriteLock());
     }
 
 }
