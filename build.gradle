@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group = 'com.jummania'
-version = '1.0-SNAPSHOT'
+version = '3.0'
 
 repositories {
     mavenCentral()
@@ -15,4 +16,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        register("mavenJava", MavenPublication) {
+            from components.java
+        }
+    }
 }
