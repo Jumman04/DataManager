@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  * <p>
  * Implementations of this interface should provide persistent or in-memory storage functionality.
  * <p>
- * Created by Jummania on 20, November, 2024.
+ * Created by Jummania on 20, November 2024.
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */

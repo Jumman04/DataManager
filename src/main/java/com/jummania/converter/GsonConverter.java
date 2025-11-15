@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
  * <p>This class provides methods to serialize Java objects to JSON strings
  * and to deserialize JSON strings back into Java objects using the Gson library.</p>
  * <p>
- * Created by Jummania on 08, December, 2024.
+ * Created by Jummania on 08, December 2024.
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */

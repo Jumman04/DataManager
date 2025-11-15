@@ -12,7 +12,7 @@ import java.io.File;
  * <p>
  * It is thread-safe and provides methods to create and retrieve the DataManager instance.
  * <p>
- * Created by Jummania on 20, November, 2024.
+ * Created by Jummania on 20, November 2024.
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */

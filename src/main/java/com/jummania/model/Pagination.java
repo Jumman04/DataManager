@@ -4,7 +4,7 @@ package com.jummania.model;
  * A class representing pagination information.
  * This class holds details about the current page, previous page, next page, and total pages.
  * <p>
- * Created by Jummania on 8, May, 2025.
+ * Created by Jummania on 8, May 2025.
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */

@@ -32,7 +32,7 @@ import java.util.function.Predicate;
  * <p>
  * Typically used for local storage solutions such as SharedPreferences, file-based storage, or custom memory caches.
  * <p>
- * Created by Jummania on 20, November, 2024.
+ * Created by Jummania on 20, November 2024.
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */

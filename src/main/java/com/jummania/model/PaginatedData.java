@@ -6,7 +6,7 @@ import java.util.List;
  * A generic class representing a paginated data set.
  * This class holds a list of data items and pagination information.
  * <p>
- * Created by Jummania on 8, May, 2025.
+ * Created by Jummania on 8, May 2025.
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  *
