@@ -14,7 +14,11 @@ package com.jummania.model;
  * It also provides a utility method {@link #toMeta(int, int, int)} to generate
  * a JSON string representation of the metadata.
  */
-public record MetaData(int totalPages, int itemCount, int maxBatchSize) {
+public class MetaData {
+    private final int totalPages;
+    private final int itemCount;
+    private final int maxBatchSize;
+
     /**
      * Constructs a new MetaData object.
      *
@@ -22,7 +26,10 @@ public record MetaData(int totalPages, int itemCount, int maxBatchSize) {
      * @param itemCount    the total number of items across all pages
      * @param maxBatchSize the maximum number of items per page
      */
-    public MetaData {
+    public MetaData(int totalPages, int itemCount, int maxBatchSize) {
+        this.totalPages = totalPages;
+        this.itemCount = itemCount;
+        this.maxBatchSize = maxBatchSize;
     }
 
     /**
@@ -42,8 +49,7 @@ public record MetaData(int totalPages, int itemCount, int maxBatchSize) {
      *
      * @return the total pages
      */
-    @Override
-    public int totalPages() {
+    public int getTotalPages() {
         return totalPages;
     }
 
@@ -52,8 +58,7 @@ public record MetaData(int totalPages, int itemCount, int maxBatchSize) {
      *
      * @return the item count
      */
-    @Override
-    public int itemCount() {
+    public int getItemCount() {
         return itemCount;
     }
 
@@ -62,8 +67,7 @@ public record MetaData(int totalPages, int itemCount, int maxBatchSize) {
      *
      * @return the max array size
      */
-    @Override
-    public int maxBatchSize() {
+    public int getMaxBatchSize() {
         return maxBatchSize;
     }
 }

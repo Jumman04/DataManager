@@ -167,13 +167,13 @@ class DataManagerImpl implements DataManager {
                 return dataList;
             }
 
-            final int totalPages = metaData.totalPages();
+            final int totalPages = metaData.getTotalPages();
             if (totalPages <= 0) {
                 return dataList;
             }
 
             // Prepare the result list and the List<E> type token
-            dataList = new ArrayList<>(Math.max(0, metaData.itemCount()));
+            dataList = new ArrayList<>(Math.max(0, metaData.getItemCount()));
 
             // Ensure consistent key formatting
             key += ".";
@@ -207,7 +207,7 @@ class DataManagerImpl implements DataManager {
                 return getEmptyPaginateData(page, 0);
             }
 
-            int totalPages = metaData.totalPages();
+            int totalPages = metaData.getTotalPages();
 
             // If reverse: flip the page index (1 => N, 2 => N-1, etc.)
             int targetPage = reverse ? (totalPages - page + 1) : page;
@@ -290,9 +290,9 @@ class DataManagerImpl implements DataManager {
                 return;
             }
 
-            int totalPage = metaData.totalPages();
-            int itemCount = metaData.itemCount();
-            maxBatchSize = metaData.maxBatchSize();
+            int totalPage = metaData.getTotalPages();
+            int itemCount = metaData.getItemCount();
+            maxBatchSize = metaData.getMaxBatchSize();
 
             key += ".";
 
@@ -366,7 +366,7 @@ class DataManagerImpl implements DataManager {
             MetaData metaData = getMetaData(key);
             if (metaData == null) return false;
 
-            int totalPage = metaData.totalPages(), itemCount = metaData.itemCount(), maxBatchSize = metaData.maxBatchSize();
+            int totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), maxBatchSize = metaData.getMaxBatchSize();
 
             Type listType = getParameterized(List.class, eClass);
 
