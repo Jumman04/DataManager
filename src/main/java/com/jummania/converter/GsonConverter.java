@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 
 /**
  * GsonConverter is an implementation of the Converter interface
- * that utilizes the Gson library for converting Java objects
+ * that uses the Gson library for converting Java objects
  * to JSON format and vice versa.
  *
  * <p>This class provides methods to serialize Java objects to JSON strings

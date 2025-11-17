@@ -67,13 +67,29 @@ public interface DataManager {
 
 
     /**
-     * Retrieves the raw String value associated with the given key.
-     * The value is returned as-is, without any defaulting behavior.
+     * Retrieves a string value associated with the given key.
+     * If no value is found or the value is null, it returns the provided default value.
+     *
+     * @param key      the key to look up the value
+     * @param defValue the default value to return if no value is found or if the result is null
+     * @return the retrieved string value or the default value if not found
+     */
+    String getString(String key, String defValue);
+
+
+    /**
+     * Retrieves a string value associated with the given key.
+     * If no value is found or the value is null, it returns null.
+     * <p>
+     * This is a shorthand method that calls {@link #getString(String, String)} with a default value of null.
      *
      * @param key the key to look up the value
-     * @return the raw String value associated with the key, or null if not found
+     * @return the retrieved string value or null if not found
      */
-    String getRawString(String key);
+    default String getString(String key) {
+        return getString(key, null);
+    }
+
 
     /**
      * Saves an integer value associated with the given key by converting the integer to a string.
@@ -132,36 +148,8 @@ public interface DataManager {
 
 
     /**
-     * Retrieves a string value associated with the given key.
-     * If no value is found or the value is null, returns the provided default value.
-     *
-     * @param key      the key to look up the value
-     * @param defValue the default value to return if no value is found or if the result is null
-     * @return the retrieved string value or the default value if not found
-     */
-    default String getString(String key, String defValue) {
-        String value = getObject(key, String.class);
-        return value != null ? value : defValue;
-    }
-
-
-    /**
-     * Retrieves a string value associated with the given key.
-     * If no value is found or the value is null, returns null.
-     * <p>
-     * This is a shorthand method that calls {@link #getString(String, String)} with a default value of null.
-     *
-     * @param key the key to look up the value
-     * @return the retrieved string value or null if not found
-     */
-    default String getString(String key) {
-        return getString(key, null);
-    }
-
-
-    /**
      * Retrieves an integer value associated with the given key.
-     * If no value is found or the value is null, returns the provided default value.
+     * If no value is found or the value is null, it returns the provided default value.
      *
      * @param key      the key to look up the value
      * @param defValue the default value to return if no value is found or if the result is null
@@ -175,7 +163,7 @@ public interface DataManager {
 
     /**
      * Retrieves an integer value associated with the given key.
-     * If no value is found or the value is null, returns 0.
+     * If no value is found or the value is null, it returns 0.
      * <p>
      * This is a shorthand method that calls {@link #getInt(String, int)} with a default value of 0.
      *
@@ -189,7 +177,7 @@ public interface DataManager {
 
     /**
      * Retrieves a long value associated with the given key.
-     * If no value is found or the value is null, returns the provided default value.
+     * If no value is found or the value is null, it returns the provided default value.
      *
      * @param key      the key to look up the value
      * @param defValue the default value to return if no value is found or if the result is null
@@ -203,7 +191,7 @@ public interface DataManager {
 
     /**
      * Retrieves a long value associated with the given key.
-     * If no value is found or the value is null, returns 0.
+     * If no value is found or the value is null, it returns 0.
      * <p>
      * This is a shorthand method that calls {@link #getLong(String, long)} with a default value of 0.
      *
@@ -217,7 +205,7 @@ public interface DataManager {
 
     /**
      * Retrieves a float value associated with the given key.
-     * If no value is found or the value is null, returns the provided default value.
+     * If no value is found or the value is null, it returns the provided default value.
      *
      * @param key      the key to look up the value
      * @param defValue the default value to return if no value is found or if the result is null
@@ -231,7 +219,7 @@ public interface DataManager {
 
     /**
      * Retrieves a float value associated with the given key.
-     * If no value is found or the value is null, returns 0.
+     * If no value is found or the value is null, it returns 0.
      * <p>
      * This is a shorthand method that calls {@link #getFloat(String, float)} with a default value of 0.
      *
@@ -245,7 +233,7 @@ public interface DataManager {
 
     /**
      * Retrieves a boolean value associated with the given key.
-     * If no value is found or the value is null, returns the provided default value.
+     * If no value is found or the value is null, it returns the provided default value.
      *
      * @param key      the key to look up the value
      * @param defValue the default value to return if no value is found or if the result is null
@@ -259,7 +247,7 @@ public interface DataManager {
 
     /**
      * Retrieves a boolean value associated with the given key.
-     * If no value is found or the value is null, returns false.
+     * If no value is found or the value is null, it returns false.
      * <p>
      * This is a shorthand method that calls {@link #getBoolean(String, boolean)} with a default value of false.
      *
@@ -591,7 +579,7 @@ public interface DataManager {
     /**
      * Interface for converting between Java objects and JSON representations.
      * <p>
-     * Implementations are responsible for serializing Java objects to JSON strings or streams,
+     * Implementations are responsible for serializing Java objects to JSON strings or streams
      * and deserializing JSON strings or streams back to Java objects.
      * </p>
      */

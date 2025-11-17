@@ -73,7 +73,7 @@ class DataManagerImpl implements DataManager {
         // Initialize the converter for object serialization
         this.converter = converter;
 
-        // Check if the directory exists, and create it if necessary
+        // Check if the directory exists and create it if necessary
         if (!this.filesDir.exists()) {
             if (!this.filesDir.mkdirs()) {
                 System.err.println("Failed to create folder: " + this.filesDir.getAbsolutePath());
@@ -133,7 +133,7 @@ class DataManagerImpl implements DataManager {
 
 
     @Override
-    public String getRawString(String key) {
+    public String getString(String key, String defValue) {
 
         try (BufferedReader bufferedReader = new BufferedReader(getReader(key))) {
             StringBuilder sb = new StringBuilder();
@@ -147,7 +147,7 @@ class DataManagerImpl implements DataManager {
         } catch (Exception e) {
             notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
         }
-        return null;
+        return defValue;
     }
 
 
@@ -162,7 +162,7 @@ class DataManagerImpl implements DataManager {
 
             List<E> dataList = new ArrayList<>();
 
-            // If metadata not found, return empty list early
+            // If metadata not found, return an empty list early
             if (metaData == null) {
                 return dataList;
             }
@@ -172,7 +172,7 @@ class DataManagerImpl implements DataManager {
                 return dataList;
             }
 
-            // Prepare result list and the List<E> type token
+            // Prepare the result list and the List<E> type token
             dataList = new ArrayList<>(Math.max(0, metaData.itemCount()));
 
             // Ensure consistent key formatting
@@ -296,7 +296,7 @@ class DataManagerImpl implements DataManager {
 
             key += ".";
 
-            // If list exceeds the size limit, shift files to remove the oldest batch
+            // If a list exceeds the size limit, shift files to remove the oldest batch
             if (itemCount >= listSizeLimit) {
                 Path rootPath = filesDir.toPath();
                 for (int i = 2; i <= totalPage; i++) {
@@ -318,7 +318,7 @@ class DataManagerImpl implements DataManager {
             List<E> lastPage = getObject(fileKey, listType);
             if (lastPage == null) lastPage = new ArrayList<>(1);
 
-            // Remove an existing matching item if predicate is provided
+            // Remove an existing matching item if a predicate is provided
             if (preventDuplication != null) {
                 boolean removed = removeFirstMatch(lastPage, preventDuplication);
                 if (!removed) {
