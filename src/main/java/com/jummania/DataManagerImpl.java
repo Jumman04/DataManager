@@ -1,7 +1,6 @@
 package com.jummania;
 
 import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.jummania.model.MetaData;
 import com.jummania.model.PaginatedData;
@@ -109,7 +108,7 @@ class DataManagerImpl implements DataManager {
             }
 
         } catch (Exception e) {
-            notifyError(new IOException("Error saving data for key: '" + key + "'. Error: " + e.getMessage(), e));
+            notifyError("Error saving data for key: '" + key + "'. Error: " + e.getMessage(), e);
         }
     }
 
@@ -120,11 +119,11 @@ class DataManagerImpl implements DataManager {
         try (Reader reader = getReader(key)) {
             return fromReader(reader, type);
         } catch (FileNotFoundException e) {
-            notifyError(new IOException("Failed to open file for key '" + key + "': " + e.getMessage(), e));
+            notifyError("Failed to open file for key '" + key + "': " + e.getMessage(), e);
         } catch (IOException | JsonIOException e) {
-            notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
+            notifyError("Error reading file for key '" + key + "': " + e.getMessage(), e);
         } catch (Exception e) {
-            notifyError(new JsonSyntaxException("Error deserializing JSON for key '" + key + "': " + e.getMessage(), e));
+            notifyError("Error deserializing JSON for key '" + key + "': " + e.getMessage(), e);
         }
 
         // Return null if an error occurs
@@ -143,9 +142,9 @@ class DataManagerImpl implements DataManager {
             }
             return sb.toString();
         } catch (FileNotFoundException e) {
-            notifyError(new IOException("Failed to open file for key '" + key + "': " + e.getMessage(), e));
+            notifyError("Failed to open file for key '" + key + "': " + e.getMessage(), e);
         } catch (Exception e) {
-            notifyError(new IOException("Error reading file for key '" + key + "': " + e.getMessage(), e));
+            notifyError("Error reading file for key '" + key + "': " + e.getMessage(), e);
         }
         return defValue;
     }
@@ -451,7 +450,7 @@ class DataManagerImpl implements DataManager {
             }
         } else {
             // If the directory does not exist, log the error
-            notifyError(new IOException("Folder does not exist"));
+            notifyError("Folder does not exist", null);
         }
     }
 
@@ -501,9 +500,9 @@ class DataManagerImpl implements DataManager {
     }
 
 
-    private void notifyError(Throwable error) {
+    private void notifyError(String message, Throwable error) {
         if (dataObserver != null) {
-            dataObserver.onError(error);
+            dataObserver.onError(new Throwable(message, error));
         }
     }
 
