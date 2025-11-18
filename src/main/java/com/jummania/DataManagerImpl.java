@@ -262,7 +262,7 @@ class DataManagerImpl implements DataManager {
                 }
 
                 // Save metadata about the paginated list
-                saveObject(key + "meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize), String.class);
+                saveObject(key + "meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize), null);
 
             } else {
                 remove(key);
@@ -347,7 +347,7 @@ class DataManagerImpl implements DataManager {
             else lastPage.add(element);
 
             saveObject(key + totalPage, lastPage, listType);
-            saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize), String.class);
+            saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize), null);
         } finally {
             lock.writeLock().unlock();
         }
@@ -380,7 +380,7 @@ class DataManagerImpl implements DataManager {
                 removed = removeFirstMatch(removedList, itemToRemove);
                 if (removed) {
                     saveObject(key, removedList, listType);
-                    saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount - 1, maxBatchSize), String.class);
+                    saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount - 1, maxBatchSize), null);
                     return true;
                 }
             }
