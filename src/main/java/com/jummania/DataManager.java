@@ -101,7 +101,7 @@ public interface DataManager {
      * @param value the integer value to save
      */
     default void saveInt(String key, int value) {
-        saveObject(key, Integer.toString(value));
+        saveObject(key, Integer.toString(value), String.class);
     }
 
 
@@ -115,7 +115,7 @@ public interface DataManager {
      * @param value the long value to save
      */
     default void saveLong(String key, long value) {
-        saveObject(key, Long.toString(value));
+        saveObject(key, Long.toString(value), String.class);
     }
 
 
@@ -129,7 +129,7 @@ public interface DataManager {
      * @param value the float value to save
      */
     default void saveFloat(String key, float value) {
-        saveObject(key, Float.toString(value));
+        saveObject(key, Float.toString(value), String.class);
     }
 
 
@@ -143,7 +143,7 @@ public interface DataManager {
      * @param value the boolean value to save
      */
     default void saveBoolean(String key, boolean value) {
-        saveObject(key, Boolean.toString(value));
+        saveObject(key, Boolean.toString(value), String.class);
     }
 
 
