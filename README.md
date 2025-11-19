@@ -66,19 +66,13 @@ DataManager dataManager = DataManagerFactory.create(getFilesDir(), new GsonConve
 // 2. Storing Data
 
 // Store simple data types or complex objects:
-dataManager.
-
-saveObject("user_name","John Doe");
-dataManager.
-
-saveInt("user_age",30);
+dataManager.saveObject("user_name","John Doe");
+dataManager.saveInt("user_age",30);
 
 
 // Store a list of objects:
 List<String> fruits = Arrays.asList("Apple", "Banana", "Cherry");
-dataManager.
-
-saveList("fruits",fruits);
+dataManager.saveList("fruits",fruits);
 
 
 // 3. Retrieving Data
