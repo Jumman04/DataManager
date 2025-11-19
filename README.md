@@ -62,9 +62,11 @@ You can initialize the DataManager with a custom converter:
 
 ```java
 DataManager dataManager = DataManagerFactory.create(getFilesDir(), new GsonConverter());
+```
 
-// 2. Storing Data
+### 2. Storing Data
 
+```java
 // Store simple data types or complex objects:
 dataManager.saveObject("user_name","John Doe");
 dataManager.saveInt("user_age",30);
@@ -73,24 +75,29 @@ dataManager.saveInt("user_age",30);
 // Store a list of objects:
 List<String> fruits = Arrays.asList("Apple", "Banana", "Cherry");
 dataManager.saveList("fruits",fruits);
+```
 
+### 3. Retrieving Data
 
-// 3. Retrieving Data
-
+```java
 // Retrieve data with a specified key:
 String userName = dataManager.getString("user_name", "Default Name");
 int userAge = dataManager.getInt("user_age", 0);
+```
 
-// Retrieve a list of data:
+### Retrieve a list of data:
 
+```java
 // Retrieve the full list of fruits (not recommended for very large datasets)
 List<String> fruitsFull = dataManager.getFullList("fruits", String.class);
 
 // Retrieve a paginated list of fruits (page 1)
 PaginatedData<String> fruitsPage = dataManager.getPagedList("fruits", String.class, 1);
+```
 
-// 4. Data Change Listener
+### 4. Data Change Listener
 
+```java
 // You can register a listener to detect when data changes:
 dataManager.addDataObserver(new DataObserver() {
     @Override
