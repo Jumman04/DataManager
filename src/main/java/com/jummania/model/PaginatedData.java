@@ -12,9 +12,9 @@ import java.util.List;
  *
  * @param <E> the type of data items in the list
  */
-public class PaginatedData<E> {
-    public List<E> data;
-    public Pagination pagination;
+public final class PaginatedData<E> {
+    public final List<E> data;
+    public final Pagination pagination;
 
 
     /**

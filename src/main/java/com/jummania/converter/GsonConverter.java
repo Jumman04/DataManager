@@ -18,7 +18,7 @@ import java.lang.reflect.Type;
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */
-public class GsonConverter implements DataManager.Converter {
+public final class GsonConverter implements DataManager.Converter {
     private final Gson gson;
 
 

@@ -304,7 +304,12 @@ class DataManagerImpl implements DataManager {
                     try {
                         Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
-                        break;
+                        // Maybe Data is corrupted, so delete the file and save a new list
+                        saveList(key, Collections.singletonList(element), listSizeLimit, maxBatchSize);
+
+                        // Notify the listener about data changes, if applicable
+                        notifyError("Failed to shift file for key '" + key + "': " + e.getMessage(), e);
+                        return;
                     }
                 }
                 --totalPage;
@@ -420,7 +425,7 @@ class DataManagerImpl implements DataManager {
         return TypeToken.getParameterized(rawType, typeArguments).getType();
     }
 
-
+    @Override
     public void remove(String key) {
 
         remove(getFile(key + "." + "meta"));

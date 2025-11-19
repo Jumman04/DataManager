@@ -14,7 +14,7 @@ package com.jummania.model;
  * It also provides a utility method {@link #toMeta(int, int, int)} to generate
  * a JSON string representation of the metadata.
  */
-public class MetaData {
+public final class MetaData {
     private final int totalPages;
     private final int itemCount;
     private final int maxBatchSize;

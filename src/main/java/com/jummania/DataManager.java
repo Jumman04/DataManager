@@ -156,7 +156,7 @@ public interface DataManager {
      * @return the retrieved integer value or the default value if not found
      */
     default int getInt(String key, int defValue) {
-        Integer value = getObject(key, Integer.class);
+        Integer value = getObject(key, int.class);
         return value != null ? value : defValue;
     }
 
@@ -184,7 +184,7 @@ public interface DataManager {
      * @return the retrieved long value or the default value if not found
      */
     default long getLong(String key, long defValue) {
-        Long value = getObject(key, Long.class);
+        Long value = getObject(key, long.class);
         return value != null ? value : defValue;
     }
 
@@ -212,7 +212,7 @@ public interface DataManager {
      * @return the retrieved float value or the default value if not found
      */
     default float getFloat(String key, float defValue) {
-        Float value = getObject(key, Float.class);
+        Float value = getObject(key, float.class);
         return value != null ? value : defValue;
     }
 
@@ -240,7 +240,7 @@ public interface DataManager {
      * @return the retrieved boolean value or the default value if not found
      */
     default boolean getBoolean(String key, boolean defValue) {
-        Boolean value = getObject(key, Boolean.class);
+        Boolean value = getObject(key, boolean.class);
         return value != null ? value : defValue;
     }
 

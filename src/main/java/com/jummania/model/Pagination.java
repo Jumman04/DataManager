@@ -8,11 +8,11 @@ package com.jummania.model;
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */
-public class Pagination {
-    public Integer previousPage;
-    public int currentPage;
-    public Integer nextPage;
-    public int totalPages;
+public final class Pagination {
+    public final Integer previousPage;
+    public final int currentPage;
+    public final Integer nextPage;
+    public final int totalPages;
 
 
     /**

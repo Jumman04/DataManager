@@ -10,14 +10,12 @@ pagination, and file-based persistence.
 
 ## Features
 
-- **JSON Serialization/Deserialization**: Easily convert objects to and from JSON format.
-- **File-based Data Storage**: Store objects, strings, integers, booleans, lists, and more in local
-  storage.
+- **JSON Serialization/Deserialization**: Convert objects to and from JSON format.
+- **File-based Data Storage**: Store objects, strings, integers, booleans, lists, and more in local storage.
 - **Batch Data Handling**: Efficiently save and load lists in batches to optimize memory usage.
 - **On Data Change Listener**: Listen to changes in data to update your app in real time.
-- **Type-Safe Operations**: Work with strongly-typed objects and use generics for flexibility.
-- **Customizable Converter**: **NEW in version 2.8!** You can choose from the following built-in
-  converters:
+- **Type-Safe Operations**: Work with strongly typed objects and use generics for flexibility.
+- **Customizable Converter**: You can choose from the following built-in converters:
     - **GsonConverter**: Uses the Google Gson library for serialization and deserialization.
 
   You can also create your own converter by implementing the `DataManager.Converter` interface,
@@ -27,7 +25,7 @@ pagination, and file-based persistence.
 
 ## Installation
 
-To include this library in your project, simply clone this repository and build the project, or you
+To include this library in your project, clone this repository and build the project, or you
 can manually add the source code to your project.
 
 Follow these steps to integrate the **DataManager** library into your project:
@@ -64,53 +62,42 @@ You can initialize the DataManager with a custom converter:
 
 ```java
 DataManager dataManager = DataManagerFactory.create(getFilesDir(), new GsonConverter());
-```
 
-### 2. Storing Data
+// 2. Storing Data
 
-Store simple data types or complex objects:
-
-```java
-dataManager.putString("user_name","John Doe");
+// Store simple data types or complex objects:
 dataManager.
 
-putInt("user_age",30);
-```
+saveObject("user_name","John Doe");
+dataManager.
 
-Store a list of objects:
+saveInt("user_age",30);
 
-```java
+
+// Store a list of objects:
 List<String> fruits = Arrays.asList("Apple", "Banana", "Cherry");
 dataManager.
 
-putList("fruits",fruits);
-```
+saveList("fruits",fruits);
 
-### 3. Retrieving Data
 
-Retrieve data with a specified key:
+// 3. Retrieving Data
 
-```java
+// Retrieve data with a specified key:
 String userName = dataManager.getString("user_name", "Default Name");
 int userAge = dataManager.getInt("user_age", 0);
-```
 
-Retrieve a list of data:
+// Retrieve a list of data:
 
-```java
 // Retrieve the full list of fruits (not recommended for very large datasets)
 List<String> fruitsFull = dataManager.getFullList("fruits", String.class);
 
 // Retrieve a paginated list of fruits (page 1)
 PaginatedData<String> fruitsPage = dataManager.getPagedList("fruits", String.class, 1);
 
-```
+// 4. Data Change Listener
 
-### 4. Data Change Listener
-
-You can register a listener to detect when data changes:
-
-```java
+// You can register a listener to detect when data changes:
 dataManager.addDataObserver(new DataObserver() {
     @Override
     public void onDataChange (String key){
@@ -137,7 +124,12 @@ public class MyCustomConverter implements DataManager.Converter {
     }
 
     @Override
-    public <T> T fromJson(String json, Type typeOfT) {
+    public void toJson(Object src, Type typeOfSrc, Appendable writer) {
+      return // Implement serialization logic to a Writer;
+    }
+
+  @Override
+  public <T> T fromJson(String json, Class<T> tClass) {
         return // Implement deserialization logic
     }
 
@@ -158,7 +150,6 @@ DataManager dataManager = DataManagerFactory.create(getFilesDir(), new MyCustomC
 
 | Return Type   | Method Name                                                                    | Description                                                                 |
 |---------------|--------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| `String`      | `getRawString(String key)`                                                     | Retrieves the raw JSON string associated with the key.                      |
 | `<T>`         | `getObject(String key, Type type)`                                             | Retrieves an object of the specified type.                                  |
 | `<T> List<T>` | `getFullList(String key, Type type)`                                           | Retrieves the full list of objects (⚠️ not recommended for large datasets). |
 | `<T>`         | `PaginatedData<T> getPagedList(String key, Type type, int page)`               | Retrieves a paginated subset of the list.                                   |
@@ -176,12 +167,11 @@ DataManager dataManager = DataManagerFactory.create(getFilesDir(), new MyCustomC
 | `<T>`         | `fromReader(Reader json, Type typeOfT)`                                        | Converts JSON from a `Reader` to an object of the specified type.           |
 | `String`      | `toJson(Object object)`                                                        | Converts an object to a JSON string.                                        |
 | `Type`        | `getParameterized(Type rawType, Type... typeArguments)`                        | Constructs a parameterized generic type.                                    |
-| `void`        | `saveString(String key, String value)`                                         | Saves a String value.                                                       |
+| `void`        | `saveObject(String key, Object value)`                                         | Saves an object.                                                            |
 | `void`        | `saveInt(String key, int value)`                                               | Saves an int value.                                                         |
 | `void`        | `saveLong(String key, long value)`                                             | Saves a long value.                                                         |
 | `void`        | `saveFloat(String key, float value)`                                           | Saves a float value.                                                        |
 | `void`        | `saveBoolean(String key, boolean value)`                                       | Saves a boolean value.                                                      |
-| `void`        | `saveObject(String key, Object value)`                                         | Saves an object.                                                            |
 | `<E>`         | `saveList(String key, List<E> value)`                                          | Saves a full list.                                                          |
 | `<E>`         | `saveList(String key, List<E> value, int maxArraySize)`                        | Saves a list with a maximum size (for paging).                              |
 | `void`        | `appendToList(String key, Object element)`                                     | Appends an element to the end of the list.                                  |

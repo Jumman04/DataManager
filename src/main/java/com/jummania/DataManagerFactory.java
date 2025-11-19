@@ -16,10 +16,10 @@ import java.io.File;
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */
-public class DataManagerFactory {
+public final class DataManagerFactory {
 
     // The singleton instance of DataManager
-    private static DataManager dataManager;
+    private static volatile DataManager dataManager;
 
     // Private constructor to prevent instantiation of the factory
     private DataManagerFactory() {
@@ -28,18 +28,12 @@ public class DataManagerFactory {
 
     /**
      * Creates and returns the singleton instance of DataManager.
-     * If the DataManager instance does not exist, it is created with the provided filesDir.
-     * This method is synchronized to ensure thread safety during instance creation.
      *
      * @param filesDir The directory where data is to be stored.
      * @return The singleton instance of DataManager.
      */
-    public static synchronized DataManager create(File filesDir) {
-        // If the instance does not exist, create a new one
-        if (dataManager == null) {
-            dataManager = new DataManagerImpl(filesDir, new GsonConverter());
-        }
-        return dataManager;
+    public static DataManager create(File filesDir) {
+        return create(filesDir, new GsonConverter());
     }
 
 
@@ -68,10 +62,11 @@ public class DataManagerFactory {
      * @throws IllegalStateException If the DataManager instance is not yet created.
      */
     public static DataManager getInstance() {
+        DataManager instance = dataManager;
         // Check if DataManager is initialized; if not, throw an exception
-        if (dataManager == null) {
+        if (instance == null) {
             throw new IllegalStateException("DataManagerFactory is not created. Call create(getFilesDir()) first.");
         }
-        return dataManager;
+        return instance;
     }
 }
