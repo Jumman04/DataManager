@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 A simple, efficient, and flexible data management library for Java and Android.
-Easily store, retrieve, and manipulate data using JSON serialization with support for type safety,
+Store, retrieve, and manipulate data using JSON serialization with support for type safety,
 pagination, and file-based persistence.
 
 ## Features
@@ -187,7 +187,7 @@ DataManager dataManager = DataManagerFactory.create(getFilesDir(), new MyCustomC
 | `void`        | `removeDataObserver(DataObserver observer)`                                    | Unregisters a data observer.                                                |
 
 For more methods, refer to
-the [documentation](https://jumman04.github.io/DataManager/doc/index.html).
+the [documentation](https://jumman04.github.io/DataManager/docs/).
 
 ## Contributing
 
@@ -196,7 +196,7 @@ repository, make your changes, and submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
