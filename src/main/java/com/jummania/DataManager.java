@@ -534,12 +534,34 @@ public interface DataManager {
 
 
     /**
-     * Checks if the data structure contains an entry associated with the given key.
+     * Checks if the data structure exists an entry associated with the given key.
      *
      * @param key the key to check for existence in the data structure
      * @return {@code true} if the key exists in the data structure, {@code false} otherwise
      */
-    boolean contains(String key);
+    boolean exists(String key);
+
+
+    /**
+     * Returns the last modified time of the file for the given key.
+     *
+     * @param key The key of the saved object.
+     * @return Last modified time in milliseconds, or 0 if the file doesn't exist.
+     */
+    long lastModified(String key);
+
+
+    /**
+     * Checks if the file for the given key was modified within the specified time.
+     *
+     * @param key  The key of the saved object.
+     * @param time The time window in milliseconds.
+     * @return true if lastModified(key) is within the last 'time' milliseconds,
+     * false if the file is old, missing, or lastModified() returns 0.
+     */
+    default boolean isModifiedWithin(String key, long time) {
+        return lastModified(key) > System.currentTimeMillis() - time;
+    }
 
 
     // Data change listener registration
