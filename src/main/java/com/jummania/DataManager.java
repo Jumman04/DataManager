@@ -39,6 +39,21 @@ public interface DataManager {
 
 
     /**
+     * Saves a string value to the storage system associated with the given key.
+     * <p>
+     * This is a convenience method that calls {@link #saveObject(String, Object, Type)}
+     * to store the string.
+     * </p>
+     *
+     * @param key   the unique key identifying the storage location; must not be {@code null}
+     * @param value the string value to save; may be {@code null} to remove the key
+     */
+    default void saveString(String key, String value) {
+        saveObject(key, value, null);
+    }
+
+
+    /**
      * Saves an object to the storage system associated with the given key.
      * <p>
      * This is a convenience method equivalent to calling
