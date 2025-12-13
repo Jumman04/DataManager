@@ -1,6 +1,6 @@
 package com.jummania;
 
-import com.google.gson.JsonIOException;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.jummania.model.MetaData;
 import com.jummania.model.PaginatedData;
@@ -45,7 +45,7 @@ import java.util.function.Predicate;
  * Email: sharifuddinjumman@gmail.com
  * Dhaka, Bangladesh.
  */
-class DataManagerImpl implements DataManager {
+final class DataManagerImpl implements DataManager {
 
     // Converter instance for serializing and deserializing data
     private final Converter converter;
@@ -125,18 +125,17 @@ class DataManagerImpl implements DataManager {
 
     @Override
     public <T> T getObject(String key, Type type) {
-
         try (Reader reader = getReader(key)) {
             return fromReader(reader, type);
         } catch (FileNotFoundException e) {
-            notifyError("Failed to open file for key '" + key + "': " + e.getMessage(), e);
-        } catch (IOException | JsonIOException e) {
-            notifyError("Error reading file for key '" + key + "': " + e.getMessage(), e);
+            notifyError("File not found for key '" + key + "'", e);
+        } catch (IOException | JsonParseException e) {
+            notifyError("Failed to read or parse data for key '" + key + "'", e);
         } catch (Exception e) {
-            notifyError("Error deserializing JSON for key '" + key + "': " + e.getMessage(), e);
+            notifyError("Unexpected error while reading key '" + key + "'", e);
         }
 
-        // Return null if an error occurs
+        // Contract: return null on any failure
         return null;
     }
 
@@ -152,9 +151,9 @@ class DataManagerImpl implements DataManager {
             }
             return sb.toString();
         } catch (FileNotFoundException e) {
-            notifyError("Failed to open file for key '" + key + "': " + e.getMessage(), e);
+            notifyError("File not found for key '" + key + "'", e);
         } catch (Exception e) {
-            notifyError("Error reading file for key '" + key + "': " + e.getMessage(), e);
+            notifyError("Failed to read data for key '" + key + "'", e);
         }
         return defValue;
     }
@@ -318,7 +317,7 @@ class DataManagerImpl implements DataManager {
                         saveList(key, Collections.singletonList(element), listSizeLimit, maxBatchSize);
 
                         // Notify the listener about data changes, if applicable
-                        notifyError("Failed to shift file for key '" + key + "': " + e.getMessage(), e);
+                        notifyError("Failed to shift file for key '" + key + "'", e);
                         return;
                     }
                 }
