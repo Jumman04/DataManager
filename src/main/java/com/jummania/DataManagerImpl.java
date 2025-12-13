@@ -118,7 +118,7 @@ final class DataManagerImpl implements DataManager {
             }
 
         } catch (Exception e) {
-            notifyError("Error saving data for key: '" + key + "'. Error: " + e.getMessage(), e);
+            notifyError("Error saving data for key: '" + key + "'", e);
         }
     }
 
