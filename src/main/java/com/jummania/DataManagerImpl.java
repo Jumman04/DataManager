@@ -19,9 +19,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -186,7 +183,9 @@ final class DataManagerImpl implements DataManager {
             // Ensure consistent key formatting
             key += ".";
 
-            int start = reverse ? totalPages : 1, end = reverse ? 1 : totalPages, step = reverse ? -1 : 1;
+            final int startPage = metaData.getStartPage();
+
+            int start = reverse ? totalPages : startPage, end = reverse ? startPage : totalPages, step = reverse ? -1 : 1;
             List<E> batch;
             Type listType = getParameterized(List.class, eClass);
 
@@ -205,7 +204,6 @@ final class DataManagerImpl implements DataManager {
 
     @Override
     public <E> PaginatedData<E> getPagedList(String key, Class<E> eClass, int page, boolean reverse) {
-
         ReadWriteLock lock = getLock(key);
         lock.readLock().lock();
 
@@ -215,24 +213,32 @@ final class DataManagerImpl implements DataManager {
                 return getEmptyPaginateData(page, 0);
             }
 
-            int totalPages = metaData.getTotalPages();
+            int start = metaData.getStartPage();
+            int end = metaData.getTotalPages();
+            int activePagesCount = (end - start) + 1;
 
-            // If reverse: flip the page index (1 => N, 2 => N-1, etc.)
-            int targetPage = reverse ? (totalPages - page + 1) : page;
-            if (targetPage < 1 || targetPage > totalPages) {
-                return getEmptyPaginateData(page, totalPages);
+            // Validation: Requested page must be within the current available range
+            if (page < 1 || page > activePagesCount) {
+                return getEmptyPaginateData(page, activePagesCount);
             }
 
+            // Calculate the actual filename index
+            // If reverse=false: Page 1 is startPage, Page 2 is startPage + 1
+            // If reverse=true:  Page 1 is endPage, Page 2 is endPage - 1
+            int targetFileIndex = reverse ? (end - page + 1) : (start + page - 1);
+
             Type listType = getParameterized(List.class, eClass);
-            List<E> pageData = getObject(key + "." + targetPage, listType);
+            List<E> pageData = getObject(key + "." + targetFileIndex, listType);
+
             if (pageData == null) pageData = Collections.emptyList();
 
-            // Previous/Next still follow the user's requested page (not the flipped index)
+            // Handle navigation relative to the user's requested 'page' number
             Integer previousPage = (page > 1) ? page - 1 : null;
-            Integer nextPage = (page < totalPages) ? page + 1 : null;
+            Integer nextPage = (page < activePagesCount) ? page + 1 : null;
 
-            Pagination pagination = new Pagination(previousPage, page, nextPage, totalPages);
+            Pagination pagination = new Pagination(previousPage, page, nextPage, activePagesCount);
             return new PaginatedData<>(pageData, pagination);
+
         } finally {
             lock.readLock().unlock();
         }
@@ -271,7 +277,7 @@ final class DataManagerImpl implements DataManager {
                 }
 
                 // Save metadata about the paginated list
-                saveObject(key + "meta", MetaData.toMeta(pos, listSizeLimit, maxBatchSize), null);
+                saveObject(key + "meta", MetaData.toMeta(1, pos, listSizeLimit, maxBatchSize), null);
 
             } else {
                 remove(key);
@@ -298,6 +304,7 @@ final class DataManagerImpl implements DataManager {
                 return;
             }
 
+            int startPage = metaData.getStartPage();
             int totalPage = metaData.getTotalPages();
             int itemCount = metaData.getItemCount();
             maxBatchSize = metaData.getMaxBatchSize();
@@ -306,23 +313,9 @@ final class DataManagerImpl implements DataManager {
 
             // If a list exceeds the size limit, shift files to remove the oldest batch
             if (itemCount >= listSizeLimit) {
-                Path rootPath = filesDir.toPath();
-                for (int i = 2; i <= totalPage; i++) {
-                    Path oldPath = rootPath.resolve(key + i);
-                    Path newPath = rootPath.resolve(key + (i - 1));
-                    try {
-                        Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException e) {
-                        // Maybe Data is corrupted, so delete the file and save a new list
-                        saveList(key, Collections.singletonList(element), listSizeLimit, maxBatchSize);
-
-                        // Notify the listener about data changes, if applicable
-                        notifyError("Failed to shift file for key '" + key + "'", e);
-                        return;
-                    }
-                }
-                --totalPage;
-                itemCount -= maxBatchSize; // Approximation (actual size may vary)
+                remove(key + startPage);
+                startPage++;
+                itemCount = Math.max(0, itemCount - maxBatchSize); // Approximation (actual size may vary)
             }
 
             // Load the last batch
@@ -336,7 +329,7 @@ final class DataManagerImpl implements DataManager {
                 boolean removed = removeFirstMatch(lastPage, preventDuplication);
                 if (!removed) {
                     List<E> removedList;
-                    for (int i = totalPage - 1; i > 0; --i) {
+                    for (int i = totalPage - 1; i > startPage; --i) {
                         fileKey = key + i;
                         removedList = getObject(fileKey, listType);
                         if (removedList == null) break;
@@ -361,7 +354,7 @@ final class DataManagerImpl implements DataManager {
             else lastPage.add(element);
 
             saveObject(key + totalPage, lastPage, listType);
-            saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount + 1, maxBatchSize), null);
+            saveObject(key + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null);
         } finally {
             lock.writeLock().unlock();
         }
@@ -379,22 +372,22 @@ final class DataManagerImpl implements DataManager {
             MetaData metaData = getMetaData(key);
             if (metaData == null) return false;
 
-            int totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), maxBatchSize = metaData.getMaxBatchSize();
+            int startPage = metaData.getStartPage(), totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), maxBatchSize = metaData.getMaxBatchSize();
 
             Type listType = getParameterized(List.class, eClass);
 
-            key += ".";
+            String baseKey = key + ".";
 
             boolean removed;
             List<E> removedList;
-            for (int i = totalPage; i > 0; --i) {
-                key = key + i;
+            for (int i = totalPage; i >= startPage; --i) {
+                key = baseKey + i;
                 removedList = getObject(key, listType);
                 if (removedList == null) return false;
                 removed = removeFirstMatch(removedList, itemToRemove);
                 if (removed) {
                     saveObject(key, removedList, listType);
-                    saveObject(key + "meta", MetaData.toMeta(totalPage, itemCount - 1, maxBatchSize), null);
+                    saveObject(key + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
                     return true;
                 }
             }

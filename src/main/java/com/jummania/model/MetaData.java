@@ -6,15 +6,17 @@ package com.jummania.model;
  * <p>
  * This class stores information about a list that is split into pages:
  * <ul>
+ *     <li>{@code startPage} — the starting page index</li>
  *     <li>{@code totalPages} — the total number of pages currently in the list</li>
  *     <li>{@code itemCount} — the total number of items across all pages</li>
  *     <li>{@code batchSizeLimit} — the maximum number of items allowed per page</li>
  * </ul>
  * <p>
- * It also provides a utility method {@link #toMeta(int, int, int)} to generate
+ * It also provides a utility method {@link #toMeta(int, int, int, int)} to generate
  * a JSON string representation of the metadata.
  */
 public final class MetaData {
+    private final int startPage;
     private final int totalPages;
     private final int itemCount;
     private final int maxBatchSize;
@@ -22,11 +24,13 @@ public final class MetaData {
     /**
      * Constructs a new MetaData object.
      *
+     * @param startPage    the starting page index
      * @param totalPages   the total number of pages
      * @param itemCount    the total number of items across all pages
      * @param maxBatchSize the maximum number of items per page
      */
-    public MetaData(int totalPages, int itemCount, int maxBatchSize) {
+    public MetaData(int startPage, int totalPages, int itemCount, int maxBatchSize) {
+        this.startPage = startPage;
         this.totalPages = totalPages;
         this.itemCount = itemCount;
         this.maxBatchSize = maxBatchSize;
@@ -35,13 +39,23 @@ public final class MetaData {
     /**
      * Generates a JSON string representing the metadata.
      *
+     * @param startPage    the starting page index
      * @param totalPages   the total number of pages
      * @param itemCount    the total number of items
      * @param maxBatchSize the maximum number of items per page
      * @return a JSON string representing the metadata
      */
-    public static String toMeta(int totalPages, int itemCount, int maxBatchSize) {
-        return "{\"totalPages\":" + totalPages + ",\"itemCount\":" + itemCount + ",\"maxBatchSize\":" + maxBatchSize + "}";
+    public static String toMeta(int startPage, int totalPages, int itemCount, int maxBatchSize) {
+        return "{\"startPage\":" + startPage + ",\"totalPages\":" + totalPages + ",\"itemCount\":" + itemCount + ",\"maxBatchSize\":" + maxBatchSize + "}";
+    }
+
+    /**
+     * Returns the starting page index.
+     *
+     * @return the start page
+     */
+    public int getStartPage() {
+        return startPage;
     }
 
     /**
