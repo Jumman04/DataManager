@@ -91,9 +91,8 @@ final class DataManagerImpl implements DataManager {
     @Override
     public void saveObject(String key, Object value, Type typeOfSrc) {
 
-        // Validate inputs: Ensure the key is not null
         if (key == null) {
-            throw new IllegalArgumentException("Key cannot be null");
+            throw new IllegalArgumentException("The 'key' argument cannot be null.");
         }
 
         // If the value is null, remove the corresponding entry and return
@@ -515,10 +514,7 @@ final class DataManagerImpl implements DataManager {
     }
 
 
-    private Reader getReader(String key) throws FileNotFoundException {
-        if (key == null) {
-            throw new IllegalArgumentException("Key cannot be null");
-        }
+    private Reader getReader(String key) throws Exception {
         return new InputStreamReader(new BufferedInputStream(new FileInputStream(getFile(key)), defaultCharBufferSize));
     }
 
