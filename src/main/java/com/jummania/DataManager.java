@@ -377,7 +377,7 @@ public interface DataManager {
      * @param maxBatchSize  the maximum number of elements per batch (must be ≥ 1)
      * @see #saveObject(String, Object, Type)
      * @see #remove(String)
-     * @see com.jummania.model.MetaData#toMeta(int, int, int)
+     * @see com.jummania.model.MetaData#toMeta(int, int, int, int)
      */
     <E> void saveList(String key, List<E> list, int listSizeLimit, int maxBatchSize);
 

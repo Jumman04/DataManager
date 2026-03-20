@@ -102,18 +102,13 @@ final class DataManagerImpl implements DataManager {
             return;
         }
 
-        // Write the string to the file using BufferedWriter for efficiency
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getFile(key)), StandardCharsets.UTF_8), defaultCharBufferSize)) {
-
-            // Write the value to the file
-            if (value instanceof String) writer.write((String) value);
-            else toJson(value, typeOfSrc, writer);
+        try {
+            writeToFile(key, value, typeOfSrc);
 
             // Notify the listener about data changes, if applicable
             if (dataObserver != null) {
                 dataObserver.onDataChange(key);
             }
-
         } catch (Exception e) {
             notifyError("Error saving data for key: '" + key + "'", e);
         }
@@ -270,14 +265,25 @@ final class DataManagerImpl implements DataManager {
 
                 Class<?> listClass = list.getClass();
 
-                // Split the list into smaller batches and store each one
-                for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
-                    List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
-                    saveObject(key + ++pos, batch, listClass);  // Store each batch with a unique key
-                }
+                try {
 
-                // Save metadata about the paginated list
-                saveObject(key + "meta", MetaData.toMeta(1, pos, listSizeLimit, maxBatchSize), null);
+                    // Split the list into smaller batches and store each one
+                    for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
+                        List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
+                        writeToFile(key + ++pos, batch, listClass);  // Store each batch with a unique key
+                    }
+
+                    // Save metadata about the paginated list
+                    writeToFile(key + "meta", MetaData.toMeta(1, pos, listSizeLimit, maxBatchSize), null);
+
+                    // Notify the listener about data changes, if applicable
+                    if (dataObserver != null) {
+                        dataObserver.onDataChange(key);
+                    }
+
+                } catch (Exception e) {
+                    notifyError("Error saving list for key: '" + key + "'", e);
+                }
 
             } else {
                 remove(key);
@@ -324,37 +330,47 @@ final class DataManagerImpl implements DataManager {
             List<E> lastPage = getObject(fileKey, listType);
             if (lastPage == null) lastPage = new ArrayList<>(1);
 
-            // Remove an existing matching item if a predicate is provided
-            if (preventDuplication != null) {
-                boolean removed = removeFirstMatch(lastPage, preventDuplication);
-                if (!removed) {
-                    List<E> removedList;
-                    for (int i = totalPage - 1; i > startPage; --i) {
-                        fileKey = key + i;
-                        removedList = getObject(fileKey, listType);
-                        if (removedList == null) break;
-                        removed = removeFirstMatch(removedList, preventDuplication);
-                        if (removed) {
-                            saveObject(fileKey, removedList, listType);
-                            break;
+            try {
+
+                // Remove an existing matching item if a predicate is provided
+                if (preventDuplication != null) {
+                    boolean removed = removeFirstMatch(lastPage, preventDuplication);
+                    if (!removed) {
+                        List<E> removedList;
+                        for (int i = totalPage - 1; i > startPage; --i) {
+                            fileKey = key + i;
+                            removedList = getObject(fileKey, listType);
+                            if (removedList == null) break;
+                            removed = removeFirstMatch(removedList, preventDuplication);
+                            if (removed) {
+                                writeToFile(fileKey, removedList, listType);
+                                break;
+                            }
                         }
                     }
+                    if (removed) --itemCount;
                 }
-                if (removed) --itemCount;
+
+                // If the last batch is full, create a new page
+                if (lastPage.size() >= maxBatchSize) {
+                    ++totalPage;
+                    lastPage = new ArrayList<>(1);
+                }
+
+                // Add the new element to the current batch and update metadata
+                if (addFirst) lastPage.add(0, element);
+                else lastPage.add(element);
+
+                writeToFile(key + totalPage, lastPage, listType);
+                writeToFile(key + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null);
+
+                // Notify the listener about data changes, if applicable
+                if (dataObserver != null) {
+                    dataObserver.onDataChange(key);
+                }
+            } catch (Exception e) {
+                notifyError("Error appending data for key: '" + key + "'", e);
             }
-
-            // If the last batch is full, create a new page
-            if (lastPage.size() >= maxBatchSize) {
-                ++totalPage;
-                lastPage = new ArrayList<>(1);
-            }
-
-            // Add the new element to the current batch and update metadata
-            if (addFirst) lastPage.add(0, element);
-            else lastPage.add(element);
-
-            saveObject(key + totalPage, lastPage, listType);
-            saveObject(key + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null);
         } finally {
             lock.writeLock().unlock();
         }
@@ -386,8 +402,18 @@ final class DataManagerImpl implements DataManager {
                 if (removedList == null) return false;
                 removed = removeFirstMatch(removedList, itemToRemove);
                 if (removed) {
-                    saveObject(key, removedList, listType);
-                    saveObject(key + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
+                    try {
+                        writeToFile(key, removedList, listType);
+                        writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
+
+                        // Notify the listener about data changes, if applicable
+                        if (dataObserver != null) {
+                            dataObserver.onDataChange(key);
+                        }
+                    } catch (Exception e) {
+                        notifyError("Error saving data for key: '" + key + "'", e);
+                    }
+
                     return true;
                 }
             }
@@ -538,6 +564,13 @@ final class DataManagerImpl implements DataManager {
 
     private ReadWriteLock getLock(String key) {
         return lockMap.computeIfAbsent(key, k -> new ReentrantReadWriteLock());
+    }
+
+    private void writeToFile(String key, Object value, Type typeOfSrc) throws Exception {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getFile(key)), StandardCharsets.UTF_8), defaultCharBufferSize)) {
+            if (value instanceof String) writer.write((String) value);
+            else toJson(value, typeOfSrc, writer);
+        }
     }
 
 }
