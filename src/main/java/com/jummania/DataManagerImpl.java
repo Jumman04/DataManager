@@ -102,12 +102,7 @@ final class DataManagerImpl implements DataManager {
         }
 
         try {
-            writeToFile(key, value, typeOfSrc);
-
-            // Notify the listener about data changes, if applicable
-            if (dataObserver != null) {
-                dataObserver.onDataChange(key);
-            }
+            writeToFile(key, value, typeOfSrc, true);
         } catch (Exception e) {
             notifyError("Error saving data for key: '" + key + "'", e);
         }
@@ -562,10 +557,15 @@ final class DataManagerImpl implements DataManager {
         return lockMap.computeIfAbsent(key, k -> new ReentrantReadWriteLock());
     }
 
-    private void writeToFile(String key, Object value, Type typeOfSrc) throws Exception {
+    private void writeToFile(String key, Object value, Type typeOfSrc, bool notifyObserver) throws Exception {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getFile(key)), StandardCharsets.UTF_8), defaultCharBufferSize)) {
             if (value instanceof String) writer.write((String) value);
             else toJson(value, typeOfSrc, writer);
+
+            // Notify the listener about data changes, if applicable
+            if (notifyObserver && dataObserver != null) {
+                dataObserver.onDataChange(key);
+            }
         }
     }
 
