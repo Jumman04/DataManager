@@ -264,11 +264,11 @@ final class DataManagerImpl implements DataManager {
                     // Split the list into smaller batches and store each one
                     for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
                         List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
-                        writeToFile(key + ++pos, batch, listClass);  // Store each batch with a unique key
+                        writeToFile(key + ++pos, batch, listClass, false);  // Store each batch with a unique key
                     }
 
                     // Save metadata about the paginated list
-                    writeToFile(key + "meta", MetaData.toMeta(1, pos, listSizeLimit, maxBatchSize), null);
+                    writeToFile(key + "meta", MetaData.toMeta(1, pos, listSizeLimit, maxBatchSize), null, false);
 
                     // Notify the listener about data changes, if applicable
                     if (dataObserver != null) {
@@ -337,7 +337,7 @@ final class DataManagerImpl implements DataManager {
                             if (removedList == null) break;
                             removed = removeFirstMatch(removedList, preventDuplication);
                             if (removed) {
-                                writeToFile(fileKey, removedList, listType);
+                                writeToFile(fileKey, removedList, listType, false);
                                 break;
                             }
                         }
@@ -355,8 +355,8 @@ final class DataManagerImpl implements DataManager {
                 if (addFirst) lastPage.add(0, element);
                 else lastPage.add(element);
 
-                writeToFile(key + totalPage, lastPage, listType);
-                writeToFile(key + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null);
+                writeToFile(key + totalPage, lastPage, listType, false);
+                writeToFile(key + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null, false);
 
                 // Notify the listener about data changes, if applicable
                 if (dataObserver != null) {
@@ -397,8 +397,8 @@ final class DataManagerImpl implements DataManager {
                 removed = removeFirstMatch(removedList, itemToRemove);
                 if (removed) {
                     try {
-                        writeToFile(key, removedList, listType);
-                        writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
+                        writeToFile(key, removedList, listType, false);
+                        writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null, false);
 
                         // Notify the listener about data changes, if applicable
                         if (dataObserver != null) {
