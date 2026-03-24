@@ -159,20 +159,18 @@ final class DataManagerImpl implements DataManager {
         try {
             MetaData metaData = getMetaData(key);
 
-            List<E> dataList = new ArrayList<>();
-
             // If metadata not found, return an empty list early
             if (metaData == null) {
-                return dataList;
+                return new ArrayList<>();
             }
 
             final int totalPages = metaData.getTotalPages();
             if (totalPages <= 0) {
-                return dataList;
+                return new ArrayList<>();
             }
 
             // Prepare the result list and the List<E> type token
-            dataList = new ArrayList<>(Math.max(0, metaData.getItemCount()));
+            List<E> dataList = new ArrayList<>(Math.max(0, metaData.getItemCount()));
 
             // Ensure consistent key formatting
             key += ".";
@@ -395,13 +393,13 @@ final class DataManagerImpl implements DataManager {
 
             boolean removed;
             List<E> removedList;
-            for (int i = totalPage; i >= startPage; --i) {
-                key = baseKey + i;
-                removedList = getObject(key, listType);
-                if (removedList == null) return false;
-                removed = removeFirstMatch(removedList, itemToRemove);
-                if (removed) {
-                    try {
+            try {
+                for (int i = totalPage; i >= startPage; --i) {
+                    key = baseKey + i;
+                    removedList = getObject(key, listType);
+                    if (removedList == null) return false;
+                    removed = removeFirstMatch(removedList, itemToRemove);
+                    if (removed) {
                         writeToFile(key, removedList, listType);
                         writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
 
@@ -409,12 +407,12 @@ final class DataManagerImpl implements DataManager {
                         if (dataObserver != null) {
                             dataObserver.onDataChange(key);
                         }
-                    } catch (Exception e) {
-                        notifyError("Error saving data for key: '" + key + "'", e);
-                    }
 
-                    return true;
+                        return true;
+                    }
                 }
+            } catch (Exception e) {
+                notifyError("Error saving data for key: '" + key + "'", e);
             }
 
             return false;
