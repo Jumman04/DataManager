@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -105,9 +106,8 @@ final class DataManagerImpl implements DataManager {
             writeToFile(key, value, typeOfSrc);
 
             // Notify the listener about data changes, if applicable
-            if (dataObserver != null) {
-                dataObserver.onDataChange(key);
-            }
+            if (dataObserver != null) dataObserver.onDataChange(key);
+
         } catch (Exception e) {
             notifyError("Error saving data for key: '" + key + "'", e);
         }
@@ -274,9 +274,8 @@ final class DataManagerImpl implements DataManager {
                     writeToFile(key + "meta", MetaData.toMeta(1, pos, listSizeLimit, maxBatchSize), null);
 
                     // Notify the listener about data changes, if applicable
-                    if (dataObserver != null) {
-                        dataObserver.onDataChange(key);
-                    }
+                    if (dataObserver != null) dataObserver.onDataChange(key);
+
 
                 } catch (Exception e) {
                     notifyError("Error saving list for key: '" + key + "'", e);
@@ -292,17 +291,14 @@ final class DataManagerImpl implements DataManager {
 
 
     @Override
-    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Predicate<? super E> preventDuplication) {
-
+    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Object uniqueId, Function<E, Object> idExtractor) {
         ReadWriteLock lock = getLock(key);
         lock.writeLock().lock();
 
         try {
             if (element == null) return;
-
             MetaData metaData = getMetaData(key);
             if (metaData == null) {
-                // Create a new list if none exists
                 saveList(key, Collections.singletonList(element), listSizeLimit, maxBatchSize);
                 return;
             }
@@ -312,61 +308,62 @@ final class DataManagerImpl implements DataManager {
             int itemCount = metaData.getItemCount();
             maxBatchSize = metaData.getMaxBatchSize();
 
-            key += ".";
+            String baseKey = key + ".";
 
-            // If a list exceeds the size limit, shift files to remove the oldest batch
+            // Step 1: Handle List Size Limit (O(1) operation)
             if (itemCount >= listSizeLimit) {
-                remove(key + startPage);
+                getFile(baseKey + startPage).delete();
                 startPage++;
-                itemCount = Math.max(0, itemCount - maxBatchSize); // Approximation (actual size may vary)
+                itemCount = Math.max(0, itemCount - maxBatchSize);
             }
 
-            // Load the last batch
-            String fileKey = key + totalPage;
+            // Step 2: Load the current active batch
             Type listType = getParameterized(List.class, eClass);
-            List<E> lastPage = getObject(fileKey, listType);
-            if (lastPage == null) lastPage = new ArrayList<>(1);
+            List<E> lastPage = getObject(baseKey + totalPage, listType);
+            if (lastPage == null) lastPage = new ArrayList<>(1); // Optimized capacity
 
             try {
-
-                // Remove an existing matching item if a predicate is provided
-                if (preventDuplication != null) {
-                    boolean removed = removeFirstMatch(lastPage, preventDuplication);
-                    if (!removed) {
-                        List<E> removedList;
-                        for (int i = totalPage - 1; i > startPage; --i) {
-                            fileKey = key + i;
-                            removedList = getObject(fileKey, listType);
-                            if (removedList == null) break;
-                            removed = removeFirstMatch(removedList, preventDuplication);
-                            if (removed) {
-                                writeToFile(fileKey, removedList, listType);
-                                break;
+                // Step 3: Fast Indexed Duplicate Removal
+                if (uniqueId != null && idExtractor != null) {
+                    int position = getInt(baseKey + "index." + uniqueId);
+                    if (position >= startPage) {
+                        boolean removed = false;
+                        if (position == totalPage) {
+                            removed = removeById(lastPage, uniqueId, idExtractor);
+                        } else {
+                            String oldPageKey = baseKey + position;
+                            List<E> olderPage = getObject(oldPageKey, listType);
+                            if (removeById(olderPage, uniqueId, idExtractor)) {
+                                writeToFile(oldPageKey, olderPage, listType);
+                                removed = true;
                             }
                         }
+                        if (removed) --itemCount;
                     }
-                    if (removed) --itemCount;
                 }
 
-                // If the last batch is full, create a new page
+                // Step 4: Handle Page Rotation
                 if (lastPage.size() >= maxBatchSize) {
                     ++totalPage;
                     lastPage = new ArrayList<>(1);
                 }
 
-                // Add the new element to the current batch and update metadata
+                // Step 5: Add Element
                 if (addFirst) lastPage.add(0, element);
                 else lastPage.add(element);
 
-                writeToFile(key + totalPage, lastPage, listType);
-                writeToFile(key + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null);
+                // Step 6: Atomic Writes
+                writeToFile(baseKey + totalPage, lastPage, listType);
+                writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null);
 
-                // Notify the listener about data changes, if applicable
-                if (dataObserver != null) {
-                    dataObserver.onDataChange(key);
+                if (uniqueId != null) {
+                    writeToFile(baseKey + "index." + uniqueId, Integer.toString(totalPage), null);
                 }
+
+                if (dataObserver != null) dataObserver.onDataChange(key);
+
             } catch (Exception e) {
-                notifyError("Error appending data for key: '" + key + "'", e);
+                notifyError("Error in append cycle for: " + key, e);
             }
         } finally {
             lock.writeLock().unlock();
@@ -404,9 +401,7 @@ final class DataManagerImpl implements DataManager {
                         writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
 
                         // Notify the listener about data changes, if applicable
-                        if (dataObserver != null) {
-                            dataObserver.onDataChange(key);
-                        }
+                        if (dataObserver != null) dataObserver.onDataChange(key);
 
                         return true;
                     }
@@ -453,15 +448,11 @@ final class DataManagerImpl implements DataManager {
     @Override
     public void remove(String key) {
 
-        remove(getFile(key + "." + "meta"));
-
-        // Remove the base file
-        remove(getFile(key));
+        getFile(key + "." + "meta").delete();
+        getFile(key).delete();
 
         // Notify the listener about data changes, if applicable
-        if (dataObserver != null) {
-            dataObserver.onDataChange(key);
-        }
+        if (dataObserver != null) dataObserver.onDataChange(key);
     }
 
 
@@ -475,7 +466,7 @@ final class DataManagerImpl implements DataManager {
             if (files != null) {
                 // Loop through each file and remove it
                 for (File file : files) {
-                    remove(file); // Call the remove method for each file
+                    file.delete();
                 }
             }
         } else {
@@ -517,11 +508,6 @@ final class DataManagerImpl implements DataManager {
     }
 
 
-    private boolean remove(File file) {
-        return file != null && file.delete();
-    }
-
-
     private File getFile(String key) {
         // Return the File object located in the directory with the provided key
         return new File(filesDir, key);
@@ -534,9 +520,8 @@ final class DataManagerImpl implements DataManager {
 
 
     private void notifyError(String message, Throwable error) {
-        if (dataObserver != null) {
-            dataObserver.onError(new Throwable(message, error));
-        }
+        if (dataObserver != null) dataObserver.onError(new Throwable(message, error));
+
     }
 
 
@@ -554,6 +539,25 @@ final class DataManagerImpl implements DataManager {
             }
         }
         return false; // nothing removed
+    }
+
+    private <E> boolean removeById(List<E> list, Object uniqueId, Function<E, Object> idExtractor) {
+        if (list == null || uniqueId == null || idExtractor == null) return false;
+
+        for (int i = list.size() - 1; i >= 0; --i) {
+            E item = list.get(i);
+            if (item == null) continue;
+
+            // Extract the ID from the current item
+            Object currentItemId = idExtractor.apply(item);
+
+            // Compare the extracted ID with the one we are looking for
+            if (uniqueId.equals(currentItemId)) {
+                list.remove(i);
+                return true; // Match found and removed
+            }
+        }
+        return false;
     }
 
     private ReadWriteLock getLock(String key) {

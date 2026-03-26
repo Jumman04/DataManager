@@ -5,6 +5,7 @@ import com.jummania.model.PaginatedData;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -393,7 +394,7 @@ public interface DataManager {
      * @param <E>  the type of elements in the list
      */
     default <E> void saveList(String key, List<E> list) {
-        saveList(key, list, list.size(), 25);
+        saveList(key, list, list.size(), 30);
     }
 
 
@@ -406,18 +407,19 @@ public interface DataManager {
      * be removed before adding the new element using the {@code itemToRemove} predicate.
      * </p>
      *
-     * @param <E>                the type of elements in the list
-     * @param key                the unique key identifying the stored paginated list
-     * @param element            the element to append; ignored if {@code null}
-     * @param eClass             the class type of the list elements (for deserialization)
-     * @param listSizeLimit      the maximum total number of elements allowed in storage
-     * @param maxBatchSize       the maximum number of elements per batch
-     * @param addFirst           if {@code true}, the new element is added to the beginning of the list
-     * @param preventDuplication a predicate to identify and remove an existing element; may be {@code null}
+     * @param <E>           the type of elements in the list
+     * @param key           the unique key identifying the stored paginated list
+     * @param element       the element to append; ignored if {@code null}
+     * @param eClass        the class type of the list elements (for deserialization)
+     * @param listSizeLimit the maximum total number of elements allowed in storage
+     * @param maxBatchSize  the maximum number of elements per batch
+     * @param addFirst      if {@code true}, the new element is added to the beginning of the list
+     * @param uniqueId      the unique identifier used to check for duplicates; may be {@code null}
+     * @param idExtractor   a function to extract the unique ID from an element for comparison; may be {@code null}
      * @see #saveList(String, List, int, int)
      * @see #saveObject(String, Object, Type)
      */
-    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Predicate<? super E> preventDuplication);
+    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Object uniqueId, Function<E, Object> idExtractor);
 
 
     /**
@@ -431,10 +433,10 @@ public interface DataManager {
      * @param key     the unique key identifying the stored paginated list
      * @param element the element to append; ignored if {@code null}
      * @param eClass  the class type of the list elements (for deserialization)
-     * @see #appendToList(String, Object, Class, int, int, boolean, Predicate)
+     * @see #appendToList(String, Object, Class, int, int, boolean, Object, Function)
      */
     default <E> void appendToList(String key, E element, Class<E> eClass) {
-        appendToList(key, element, eClass, Integer.MAX_VALUE, 25, false, null);
+        appendToList(key, element, eClass, Integer.MAX_VALUE, 25, false, null, null);
     }
 
 
@@ -456,9 +458,7 @@ public interface DataManager {
      * @param eClass       the class type of the list elements (for deserialization)
      * @param itemToRemove the predicate used to identify the element to remove; must not be {@code null}
      * @return {@code true} if an element was found and removed; {@code false} otherwise
-     *
      */
-
     <E> boolean removeFromList(String key, Class<E> eClass, Predicate<? super E> itemToRemove);
 
 
