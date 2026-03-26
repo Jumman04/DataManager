@@ -394,7 +394,8 @@ final class DataManagerImpl implements DataManager {
                     String currentPageKey = baseKey + i;
                     List<E> currentPage = getObject(currentPageKey, listType);
 
-                    if (currentPage == null) continue; // Skip corrupted/missing pages
+                    if (currentPage == null)
+                        return false; // immediately return false for corrupted/missing pages
 
                     for (int j = currentPage.size() - 1; j >= 0; --j) {
                         if (itemToRemove.test(currentPage.get(j))) {
