@@ -372,7 +372,6 @@ final class DataManagerImpl implements DataManager {
 
     @Override
     public <E> boolean removeFromList(String key, Class<E> eClass, Predicate<? super E> itemToRemove) {
-
         ReadWriteLock lock = getLock(key);
         lock.writeLock().lock();
 
@@ -382,35 +381,42 @@ final class DataManagerImpl implements DataManager {
             MetaData metaData = getMetaData(key);
             if (metaData == null) return false;
 
-            int startPage = metaData.getStartPage(), totalPage = metaData.getTotalPages(), itemCount = metaData.getItemCount(), maxBatchSize = metaData.getMaxBatchSize();
+            int startPage = metaData.getStartPage();
+            int totalPage = metaData.getTotalPages();
+            int itemCount = metaData.getItemCount();
+            int maxBatchSize = metaData.getMaxBatchSize();
 
             Type listType = getParameterized(List.class, eClass);
-
             String baseKey = key + ".";
 
-            boolean removed;
-            List<E> removedList;
             try {
                 for (int i = totalPage; i >= startPage; --i) {
-                    key = baseKey + i;
-                    removedList = getObject(key, listType);
-                    if (removedList == null) return false;
-                    removed = removeFirstMatch(removedList, itemToRemove);
-                    if (removed) {
-                        writeToFile(key, removedList, listType);
-                        writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
+                    String currentPageKey = baseKey + i;
+                    List<E> currentPage = getObject(currentPageKey, listType);
 
-                        // Notify the listener about data changes, if applicable
-                        if (dataObserver != null) dataObserver.onDataChange(key);
+                    if (currentPage == null) continue; // Skip corrupted/missing pages
 
-                        return true;
+                    for (int j = currentPage.size() - 1; j >= 0; --j) {
+                        if (itemToRemove.test(currentPage.get(j))) {
+                            currentPage.remove(j);
+
+                            // Save the modified page
+                            writeToFile(currentPageKey, currentPage, listType);
+
+                            // Update Metadata
+                            writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
+
+                            if (dataObserver != null) dataObserver.onDataChange(key);
+
+                            return true;
+                        }
                     }
                 }
             } catch (Exception e) {
-                notifyError("Error saving data for key: '" + key + "'", e);
+                notifyError("Error removing item for key: '" + key + "'", e);
             }
 
-            return false;
+            return false; // Only returns false if NO page contained the item
         } finally {
             lock.writeLock().unlock();
         }
@@ -529,17 +535,6 @@ final class DataManagerImpl implements DataManager {
         return new PaginatedData<>(Collections.emptyList(), new Pagination(null, currentPage, null, totalPages));
     }
 
-
-    private <E> boolean removeFirstMatch(List<E> list, Predicate<? super E> filter) {
-        if (list == null || filter == null) return false;
-        for (int i = list.size() - 1; i >= 0; --i) {
-            if (filter.test(list.get(i))) {
-                list.remove(i);
-                return true; // removed 1 element
-            }
-        }
-        return false; // nothing removed
-    }
 
     private <E> boolean removeById(List<E> list, Object uniqueId, Function<E, Object> idExtractor) {
         if (list == null || uniqueId == null || idExtractor == null) return false;
