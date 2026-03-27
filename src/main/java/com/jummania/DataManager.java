@@ -441,6 +441,23 @@ public interface DataManager {
 
 
     /**
+     * Removes an element from a paginated list by comparing its unique ID.
+     * <p>
+     * This is a convenience method that uses {@link #removeFromList(String, Class, Predicate)}
+     * with a predicate that checks if the extracted ID matches the provided {@code uniqueId}.
+     * </p>
+     *
+     * @param <E>         the type of elements in the list
+     * @param key         the unique key identifying the paginated list
+     * @param eClass      the class type of the list elements (for deserialization)
+     * @param uniqueId    the unique identifier of the element to remove
+     * @param idExtractor a function to extract the unique ID from an element
+     * @return {@code true} if an element was found and removed; {@code false} otherwise
+     */
+    <E> boolean deleteFromListById(String key, Class<E> eClass, Object uniqueId, Function<E, Object> idExtractor);
+
+
+    /**
      * Removes the first element from a paginated list stored under the given key
      * that matches the provided predicate.
      * <p>

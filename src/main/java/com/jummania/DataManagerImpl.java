@@ -262,28 +262,23 @@ final class DataManagerImpl implements DataManager {
 
                 Class<?> listClass = list.getClass();
 
-                try {
-
-                    // Split the list into smaller batches and store each one
-                    for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
-                        List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
-                        writeToFile(key + ++pos, batch, listClass);  // Store each batch with a unique key
-                    }
-
-                    // Save metadata about the paginated list
-                    writeToFile(key + "meta", MetaData.toMeta(1, pos, listSizeLimit, maxBatchSize), null);
-
-                    // Notify the listener about data changes, if applicable
-                    if (dataObserver != null) dataObserver.onDataChange(key);
-
-
-                } catch (Exception e) {
-                    notifyError("Error saving list for key: '" + key + "'", e);
+                // Split the list into smaller batches and store each one
+                for (int i = 0; i < listSizeLimit; i += batchSizeLimit) {
+                    List<E> batch = list.subList(i, Math.min(i + batchSizeLimit, listSizeLimit));
+                    writeToFile(key + ++pos, batch, listClass);  // Store each batch with a unique key
                 }
+
+                // Save metadata about the paginated list
+                writeToFile(key + "meta", MetaData.toMeta(1, pos, listSizeLimit, maxBatchSize), null);
+
+                // Notify the listener about data changes, if applicable
+                if (dataObserver != null) dataObserver.onDataChange(key);
 
             } else {
                 remove(key);
             }
+        } catch (Exception e) {
+            notifyError("Error saving list for key: '" + key + "'", e);
         } finally {
             lock.writeLock().unlock();
         }
@@ -322,53 +317,107 @@ final class DataManagerImpl implements DataManager {
             List<E> lastPage = getObject(baseKey + totalPage, listType);
             if (lastPage == null) lastPage = new ArrayList<>(1); // Optimized capacity
 
-            try {
-                // Step 3: Fast Indexed Duplicate Removal
-                if (uniqueId != null && idExtractor != null) {
-                    int position = getInt(baseKey + "index." + uniqueId);
-                    if (position >= startPage) {
-                        boolean removed = false;
-                        if (position == totalPage) {
-                            removed = removeById(lastPage, uniqueId, idExtractor);
-                        } else {
-                            String oldPageKey = baseKey + position;
-                            List<E> olderPage = getObject(oldPageKey, listType);
-                            if (removeById(olderPage, uniqueId, idExtractor)) {
-                                writeToFile(oldPageKey, olderPage, listType);
-                                removed = true;
-                            }
+            // Step 3: Fast Indexed Duplicate Removal
+            if (uniqueId != null && idExtractor != null) {
+                int position = getInt(baseKey + "index." + uniqueId);
+                if (position >= startPage) {
+                    boolean removed = false;
+                    if (position == totalPage) {
+                        removed = removeById(lastPage, uniqueId, idExtractor);
+                    } else {
+                        String oldPageKey = baseKey + position;
+                        List<E> olderPage = getObject(oldPageKey, listType);
+                        if (removeById(olderPage, uniqueId, idExtractor)) {
+                            writeToFile(oldPageKey, olderPage, listType);
+                            removed = true;
                         }
-                        if (removed) --itemCount;
                     }
+                    if (removed) --itemCount;
                 }
-
-                // Step 4: Handle Page Rotation
-                if (lastPage.size() >= maxBatchSize) {
-                    ++totalPage;
-                    lastPage = new ArrayList<>(1);
-                }
-
-                // Step 5: Add Element
-                if (addFirst) lastPage.add(0, element);
-                else lastPage.add(element);
-
-                // Step 6: Atomic Writes
-                writeToFile(baseKey + totalPage, lastPage, listType);
-                writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null);
-
-                if (uniqueId != null) {
-                    writeToFile(baseKey + "index." + uniqueId, Integer.toString(totalPage), null);
-                }
-
-                if (dataObserver != null) dataObserver.onDataChange(key);
-
-            } catch (Exception e) {
-                notifyError("Error in append cycle for: " + key, e);
             }
+
+            // Step 4: Handle Page Rotation
+            if (lastPage.size() >= maxBatchSize) {
+                ++totalPage;
+                lastPage = new ArrayList<>(1);
+            }
+
+            // Step 5: Add Element
+            if (addFirst) lastPage.add(0, element);
+            else lastPage.add(element);
+
+            // Step 6: Atomic Writes
+            writeToFile(baseKey + totalPage, lastPage, listType);
+            writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount + 1, maxBatchSize), null);
+
+            if (uniqueId != null) {
+                writeToFile(baseKey + "index." + uniqueId, Integer.toString(totalPage), null);
+            }
+
+            if (dataObserver != null) dataObserver.onDataChange(key);
+
+        } catch (Exception e) {
+            notifyError("Error in append cycle for: " + key, e);
         } finally {
             lock.writeLock().unlock();
         }
     }
+
+
+    @Override
+    public <E> boolean deleteFromListById(String key, Class<E> eClass, Object uniqueId, Function<E, Object> idExtractor) {
+        ReadWriteLock lock = getLock(key);
+        lock.writeLock().lock();
+
+        try {
+            if (uniqueId == null || idExtractor == null) return false;
+
+            MetaData metaData = getMetaData(key);
+            if (metaData == null) return false;
+
+            int startPage = metaData.getStartPage();
+
+            String baseKey = key + ".";
+            String positionKey = baseKey + "index." + uniqueId;
+
+            int position = getInt(positionKey);
+
+            // Only proceed if the index points to an existing (not deleted) page
+            if (position >= startPage) {
+                Type listType = getParameterized(List.class, eClass);
+                String targetPageKey = baseKey + position;
+
+                List<E> pageData = getObject(targetPageKey, listType);
+
+                // Use the private helper we wrote earlier
+                if (removeById(pageData, uniqueId, idExtractor)) {
+                    // 1. Save the updated page
+                    writeToFile(targetPageKey, pageData, listType);
+
+                    // 2. Update Metadata with decremented count
+                    int totalPage = metaData.getTotalPages();
+                    int itemCount = Math.max(0, metaData.getItemCount() - 1);
+                    int maxBatchSize = metaData.getMaxBatchSize();
+                    writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount, maxBatchSize), null);
+
+                    // 3. Delete the index file (Cleanup)
+                    getFile(positionKey).delete();
+
+                    // 4. Notify UI
+                    if (dataObserver != null) dataObserver.onDataChange(key);
+
+                    return true; // Successfully found and removed!
+                }
+            }
+        } catch (Exception e) {
+            notifyError("Error removing item by ID for key: '" + key + "'", e);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        return false; // Item not found or error occurred
+    }
+
 
     @Override
     public <E> boolean removeFromList(String key, Class<E> eClass, Predicate<? super E> itemToRemove) {
@@ -383,44 +432,42 @@ final class DataManagerImpl implements DataManager {
 
             int startPage = metaData.getStartPage();
             int totalPage = metaData.getTotalPages();
-            int itemCount = metaData.getItemCount();
-            int maxBatchSize = metaData.getMaxBatchSize();
 
             Type listType = getParameterized(List.class, eClass);
             String baseKey = key + ".";
 
-            try {
-                for (int i = totalPage; i >= startPage; --i) {
-                    String currentPageKey = baseKey + i;
-                    List<E> currentPage = getObject(currentPageKey, listType);
+            for (int i = totalPage; i >= startPage; --i) {
+                String currentPageKey = baseKey + i;
+                List<E> currentPage = getObject(currentPageKey, listType);
 
-                    if (currentPage == null)
-                        return false; // immediately return false for corrupted/missing pages
+                if (currentPage == null)
+                    return false; // immediately return false for corrupted/missing pages
 
-                    for (int j = currentPage.size() - 1; j >= 0; --j) {
-                        if (itemToRemove.test(currentPage.get(j))) {
-                            currentPage.remove(j);
+                for (int j = currentPage.size() - 1; j >= 0; --j) {
+                    if (itemToRemove.test(currentPage.get(j))) {
+                        currentPage.remove(j);
 
-                            // Save the modified page
-                            writeToFile(currentPageKey, currentPage, listType);
+                        // Save the modified page
+                        writeToFile(currentPageKey, currentPage, listType);
 
-                            // Update Metadata
-                            writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount - 1, maxBatchSize), null);
+                        // Update Metadata
+                        int itemCount = Math.max(0, metaData.getItemCount() - 1);
+                        int maxBatchSize = metaData.getMaxBatchSize();
+                        writeToFile(baseKey + "meta", MetaData.toMeta(startPage, totalPage, itemCount, maxBatchSize), null);
 
-                            if (dataObserver != null) dataObserver.onDataChange(key);
+                        if (dataObserver != null) dataObserver.onDataChange(key);
 
-                            return true;
-                        }
+                        return true;
                     }
                 }
-            } catch (Exception e) {
-                notifyError("Error removing item for key: '" + key + "'", e);
             }
 
-            return false; // Only returns false if NO page contained the item
+        } catch (Exception e) {
+            notifyError("Error removing item for key: '" + key + "'", e);
         } finally {
             lock.writeLock().unlock();
         }
+        return false; // Only returns false if NO page contained the item
     }
 
 
