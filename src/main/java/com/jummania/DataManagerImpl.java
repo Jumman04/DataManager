@@ -6,8 +6,6 @@ import com.jummania.model.MetaData;
 import com.jummania.model.PaginatedData;
 import com.jummania.model.Pagination;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -133,12 +131,12 @@ final class DataManagerImpl implements DataManager {
 
     @Override
     public String getString(String key, String defValue) {
-
-        try (BufferedReader bufferedReader = new BufferedReader(getReader(key))) {
+        try (Reader reader = getReader(key)) {
             StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
+            int read;
+            char[] buffer = new char[defaultCharBufferSize];
+            while ((read = reader.read(buffer)) != -1) {
+                sb.append(buffer, 0, read);
             }
             return sb.toString();
         } catch (FileNotFoundException e) {
@@ -558,7 +556,7 @@ final class DataManagerImpl implements DataManager {
 
 
     private Reader getReader(String key) throws Exception {
-        return new InputStreamReader(new BufferedInputStream(new FileInputStream(getFile(key)), defaultCharBufferSize));
+        return new InputStreamReader(new FileInputStream(getFile(key)), StandardCharsets.UTF_8);
     }
 
 
