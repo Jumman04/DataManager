@@ -317,15 +317,18 @@ final class DataManagerImpl implements DataManager {
 
             String uniqueId = null;
 
+            boolean removedFromLastPage = false;
+
             // Step 3: Fast Indexed Duplicate Removal
             if (idExtractor != null) {
                 uniqueId = idExtractor.apply(element);
+                System.err.println("uniqueId: " + uniqueId);
 
-                int position = getInt(baseKey + "index." + uniqueId);
+                int position = getInt(baseKey + "index." + uniqueId, -1);
                 if (position >= startPage) {
                     boolean removed = false;
                     if (position == totalPage) {
-                        removed = removeById(lastPage, uniqueId, idExtractor);
+                        removedFromLastPage = removeById(lastPage, uniqueId, idExtractor);
                     } else {
                         String oldPageKey = baseKey + position;
                         List<E> olderPage = getObject(oldPageKey, listType);
@@ -334,12 +337,16 @@ final class DataManagerImpl implements DataManager {
                             removed = true;
                         }
                     }
-                    if (removed) --itemCount;
+                    if (removedFromLastPage || removed) {
+                        --itemCount;
+                        System.err.println("removed");
+                    }
                 }
             }
 
             // Step 4: Handle Page Rotation
             if (lastPage.size() >= maxBatchSize) {
+                if (removedFromLastPage) writeToFile(baseKey + totalPage, lastPage, listType);
                 ++totalPage;
                 lastPage = new ArrayList<>(1);
             }
@@ -354,6 +361,7 @@ final class DataManagerImpl implements DataManager {
 
             if (uniqueId != null) {
                 writeToFile(baseKey + "index." + uniqueId, Integer.toString(totalPage), null);
+                System.err.println("saved: " + uniqueId);
             }
 
             if (dataObserver != null) dataObserver.onDataChange(key);
