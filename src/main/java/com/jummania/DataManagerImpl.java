@@ -593,11 +593,8 @@ final class DataManagerImpl implements DataManager {
             E item = list.get(i);
             if (item == null) continue;
 
-            // Extract the ID from the current item
-            Object currentItemId = idExtractor.apply(item);
-
             // Compare the extracted ID with the one we are looking for
-            if (uniqueId.equals(currentItemId)) {
+            if (uniqueId.equals(idExtractor.apply(item))) {
                 list.remove(i);
                 return true; // Match found and removed
             }
