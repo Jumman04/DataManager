@@ -322,8 +322,6 @@ final class DataManagerImpl implements DataManager {
 
             String uniqueId = null;
 
-            boolean removedFromLastPage = false;
-
             // Step 3: Fast Indexed Duplicate Removal
             if (idExtractor != null) {
                 uniqueId = idExtractor.apply(element);
@@ -332,7 +330,7 @@ final class DataManagerImpl implements DataManager {
                 if (position >= startPage) {
                     boolean removed = false;
                     if (position == totalPage) {
-                        removedFromLastPage = removeById(lastPage, uniqueId, idExtractor);
+                        removed = removeById(lastPage, uniqueId, idExtractor);
                     } else {
                         String oldPageKey = baseKey + position;
                         List<E> olderPage = getObject(oldPageKey, listType);
@@ -341,15 +339,12 @@ final class DataManagerImpl implements DataManager {
                             removed = true;
                         }
                     }
-                    if (removedFromLastPage || removed) {
-                        --itemCount;
-                    }
+                    if (removed) --itemCount;
                 }
             }
 
             // Step 4: Handle Page Rotation
             if (lastPage.size() >= maxBatchSize) {
-                if (removedFromLastPage) writeToFile(baseKey + totalPage, lastPage, listType);
                 ++totalPage;
                 lastPage = new ArrayList<>(1);
             }
