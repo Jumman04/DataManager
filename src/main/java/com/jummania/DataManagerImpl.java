@@ -284,7 +284,7 @@ final class DataManagerImpl implements DataManager {
 
 
     @Override
-    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Object uniqueId, Function<E, Object> idExtractor) {
+    public <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Function<E, String> idExtractor) {
         ReadWriteLock lock = getLock(key);
         lock.writeLock().lock();
 
@@ -315,8 +315,12 @@ final class DataManagerImpl implements DataManager {
             List<E> lastPage = getObject(baseKey + totalPage, listType);
             if (lastPage == null) lastPage = new ArrayList<>(1); // Optimized capacity
 
+            String uniqueId = null;
+
             // Step 3: Fast Indexed Duplicate Removal
-            if (uniqueId != null && idExtractor != null) {
+            if (idExtractor != null) {
+                uniqueId = idExtractor.apply(element);
+
                 int position = getInt(baseKey + "index." + uniqueId);
                 if (position >= startPage) {
                     boolean removed = false;
@@ -363,7 +367,7 @@ final class DataManagerImpl implements DataManager {
 
 
     @Override
-    public <E> boolean deleteFromListById(String key, Class<E> eClass, Object uniqueId, Function<E, Object> idExtractor) {
+    public <E> boolean deleteFromListById(String key, Class<E> eClass, String uniqueId, Function<E, String> idExtractor) {
         ReadWriteLock lock = getLock(key);
         lock.writeLock().lock();
 
@@ -582,7 +586,7 @@ final class DataManagerImpl implements DataManager {
     }
 
 
-    private <E> boolean removeById(List<E> list, Object uniqueId, Function<E, Object> idExtractor) {
+    private <E> boolean removeById(List<E> list, String uniqueId, Function<E, String> idExtractor) {
         if (list == null || uniqueId == null || idExtractor == null) return false;
 
         for (int i = list.size() - 1; i >= 0; --i) {

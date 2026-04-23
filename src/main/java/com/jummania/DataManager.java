@@ -414,12 +414,11 @@ public interface DataManager {
      * @param listSizeLimit the maximum total number of elements allowed in storage
      * @param maxBatchSize  the maximum number of elements per batch
      * @param addFirst      if {@code true}, the new element is added to the beginning of the list
-     * @param uniqueId      the unique identifier used to check for duplicates; may be {@code null}
      * @param idExtractor   a function to extract the unique ID from an element for comparison; may be {@code null}
      * @see #saveList(String, List, int, int)
      * @see #saveObject(String, Object, Type)
      */
-    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Object uniqueId, Function<E, Object> idExtractor);
+    <E> void appendToList(String key, E element, Class<E> eClass, int listSizeLimit, int maxBatchSize, boolean addFirst, Function<E, String> idExtractor);
 
 
     /**
@@ -433,10 +432,9 @@ public interface DataManager {
      * @param key     the unique key identifying the stored paginated list
      * @param element the element to append; ignored if {@code null}
      * @param eClass  the class type of the list elements (for deserialization)
-     * @see #appendToList(String, Object, Class, int, int, boolean, Object, Function)
      */
     default <E> void appendToList(String key, E element, Class<E> eClass) {
-        appendToList(key, element, eClass, Integer.MAX_VALUE, 25, false, null, null);
+        appendToList(key, element, eClass, Integer.MAX_VALUE, 25, false, null);
     }
 
 
@@ -454,7 +452,7 @@ public interface DataManager {
      * @param idExtractor a function to extract the unique ID from an element
      * @return {@code true} if an element was found and removed; {@code false} otherwise
      */
-    <E> boolean deleteFromListById(String key, Class<E> eClass, Object uniqueId, Function<E, Object> idExtractor);
+    <E> boolean deleteFromListById(String key, Class<E> eClass, String uniqueId, Function<E, String> idExtractor);
 
 
     /**
