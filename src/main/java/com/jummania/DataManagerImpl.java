@@ -601,8 +601,11 @@ final class DataManagerImpl implements DataManager {
             E item = list.get(i);
             if (item == null) continue;
 
+            String s = idExtractor.apply(item);
+            System.err.println(uniqueId.equals(s));
+
             // Compare the extracted ID with the one we are looking for
-            if (uniqueId.equals(idExtractor.apply(item))) {
+            if (uniqueId.equals(s)) {
                 list.remove(i);
                 return true; // Match found and removed
             }
