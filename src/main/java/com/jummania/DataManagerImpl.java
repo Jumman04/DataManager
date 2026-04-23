@@ -291,8 +291,15 @@ final class DataManagerImpl implements DataManager {
         try {
             if (element == null) return;
             MetaData metaData = getMetaData(key);
+
+            String baseKey = key + ".";
+
             if (metaData == null) {
                 saveList(key, Collections.singletonList(element), listSizeLimit, maxBatchSize);
+
+                if (idExtractor != null) {
+                    writeToFile(baseKey + "index." + idExtractor.apply(element), Integer.toString(1), null);
+                }
                 return;
             }
 
@@ -300,8 +307,6 @@ final class DataManagerImpl implements DataManager {
             int totalPage = metaData.getTotalPages();
             int itemCount = metaData.getItemCount();
             maxBatchSize = metaData.getMaxBatchSize();
-
-            String baseKey = key + ".";
 
             // Step 1: Handle List Size Limit (O(1) operation)
             if (itemCount >= listSizeLimit) {
@@ -322,7 +327,6 @@ final class DataManagerImpl implements DataManager {
             // Step 3: Fast Indexed Duplicate Removal
             if (idExtractor != null) {
                 uniqueId = idExtractor.apply(element);
-                System.err.println("uniqueId: " + uniqueId);
 
                 int position = getInt(baseKey + "index." + uniqueId, -1);
                 if (position >= startPage) {
@@ -339,7 +343,6 @@ final class DataManagerImpl implements DataManager {
                     }
                     if (removedFromLastPage || removed) {
                         --itemCount;
-                        System.err.println("removed");
                     }
                 }
             }
@@ -361,7 +364,6 @@ final class DataManagerImpl implements DataManager {
 
             if (uniqueId != null) {
                 writeToFile(baseKey + "index." + uniqueId, Integer.toString(totalPage), null);
-                System.err.println("saved: " + uniqueId);
             }
 
             if (dataObserver != null) dataObserver.onDataChange(key);
@@ -601,11 +603,8 @@ final class DataManagerImpl implements DataManager {
             E item = list.get(i);
             if (item == null) continue;
 
-            String s = idExtractor.apply(item);
-            System.err.println(uniqueId.equals(s));
-
             // Compare the extracted ID with the one we are looking for
-            if (uniqueId.equals(s)) {
+            if (uniqueId.equals(idExtractor.apply(item))) {
                 list.remove(i);
                 return true; // Match found and removed
             }
