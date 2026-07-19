@@ -1,18 +1,20 @@
 package com.jummania;
 
+import com.jummania.interfaces.Reader;
+import com.jummania.interfaces.Writer;
 import sun.misc.Unsafe;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class Parser {
 
     private static final Unsafe UNSAFE;
-    private static final ConcurrentHashMap<Class<?>, Field[]> FIELD_CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Class<?>, FieldMap> FIELD_CACHE = new ConcurrentHashMap<>();
 
     static {
         try {
@@ -24,30 +26,27 @@ public final class Parser {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> T newInstance(Class<T> clazz) {
-        try {
-            return (T) UNSAFE.allocateInstance(clazz);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     static void main() throws Exception {
-        Writer writer = new Writer(14, "hello world");
-        byte[] ser = serialize(writer);
-        System.out.println(deserialize(ser, String.class));
+        //  Writer writer = new Writer(14, "hello world");
+        //  byte[] ser = serialize(writer);
+        //  System.out.println(deserialize(ser, Writer.class));
     }
 
-    private static Field[] getFields(Class<?> clazz) {
+    private static FieldMap getFieldMap(Class<?> clazz) {
         return FIELD_CACHE.computeIfAbsent(clazz, c -> {
+
             Field[] fields = c.getDeclaredFields();
 
+            HashMap<String, Field> map = new HashMap<>(fields.length * 2);
+
             for (Field field : fields) {
+
                 field.setAccessible(true);
+
+                map.put(field.getName(), field);
             }
 
-            return fields;
+            return new FieldMap(fields, map);
         });
     }
 
@@ -57,106 +56,110 @@ public final class Parser {
         return sb.toByteArray();
     }
 
-    private static void serialize(Object obj, ByteBuilder sb) {
+    private static void serialize(Object obj, Writer writer) {
 
-        if (obj == null) return;
+        if (obj == null) {
+            return;
+        }
 
         Class<?> clazz = obj.getClass();
 
-        if (appendPrimitive(clazz, obj, sb)) return;
-
-
-        // Array
-        if (clazz.isArray()) {
-
-            int length = Array.getLength(obj);
-
-            sb.writeInt(length);
-
-            for (int i = 0; i < length; i++) {
-                serialize(Array.get(obj, i), sb);
-            }
-
-            return;
-        }
-
-        // Collection
-        if (obj instanceof Collection<?> collection) {
-
-            sb.writeInt(collection.size());
-
-            for (Object item : collection) {
-                serialize(item, sb);
-            }
-
-            return;
-        }
-
         try {
-            // Object fields
-            for (Field field : getFields(clazz)) {
 
-                String name = field.getName();
-                Object value = null;
-
-                value = field.get(obj);
-
-                sb.writeString(name);
-                serialize(value, sb);
+            // Primitive / String
+            if (appendPrimitive(clazz, obj, writer)) {
+                return;
             }
 
-        } catch (IllegalAccessException e) {
+            // Array
+            if (clazz.isArray()) {
+
+                int length = Array.getLength(obj);
+
+                writer.writeInt(length);
+
+                for (int i = 0; i < length; i++) {
+                    serialize(Array.get(obj, i), writer);
+                }
+
+                return;
+            }
+
+            // Collection
+            if (obj instanceof Collection<?> collection) {
+
+                writer.writeInt(collection.size());
+
+                for (Object item : collection) {
+                    serialize(item, writer);
+                }
+
+                return;
+            }
+
+            // Object
+            for (Field field : getFieldMap(clazz).fields()) {
+
+                Object value = field.get(obj);
+
+                writer.writeString(field.getName());
+
+                serialize(value, writer);
+            }
+
+            // End Of Object
+            writer.writeInt(-1);
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
-    private static boolean appendPrimitive(Class<?> clazz, Object obj, ByteBuilder sb) {
+    private static boolean appendPrimitive(Class<?> clazz, Object obj, Writer writer) throws IOException {
 
         if (clazz == Integer.class) {
-            sb.writeInt((Integer) obj);
+            writer.writeInt((Integer) obj);
             return true;
         }
 
         if (clazz == Long.class) {
-            sb.writeLong((Long) obj);
+            writer.writeLong((Long) obj);
             return true;
         }
 
         if (clazz == Short.class) {
-            sb.writeShort((Short) obj);
+            writer.writeShort((Short) obj);
             return true;
         }
 
         if (clazz == Byte.class) {
-            sb.writeByte((Byte) obj);
+            writer.writeByte((Byte) obj);
             return true;
         }
 
         if (clazz == Character.class) {
-            sb.writeChar((Character) obj);
+            writer.writeChar((Character) obj);
             return true;
         }
 
         if (clazz == Boolean.class) {
-            sb.writeBoolean((Boolean) obj);
+            writer.writeBoolean((Boolean) obj);
             return true;
         }
 
         if (clazz == Float.class) {
-            sb.writeFloat((Float) obj);
+            writer.writeFloat((Float) obj);
             return true;
         }
 
         if (clazz == Double.class) {
-            sb.writeDouble((Double) obj);
+            writer.writeDouble((Double) obj);
             return true;
         }
 
 
         if (clazz == String.class) {
-            sb.writeString((String) obj);
+            writer.writeString((String) obj);
             return true;
         }
 
@@ -164,36 +167,29 @@ public final class Parser {
     }
 
 
-    public static <T> T deserialize(byte[] bytes, Class<T> clazz) throws Exception {
+    @SuppressWarnings("unchecked")
+    public static <T> T deserialize(byte[] bytes, Class<T> clazz, Reader reader) throws Exception {
 
         try {
-
-            ByteReader reader = new ByteReader(bytes);
 
             Object primitive = readPrimitive(clazz, reader);
 
             if (primitive != null) return (T) primitive;
 
-            T object = newInstance(clazz);
+            T object = (T) UNSAFE.allocateInstance(clazz);
 
-            while (reader.hasRemaining()) {
 
-                String fieldName = reader.readString();
+            int length;
+            while ((length = reader.readInt()) != -1) {
+                String fieldName = reader.readString(length);
 
-                Field field;
+                Field field = getFieldMap(clazz).map().get(fieldName);
 
-                try {
-                    field = clazz.getDeclaredField(fieldName);
-                } catch (NoSuchFieldException e) {
-                    return null; // mismatch
-                }
+                if (field == null) return null;
 
-                field.setAccessible(true);
-
-                Object value = readPrimitive(field.getType(), reader);
-
-                field.set(object, value);
+                readAndSet(field, object, reader);
             }
+
 
             return object;
 
@@ -202,7 +198,7 @@ public final class Parser {
         }
     }
 
-    private static Object readPrimitive(Class<?> type, ByteReader reader) {
+    private static Object readPrimitive(Class<?> type, Reader reader) throws IOException {
 
         if (type == int.class || type == Integer.class) return reader.readInt();
 
@@ -225,28 +221,44 @@ public final class Parser {
         return null;
     }
 
+    private static void readAndSet(Field field, Object object, Reader reader) throws Exception {
 
-    public static class Writers {
-        final List<Writer> list = new ArrayList<>();
+        Class<?> type = field.getType();
 
-        public Writers() {
-            list.add(new Writer(13, "jumman"));
-            list.add(new Writer(11111, "111111"));
-        }
-    }
-
-    public static class Writer {
-        private final int id;
-        private final String title;
-
-        public Writer(int id, String title) {
-            this.id = id;
-            this.title = title;
-        }
-
-        @Override
-        public String toString() {
-            return id + " : " + title;
+        if (type == int.class) {
+            field.setInt(object, reader.readInt());
+        } else if (type == Integer.class) {
+            field.set(object, reader.readInt());
+        } else if (type == long.class) {
+            field.setLong(object, reader.readLong());
+        } else if (type == Long.class) {
+            field.set(object, reader.readLong());
+        } else if (type == short.class) {
+            field.setShort(object, reader.readShort());
+        } else if (type == Short.class) {
+            field.set(object, reader.readShort());
+        } else if (type == byte.class) {
+            field.setByte(object, reader.readByte());
+        } else if (type == Byte.class) {
+            field.set(object, reader.readByte());
+        } else if (type == char.class) {
+            field.setChar(object, reader.readChar());
+        } else if (type == Character.class) {
+            field.set(object, reader.readChar());
+        } else if (type == boolean.class) {
+            field.setBoolean(object, reader.readBoolean());
+        } else if (type == Boolean.class) {
+            field.set(object, reader.readBoolean());
+        } else if (type == float.class) {
+            field.setFloat(object, reader.readFloat());
+        } else if (type == Float.class) {
+            field.set(object, reader.readFloat());
+        } else if (type == double.class) {
+            field.setDouble(object, reader.readDouble());
+        } else if (type == Double.class) {
+            field.set(object, reader.readDouble());
+        } else if (type == String.class) {
+            field.set(object, reader.readString());
         }
     }
 }

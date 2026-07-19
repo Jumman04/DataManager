@@ -1,8 +1,10 @@
 package com.jummania;
 
+import com.jummania.interfaces.Writer;
+
 import java.nio.charset.StandardCharsets;
 
-public final class ByteBuilder {
+public final class ByteBuilder implements Writer {
 
     private byte[] data = new byte[256];
     private int size;
@@ -29,16 +31,19 @@ public final class ByteBuilder {
         }
     }
 
+    @Override
     public void writeByte(byte value) {
         ensureCapacity(1);
         data[size++] = value;
     }
 
+    @Override
     public void writeBoolean(boolean value) {
         ensureCapacity(1);
         data[size++] = (byte) (value ? 1 : 0);
     }
 
+    @Override
     public void writeShort(short value) {
         ensureCapacity(2);
 
@@ -46,6 +51,7 @@ public final class ByteBuilder {
         data[size++] = (byte) value;
     }
 
+    @Override
     public void writeChar(char value) {
         ensureCapacity(2);
 
@@ -53,6 +59,7 @@ public final class ByteBuilder {
         data[size++] = (byte) value;
     }
 
+    @Override
     public void writeInt(int value) {
         ensureCapacity(4);
 
@@ -62,6 +69,7 @@ public final class ByteBuilder {
         data[size++] = (byte) value;
     }
 
+    @Override
     public void writeLong(long value) {
         ensureCapacity(8);
 
@@ -75,13 +83,16 @@ public final class ByteBuilder {
         data[size++] = (byte) value;
     }
 
+    @Override
     public void writeFloat(float value) {
         writeInt(Float.floatToIntBits(value));
     }
 
+    @Override
     public void writeDouble(double value) {
         writeLong(Double.doubleToLongBits(value));
     }
+
 
     public void writeBytes(byte[] bytes) {
 
@@ -94,6 +105,7 @@ public final class ByteBuilder {
         size += length;
     }
 
+    @Override
     public void writeString(String value) {
 
         if (value == null) {
