@@ -4,13 +4,11 @@ import com.jummania.interfaces.Reader;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
 import static com.jummania.Parser.UNSAFE;
-import static com.jummania.Parser.getFieldMap;
 
 @SuppressWarnings("unchecked")
 public class Deserializer {
@@ -77,15 +75,15 @@ public class Deserializer {
 
                 String fieldName = reader.readString(length);
 
-                Field field = getFieldMap(clazz).map().get(fieldName);
+                FastCache.CachedField field = FastCache.get(clazz).map().get(fieldName);
 
                 if (field == null) return null;
 
-                Type fieldType = field.getGenericType();
+                Type fieldType = field.genericType();
 
                 Object value = deserialize(fieldType, reader);
 
-                field.set(object, value);
+                field.field().set(object, value);
             }
 
             return object;

@@ -94,6 +94,7 @@ public final class ByteBuilder implements Writer {
     }
 
 
+    @Override
     public void writeBytes(byte[] bytes) {
 
         int length = bytes.length;

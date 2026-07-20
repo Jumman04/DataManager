@@ -44,7 +44,7 @@ public final class Parser {
         });
     }
 
-    void main() throws Exception {
+    void main() {
 
 
         User user = new User(14, "hello world");

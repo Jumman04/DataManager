@@ -21,4 +21,6 @@ public interface Writer {
     void writeDouble(double value) throws IOException;
 
     void writeString(String value) throws IOException;
+
+    void writeBytes(byte[] bytes) throws IOException;
 }

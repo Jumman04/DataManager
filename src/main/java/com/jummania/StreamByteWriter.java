@@ -55,6 +55,7 @@ public final class StreamByteWriter implements Writer {
         out.writeDouble(value);
     }
 
+    @Override
     public void writeBytes(byte[] bytes) throws IOException {
         out.write(bytes);
     }
