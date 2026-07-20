@@ -127,11 +127,9 @@ public class Serializer {
                     case FastCache.STRING -> writer.writeString((String) field.get(obj));
 
                     default -> {
-
                         Object value = field.get(obj);
 
                         if (value != null) {
-
                             serialize(value, cached.rawType(), writer);
                         }
                     }

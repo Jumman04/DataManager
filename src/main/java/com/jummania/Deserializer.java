@@ -8,7 +8,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-import static com.jummania.Parser.UNSAFE;
+import static com.jummania.FastCache.UNSAFE;
 
 @SuppressWarnings("unchecked")
 public class Deserializer {

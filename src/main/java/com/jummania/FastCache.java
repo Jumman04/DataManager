@@ -1,5 +1,7 @@
 package com.jummania;
 
+import sun.misc.Unsafe;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -23,8 +25,18 @@ public final class FastCache {
     public static final byte COLLECTION = 11;
     public static final byte OBJECT = 12;
 
-    private static final ConcurrentHashMap<Class<?>, FieldMap> CACHE =
-            new ConcurrentHashMap<>();
+    static final Unsafe UNSAFE;
+    private static final ConcurrentHashMap<Class<?>, FieldMap> CACHE = new ConcurrentHashMap<>();
+
+    static {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            UNSAFE = (Unsafe) f.get(null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private FastCache() {
     }
@@ -39,8 +51,7 @@ public final class FastCache {
 
         CachedField[] fields = new CachedField[declared.length];
 
-        HashMap<String, CachedField> map =
-                new HashMap<>((int) (declared.length / 0.75f) + 1);
+        HashMap<String, CachedField> map = new HashMap<>((int) (declared.length / 0.75f) + 1);
 
         int count = 0;
 
@@ -48,9 +59,7 @@ public final class FastCache {
 
             int modifiers = field.getModifiers();
 
-            if (Modifier.isStatic(modifiers)
-                    || Modifier.isTransient(modifiers)
-                    || field.isSynthetic()) {
+            if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers) || field.isSynthetic()) {
                 continue;
             }
 
@@ -62,19 +71,9 @@ public final class FastCache {
 
             byte kind = resolveKind(rawType);
 
-            Type genericType =
-                    kind == COLLECTION
-                            ? field.getGenericType()
-                            : rawType;
+            Type genericType = kind == COLLECTION ? field.getGenericType() : rawType;
 
-            CachedField cached =
-                    new CachedField(
-                            field,
-                            rawType,
-                            genericType,
-                            name.getBytes(StandardCharsets.UTF_8),
-                            kind
-                    );
+            CachedField cached = new CachedField(field, rawType, genericType, name.getBytes(StandardCharsets.UTF_8), kind);
 
             fields[count++] = cached;
 
@@ -90,54 +89,34 @@ public final class FastCache {
 
     private static byte resolveKind(Class<?> type) {
 
-        if (type == int.class || type == Integer.class)
-            return INT;
+        if (type == int.class || type == Integer.class) return INT;
 
-        if (type == long.class || type == Long.class)
-            return LONG;
+        if (type == long.class || type == Long.class) return LONG;
 
-        if (type == short.class || type == Short.class)
-            return SHORT;
+        if (type == short.class || type == Short.class) return SHORT;
 
-        if (type == byte.class || type == Byte.class)
-            return BYTE;
+        if (type == byte.class || type == Byte.class) return BYTE;
 
-        if (type == char.class || type == Character.class)
-            return CHAR;
+        if (type == char.class || type == Character.class) return CHAR;
 
-        if (type == boolean.class || type == Boolean.class)
-            return BOOLEAN;
+        if (type == boolean.class || type == Boolean.class) return BOOLEAN;
 
-        if (type == float.class || type == Float.class)
-            return FLOAT;
+        if (type == float.class || type == Float.class) return FLOAT;
 
-        if (type == double.class || type == Double.class)
-            return DOUBLE;
+        if (type == double.class || type == Double.class) return DOUBLE;
 
-        if (type == String.class)
-            return STRING;
+        if (type == String.class) return STRING;
 
-        if (type.isArray())
-            return ARRAY;
+        if (type.isArray()) return ARRAY;
 
-        if (java.util.Collection.class.isAssignableFrom(type))
-            return COLLECTION;
+        if (java.util.Collection.class.isAssignableFrom(type)) return COLLECTION;
 
         return OBJECT;
     }
 
-    public record CachedField(
-            Field field,
-            Class<?> rawType,
-            Type genericType,
-            byte[] nameBytes,
-            byte kind
-    ) {
+    public record CachedField(Field field, Class<?> rawType, Type genericType, byte[] nameBytes, byte kind) {
     }
 
-    public record FieldMap(
-            CachedField[] fields,
-            HashMap<String, CachedField> map
-    ) {
+    public record FieldMap(CachedField[] fields, HashMap<String, CachedField> map) {
     }
 }
