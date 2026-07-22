@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
 
 import static com.jummania.FastCache.UNSAFE;
 
@@ -58,32 +59,64 @@ public class Deserializer {
                 }
             }
 
-            // Normal object
             if (!(type instanceof Class<?> clazz)) {
                 throw new IllegalArgumentException("Unsupported type: " + type);
             }
 
             T object = (T) UNSAFE.allocateInstance(clazz);
 
+            HashMap<String, FastCache.CachedField> map = FastCache.get(clazz).map();
+
             while (true) {
 
-                int length = reader.readInt();
+                int nameLength = reader.readInt();
 
-                if (length == -1) {
+                if (nameLength == -1) {
                     break;
                 }
 
-                String fieldName = reader.readString(length);
+                FastCache.CachedField field = map.get(reader.readString(nameLength));
 
-                FastCache.CachedField field = FastCache.get(clazz).map().get(fieldName);
+                if (field == null) continue;
 
-                if (field == null) return null;
+                switch (field.kind()) {
 
-                Type fieldType = field.genericType();
+                    case FastCache.INT -> field.field().setInt(object, reader.readInt());
 
-                Object value = deserialize(fieldType, reader);
+                    case FastCache.INTEGER -> field.field().set(object, reader.readInt());
 
-                field.field().set(object, value);
+                    case FastCache.LONG -> field.field().setLong(object, reader.readLong());
+
+                    case FastCache.LONG_OBJ -> field.field().set(object, reader.readLong());
+
+                    case FastCache.SHORT -> field.field().setShort(object, reader.readShort());
+
+                    case FastCache.SHORT_OBJ -> field.field().set(object, reader.readShort());
+
+                    case FastCache.BYTE -> field.field().setByte(object, reader.readByte());
+
+                    case FastCache.BYTE_OBJ -> field.field().set(object, reader.readByte());
+
+                    case FastCache.CHAR -> field.field().setChar(object, reader.readChar());
+
+                    case FastCache.CHARACTER -> field.field().set(object, reader.readChar());
+
+                    case FastCache.BOOLEAN -> field.field().setBoolean(object, reader.readBoolean());
+
+                    case FastCache.BOOLEAN_OBJ -> field.field().set(object, reader.readBoolean());
+
+                    case FastCache.FLOAT -> field.field().setFloat(object, reader.readFloat());
+
+                    case FastCache.FLOAT_OBJ -> field.field().set(object, reader.readFloat());
+
+                    case FastCache.DOUBLE -> field.field().setDouble(object, reader.readDouble());
+
+                    case FastCache.DOUBLE_OBJ -> field.field().set(object, reader.readDouble());
+
+                    case FastCache.STRING -> field.field().set(object, reader.readString());
+
+                    default -> field.field().set(object, deserialize(field.genericType(), reader));
+                }
             }
 
             return object;

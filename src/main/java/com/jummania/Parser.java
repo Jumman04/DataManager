@@ -18,9 +18,24 @@ public final class Parser {
 
         Users users = new Users(list);
 
+        for (int i = 0; i < 99; i++) {
+            parse(users);
+        }
+
+    }
+
+    void parse(Users users) {
+        long oldTime = System.nanoTime();
         byte[] ser = serialize(users);
-        Users l = deserializer.deserialize(Users.class, new ByteReader(ser));
-        System.out.println(l);
+        long currentTime = System.nanoTime();
+        long timeTaken = currentTime - oldTime;
+        System.out.println("title taken: " + timeTaken);
+
+        oldTime = System.nanoTime();
+        deserializer.deserialize(Users.class, new ByteReader(ser));
+        currentTime = System.nanoTime();
+        timeTaken = currentTime - oldTime;
+        System.out.println("title taken: " + timeTaken);
     }
 
     public byte[] serialize(Object obj) {

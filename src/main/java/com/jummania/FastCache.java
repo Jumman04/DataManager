@@ -10,20 +10,37 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class FastCache {
+final class FastCache {
 
-    public static final byte INT = 1;
-    public static final byte LONG = 2;
-    public static final byte SHORT = 3;
-    public static final byte BYTE = 4;
-    public static final byte CHAR = 5;
-    public static final byte BOOLEAN = 6;
-    public static final byte FLOAT = 7;
-    public static final byte DOUBLE = 8;
-    public static final byte STRING = 9;
-    public static final byte ARRAY = 10;
-    public static final byte COLLECTION = 11;
-    public static final byte OBJECT = 12;
+    static final byte INT = 1;
+    static final byte INTEGER = 2;
+
+    static final byte LONG = 3;
+    static final byte LONG_OBJ = 4;
+
+    static final byte SHORT = 5;
+    static final byte SHORT_OBJ = 6;
+
+    static final byte BYTE = 7;
+    static final byte BYTE_OBJ = 8;
+
+    static final byte CHAR = 9;
+    static final byte CHARACTER = 10;
+
+    static final byte BOOLEAN = 11;
+    static final byte BOOLEAN_OBJ = 12;
+
+    static final byte FLOAT = 13;
+    static final byte FLOAT_OBJ = 14;
+
+    static final byte DOUBLE = 15;
+    static final byte DOUBLE_OBJ = 16;
+
+    static final byte STRING = 17;
+
+    static final byte ARRAY = 18;
+    static final byte COLLECTION = 19;
+    static final byte OBJECT = 20;
 
     static final Unsafe UNSAFE;
     private static final ConcurrentHashMap<Class<?>, FieldMap> CACHE = new ConcurrentHashMap<>();
@@ -41,7 +58,7 @@ public final class FastCache {
     private FastCache() {
     }
 
-    public static FieldMap get(Class<?> clazz) {
+    static FieldMap get(Class<?> clazz) {
         return CACHE.computeIfAbsent(clazz, FastCache::build);
     }
 
@@ -89,21 +106,29 @@ public final class FastCache {
 
     private static byte resolveKind(Class<?> type) {
 
-        if (type == int.class || type == Integer.class) return INT;
+        if (type == int.class) return INT;
+        if (type == Integer.class) return INTEGER;
 
-        if (type == long.class || type == Long.class) return LONG;
+        if (type == long.class) return LONG;
+        if (type == Long.class) return LONG_OBJ;
 
-        if (type == short.class || type == Short.class) return SHORT;
+        if (type == short.class) return SHORT;
+        if (type == Short.class) return SHORT_OBJ;
 
-        if (type == byte.class || type == Byte.class) return BYTE;
+        if (type == byte.class) return BYTE;
+        if (type == Byte.class) return BYTE_OBJ;
 
-        if (type == char.class || type == Character.class) return CHAR;
+        if (type == char.class) return CHAR;
+        if (type == Character.class) return CHARACTER;
 
-        if (type == boolean.class || type == Boolean.class) return BOOLEAN;
+        if (type == boolean.class) return BOOLEAN;
+        if (type == Boolean.class) return BOOLEAN_OBJ;
 
-        if (type == float.class || type == Float.class) return FLOAT;
+        if (type == float.class) return FLOAT;
+        if (type == Float.class) return FLOAT_OBJ;
 
-        if (type == double.class || type == Double.class) return DOUBLE;
+        if (type == double.class) return DOUBLE;
+        if (type == Double.class) return DOUBLE_OBJ;
 
         if (type == String.class) return STRING;
 
@@ -114,9 +139,9 @@ public final class FastCache {
         return OBJECT;
     }
 
-    public record CachedField(Field field, Class<?> rawType, Type genericType, byte[] nameBytes, byte kind) {
+    record CachedField(Field field, Class<?> rawType, Type genericType, byte[] nameBytes, byte kind) {
     }
 
-    public record FieldMap(CachedField[] fields, HashMap<String, CachedField> map) {
+    record FieldMap(CachedField[] fields, HashMap<String, CachedField> map) {
     }
 }

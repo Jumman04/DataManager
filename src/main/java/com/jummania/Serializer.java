@@ -76,7 +76,6 @@ public class Serializer {
                 Class<?> componentType = clazz.getComponentType();
 
                 for (int i = 0; i < length; i++) {
-
                     serialize(Array.get(obj, i), componentType, writer);
                 }
 
@@ -89,7 +88,6 @@ public class Serializer {
                 writer.writeInt(collection.size());
 
                 for (Object item : collection) {
-
                     serialize(item, item.getClass(), writer);
                 }
 
@@ -110,19 +108,35 @@ public class Serializer {
 
                     case FastCache.INT -> writer.writeInt(field.getInt(obj));
 
+                    case FastCache.INTEGER -> writer.writeInt((Integer) field.get(obj));
+
                     case FastCache.LONG -> writer.writeLong(field.getLong(obj));
+
+                    case FastCache.LONG_OBJ -> writer.writeLong((Long) field.get(obj));
 
                     case FastCache.SHORT -> writer.writeShort(field.getShort(obj));
 
+                    case FastCache.SHORT_OBJ -> writer.writeShort((Short) field.get(obj));
+
                     case FastCache.BYTE -> writer.writeByte(field.getByte(obj));
+
+                    case FastCache.BYTE_OBJ -> writer.writeByte((Byte) field.get(obj));
 
                     case FastCache.CHAR -> writer.writeChar(field.getChar(obj));
 
+                    case FastCache.CHARACTER -> writer.writeChar((Character) field.get(obj));
+
                     case FastCache.BOOLEAN -> writer.writeBoolean(field.getBoolean(obj));
+
+                    case FastCache.BOOLEAN_OBJ -> writer.writeBoolean((Boolean) field.get(obj));
 
                     case FastCache.FLOAT -> writer.writeFloat(field.getFloat(obj));
 
+                    case FastCache.FLOAT_OBJ -> writer.writeFloat((Float) field.get(obj));
+
                     case FastCache.DOUBLE -> writer.writeDouble(field.getDouble(obj));
+
+                    case FastCache.DOUBLE_OBJ -> writer.writeDouble((Double) field.get(obj));
 
                     case FastCache.STRING -> writer.writeString((String) field.get(obj));
 
