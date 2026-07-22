@@ -1,5 +1,7 @@
 package com.jummania;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,32 +12,34 @@ public final class Parser {
 
     void main() {
 
-        User user = new User(14, "hello world");
+        Company company = createCompany();
 
-        List<User> list = new ArrayList<>();
-        list.add(user);
-        list.add(user);
-
-        Users users = new Users(list);
-
-        for (int i = 0; i < 99; i++) {
-            parse(users);
-        }
+        //  for (int i = 0; i < 3; i++) {
+        parse(company);
+        //  }
 
     }
 
-    void parse(Users users) {
-        long oldTime = System.nanoTime();
-        byte[] ser = serialize(users);
-        long currentTime = System.nanoTime();
-        long timeTaken = currentTime - oldTime;
-        System.out.println("title taken: " + timeTaken);
+    void parse(Company company) {
+        byte[] binary = serialize(company);
 
-        oldTime = System.nanoTime();
-        deserializer.deserialize(Users.class, new ByteReader(ser));
-        currentTime = System.nanoTime();
-        timeTaken = currentTime - oldTime;
-        System.out.println("title taken: " + timeTaken);
+        Gson gson = new Gson();
+
+        String s = gson.toJson(company);
+
+
+        gson.fromJson(s, Company.class);
+
+
+        long start = System.nanoTime();
+
+        for (int i = 0; i < 100000; i++) {
+            gson.fromJson(s, Company.class);
+        }
+
+        long end = System.nanoTime();
+
+        System.out.println((end - start) / 100000.0);
     }
 
     public byte[] serialize(Object obj) {
@@ -44,36 +48,129 @@ public final class Parser {
         return sb.toByteArray();
     }
 
+    public Company createCompany() {
 
-    private class Users {
-        List<User> users;
+        Company company = new Company();
 
-        public Users(List<User> users) {
-            this.users = users;
+        company.id = 1;
+        company.name = "Jummania Ltd";
+
+        company.headOffice = new Address();
+        company.headOffice.country = "Bangladesh";
+        company.headOffice.city = "Dhaka";
+        company.headOffice.street = "Motijheel";
+        company.headOffice.zipCode = 1000;
+
+        company.departments = new Department[5];
+
+        for (int i = 0; i < 5; i++) {
+
+            Department d = new Department();
+
+            d.id = i;
+            d.name = "Department " + i;
+            d.active = true;
+
+            company.departments[i] = d;
         }
 
-        @Override
-        public String toString() {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (User user : users) {
-                stringBuilder.append(user).append("\n");
+        company.employees = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+
+            Employee e = new Employee();
+
+            e.id = i;
+            e.name = "Employee " + i;
+            e.age = 20 + (i % 30);
+            e.salary = 25000 + i * 1000;
+
+            e.address = new Address();
+            e.address.country = "Bangladesh";
+            e.address.city = "Dhaka";
+            e.address.street = "Road " + i;
+            e.address.zipCode = 1000 + i;
+
+            e.phones = new ArrayList<>();
+
+            for (int j = 0; j < 3; j++) {
+
+                Phone p = new Phone();
+
+                p.type = "Mobile";
+                p.number = "01700000" + i + j;
+
+                e.phones.add(p);
             }
-            return stringBuilder.toString();
+
+            e.skills = new Skill[5];
+
+            for (int j = 0; j < 5; j++) {
+
+                Skill s = new Skill();
+
+                s.name = "Skill-" + j;
+                s.level = (j % 10) + 1;
+
+                e.skills[j] = s;
+            }
+
+            company.employees.add(e);
         }
+
+        return company;
     }
 
-    private class User {
-        int id;
-        String name;
+    public class Company {
 
-        public User(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
+        public long id;
+        public String name;
 
-        @Override
-        public String toString() {
-            return id + " : " + name;
-        }
+        public Address headOffice;
+
+        public Department[] departments;
+
+        public List<Employee> employees;
+    }
+
+    public class Address {
+
+        public String country;
+        public String city;
+        public String street;
+        public int zipCode;
+    }
+
+    public class Department {
+
+        public int id;
+        public String name;
+        public boolean active;
+    }
+
+    public class Employee {
+
+        public long id;
+        public String name;
+        public int age;
+        public double salary;
+
+        public Address address;
+
+        public List<Phone> phones;
+
+        public Skill[] skills;
+    }
+
+    public class Phone {
+
+        public String type;
+        public String number;
+    }
+
+    public class Skill {
+
+        public String name;
+        public int level;
     }
 }
